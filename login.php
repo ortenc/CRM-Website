@@ -78,12 +78,14 @@
                 "password": password
             },
             cache: false
-        }).then(function (response) {
-            var response = JSON.parse(response);
-            //TODO: Url te vije nga backend
-            window.location.href = "profile.php";
-        }).catch(function (response) {
-
+        }).then(function (result) {
+            var response = JSON.parse(result);
+            if (response.code == 200) {
+                window.location.href = "profile.php";
+            }
+            else if(response.code == 422){
+                window.alert(response.message)
+            }
         });
     }
 </script>

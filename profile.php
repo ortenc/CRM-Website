@@ -10,6 +10,7 @@ if(!$_SESSION['id'])
 }
 
 $user_id = $_SESSION['id'];
+$user_role = $_SESSION['role'];
 
 require('database.php');
 
@@ -89,7 +90,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
                     <div class="dropdown profile-element"> <span>
                             <img alt="image" class="img-circle" src="<?= $user['photo']?>"/>
                              </span>
-                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $user['name']?></strong>
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $_SESSION['name']?></strong>
                              </span> <span class="text-muted text-xs block"><?= $user['role']?><b class="caret"></b></span> </span>
                     </div>
                     <div class="logo-element">
@@ -97,18 +98,13 @@ while($row = mysqli_fetch_assoc($result_list)) {
                     </div>
                 </li>
                 <li class="active">
-                    <a href="#"><i class="fa fa-desktop"></i> <span class="nav-label">App Views</span>  <span class="pull-right label label-primary">SPECIAL</span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="contacts.html">Contacts</a></li>
-                        <li class="active"><a href="profile.html">Profile</a></li>
-                    </ul>
+                    <a href="profile.php"><i class="fa fa-user"></i> <span class="nav-label">Profile</span></a>
                 </li>
-                <li>
-                    <a href="#"><i class="fa fa-table"></i> <span class="nav-label">Tables</span><span class="fa arrow"></span></a>
-                    <ul class="nav nav-second-level collapse">
-                        <li><a href="table_foo_table.html">User List</a></li>
-                    </ul>
-                </li>
+                <?php if($user_role == "Admin") { ?>
+                    <li class="active">
+                        <a href="userlist.php"><i class="fa fa-table"></i> <span class="nav-label">Admin</span></a>
+                    </li>
+               <?php } ?>
             </ul>
         </div>
     </nav>
@@ -118,11 +114,6 @@ while($row = mysqli_fetch_assoc($result_list)) {
             <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">
                     <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-                    <form role="search" class="navbar-form-custom" action="search_results.html">
-                        <div class="form-group">
-                            <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
-                        </div>
-                    </form>
                 </div>
                 <ul class="nav navbar-top-links navbar-right">
                     <li>
@@ -377,6 +368,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
 <!-- Mainly scripts -->
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/bootstrap.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
 <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 

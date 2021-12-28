@@ -1,7 +1,7 @@
 <?php
 session_start();
 require 'database.php';
-//include 'functions.php';
+include 'functions.php';
 
 if ($_POST['action'] == "register") {
 
@@ -95,54 +95,47 @@ if ($_POST['action'] == "register") {
 
 } elseif ($_POST['action'] == "login") {
 
-    $password = $_POST['password'];
-    $email = $conn->escape_string($_POST['email']);
-    $errors = [];
-    $validation = true;
+    $txtpassword = $_POST['password'];
+    $txtemail = mysqli_real_escape_string($conn, $_POST['email']);
 
     if (empty($txtemail)) {
-        $errors[] = "Email cannot be empty!";
-        $validation = false;
+        echo json_encode(array("code" => "404", "message" => "Email cannot be empty!"));
+        exit;
     }
     if (empty($txtpassword)) {
-        $errors[] = "Password cannot be empty!";
-        $validation = false;
+        echo json_encode(array("code" => "404", "message" => "Password cannot be empty!"));
+        exit;
     }
 
-        if (!$validation) {
-            echo json_encode(["code" => 422, "message" => "Validation Errors", "errors" => $errors]);
-            exit();
-        }
+    $query_select = "SELECT * FROM users WHERE email='$txtemail'";
+    $result = mysqli_query($conn, $query_select);
+    $check = mysqli_fetch_assoc($result);
 
-    $query = "SELECT * FROM users WHERE email='$email' ";
-    $result = $conn->query($query);
-    $user = $result->fetch_assoc();
-
-    if (password_verify($password, $user['password'])) {
-        $_SESSION['id'] = $user['id'];
-        $_SESSION['name'] = $user['name'];
+    if (password_verify($txtpassword, $check['password'])) {
+        $_SESSION['id'] = $check['id'];
+        $_SESSION['name'] = $check['name'];
+        $_SESSION['role'] = $check['role'];
+        $sub_query_insert = "INSERT INTO login_details 
+                      SET user_id = '" . $check['id'] . "'
+                      ";
+        $sub_result = mysqli_query($conn, $sub_query_insert);
         $_SESSION['login_details_id'] = mysqli_insert_id($conn);
 
-            if ($user['role'] == "User") {
-                echo json_encode(array("code" => "201", "message" => "Success"));
-                exit;
-            }
-            if ($user['role'] == "Admin") {
-                echo json_encode(array("code" => "200", "message" => "Success"));
-                exit;
-            }
-    } else {
+        if ($check['role'] == "User") {
+            echo json_encode(array("code" => "200", "message" => "Success"));
+            exit;
+        }
+        if ($check['role'] == "Admin") {
+            echo json_encode(array("code" => "200", "message" => "Success"));
+            exit;
+        }
+    }
+    else{
         echo json_encode(array("code" => "404", "message" => "Password incorrect!"));
         exit;
     }
 
-    $sub_query_insert = "INSERT INTO login_details 
-                      SET user_id = '" . $user['id'] . "'
-                      ";
-    $sub_result = mysqli_query($conn, $sub_query_insert);
-
-
-    // Log in user into the webapage action code
+    // Log in user into the webpage action code
 
 
     // Update user details in the database from admin panel action code
