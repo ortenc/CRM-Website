@@ -1,7 +1,6 @@
 <?php
 include('functions.php');
-?>
-<?php
+require('database.php');
 session_start();
 
 if(!$_SESSION['id'])
@@ -11,8 +10,6 @@ if(!$_SESSION['id'])
 
 $user_id = $_SESSION['id'];
 $user_role = $_SESSION['role'];
-
-require('database.php');
 
 $query ="SELECT * FROM users WHERE id= '$user_id'";
 
@@ -74,7 +71,14 @@ while($row = mysqli_fetch_assoc($result_list)) {
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="css/plugins/dataTables/datatables.min.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
+    <link href="css/plugins/dropzone/basic.css" rel="stylesheet">
+    <link href="css/plugins/dropzone/dropzone.css" rel="stylesheet">
+    <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+    <link href="css/plugins/codemirror/codemirror.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="css/style.css" rel="stylesheet">
 
 </head>
@@ -87,12 +91,11 @@ while($row = mysqli_fetch_assoc($result_list)) {
         <div class="sidebar-collapse">
             <ul class="nav metismenu" id="side-menu">
                 <li class="nav-header">
-                    <div class="dropdown profile-element"> <span>
+                         <span>
                             <img alt="image" class="img-circle" src="<?= $user['photo']?>"/>
-                             </span>
-                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $_SESSION['name']?></strong>
-                             </span> <span class="text-muted text-xs block"><?= $user['role']?><b class="caret"></b></span> </span>
-                    </div>
+                         </span>
+                         <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $_SESSION['name']?></strong>
+                             </span> <span class="text-muted text-xs block"><?= $_SESSION['role']?><b class="fa fa-user"></b></span> </span>
                     <div class="logo-element">
                         IN+
                     </div>
@@ -104,7 +107,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
                     <li class="active">
                         <a href="userlist.php"><i class="fa fa-table"></i> <span class="nav-label">Admin</span></a>
                     </li>
-               <?php } ?>
+                <?php } ?>
             </ul>
         </div>
     </nav>
@@ -117,7 +120,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
                 </div>
                 <ul class="nav navbar-top-links navbar-right">
                     <li>
-                        <a href="login.php">
+                        <a href="logout.php">
                             <i class="fa fa-sign-out"></i> Log out
                         </a>
                     </li>
@@ -133,69 +136,82 @@ while($row = mysqli_fetch_assoc($result_list)) {
                         </div>
                         <div>
                             <div class="ibox-content no-padding border-left-right">
-                                <img alt="image" class="img-responsive" src="<?= $user['photo']?>">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <img alt="image" class="img-responsive" src="<?= $user['photo']?>">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form id="fileinfo" enctype="multipart/form-data" method="POST" name="fileinfo">
+                                            <div class="fileinput fileinput-new input-group" data-provides="fileinput">
+                                                <div class="form-control" data-trigger="fileinput">
+                                                    <i class="glyphicon glyphicon-file fileinput-exists"></i>
+                                                    <span class="fileinput-filename"></span>
+                                                </div>
+                                                <span class="input-group-addon btn btn-default btn-file">
+                                                    <span class="fileinput-new">Select file</span>
+                                                    <span class="fileinput-exists">Change</span>
+                                                    <input id="imageUpload-user" type="file" name="profile_photo"/>
+                                                </span>
+                                                <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                             <div class="ibox-content profile-content">
-                                <h4><strong><?= $user['name']?></strong></h4>
-                                <p><i class="fa fa-map-marker"></i><?= $user['role']?></p>
-                                <div class="col-md-8">
-                                    <div class="card card-user">
-                                        <div class="card-header">
-                                            <h1 class="card-title">Edit Profile</h1>
-                                        </div>
-                                        <div class="card-body">
-                                            <form>
-                                                <div class="row">
-                                                    <div class="col-md-5 pr-1">
-                                                        <div class="form-group">
-                                                            <label for="exampleInputEmail1">Email address</label>
-                                                            <input type="email" class="form-control" placeholder="Email" value="<?= $user['email']?>">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6 pr-1">
-                                                        <div class="form-group">
-                                                            <label>First Name</label>
-                                                            <input type="text" class="form-control" placeholder="Name" value="<?= $user['name']?>">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 pl-1">
-                                                        <div class="form-group">
-                                                            <label>Last Name</label>
-                                                            <input type="text" class="form-control" placeholder="Last Name" value="<?= $user['surname']?>">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-4 pr-1">
-                                                        <div class="form-group">
-                                                            <label>Role</label>
-                                                            <input type="text" class="form-control" value="<?= $user['role']?>" disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 px-1">
-                                                        <div class="form-group">
-                                                            <label>Gender</label>
-                                                            <input type="text" class="form-control" value="<?= $user['gender']?>" disabled>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="update ml-auto mr-auto">
-                                                        <button type="submit" class="btn btn-primary btn-round">Update Profile</button>
-                                                    </div>
-                                                </div>
-                                            </form>
+                                <h4><strong><?= $user['name'] ." ". $user['surname']?></strong></h4>
+                                <p>
+                                    <i class="fa fa-envelope"></i>
+                                    <span style="margin-left: 5px;"><?= $user['email'] ?></span>
+                                </p>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3>Edit Profile</h3>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Email address</label>
+                                            <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="<?= $user['email']?>">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="user-button">
-                                    <div class="row">
-                                        <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-6 pr-1">
+                                        <div class="form-group">
+                                            <label>First Name</label>
+                                            <input type="text" id="name" name="name" class="form-control" placeholder="Name" value="<?= $user['name']?>">
                                         </div>
-                                        <div class="col-md-6">
+                                    </div>
+                                    <div class="col-md-6 pl-1">
+                                        <div class="form-group">
+                                            <label>Last Name</label>
+                                            <input type="text" id="surname" name="surname" class="form-control" placeholder="Last Name" value="<?= $user['surname']?>">
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 pr-1">
+                                        <div class="form-group">
+                                            <label>Role</label>
+                                            <input type="text" class="form-control" value="<?= $user['role']?>" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 px-1">
+                                        <div class="form-group">
+                                            <label>Gender</label>
+                                            <input type="text" class="form-control" value="<?= $user['gender']?>" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-primary btn-round" onclick="userUpdate('<?= $user['id'] ?>')">Update Profile</button>
                                     </div>
                                 </div>
                             </div>
@@ -205,162 +221,77 @@ while($row = mysqli_fetch_assoc($result_list)) {
                 <div class="col-md-8">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Activites</h5>
+                            <h5>User Chat</h5>
                             <div class="ibox-tools">
                                 <a class="collapse-link">
                                     <i class="fa fa-chevron-up"></i>
-                                </a>
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    <i class="fa fa-wrench"></i>
-                                </a>
-                                <ul class="dropdown-menu dropdown-user">
-                                    <li><a href="#">Config option 1</a>
-                                    </li>
-                                    <li><a href="#">Config option 2</a>
-                                    </li>
-                                </ul>
-                                <a class="close-link">
-                                    <i class="fa fa-times"></i>
                                 </a>
                             </div>
                         </div>
                         <div class="ibox-content">
 
-                            <div>
-                                <div class="feed-activity-list">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover dataTables-example" >
+                                    <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+                                    foreach ($user_list as $key => $row) {
 
-                                    <div class="feed-element">
-                                        <a href="#" class="pull-left">
-                                            <img alt="image" class="img-circle" src="img/a1.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right text-navy">1m ago</small>
-                                            <strong>Sandra Momot</strong> started following <strong>Monica Smith</strong>. <br>
-                                            <small class="text-muted">Today 4:21 pm - 12.06.2014</small>
-                                            <div class="actions">
-                                                <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
-                                                <a class="btn btn-xs btn-danger"><i class="fa fa-heart"></i> Love</a>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        $status = '';
+                                        $current_timestamp = strtotime(date("Y-m-d H:i:s") . '- 10 second');
+                                        $current_timestamp = date('Y-m-d H:i:s', $current_timestamp);
+                                        $user_last_activity = fetch_user_last_activity($row['id'], $conn);
 
-                                    <div class="feed-element">
-                                        <a href="#" class="pull-left">
-                                            <img alt="image" class="img-circle" src="img/profile.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right">5m ago</small>
-                                            <strong>Monica Smith</strong> posted a new blog. <br>
-                                            <small class="text-muted">Today 5:60 pm - 12.06.2014</small>
-                                        </div>
-                                    </div>
+                                        if(strtotime($user_last_activity) > strtotime($current_timestamp))
+                                        {
+                                            $status = '<span class="badge badge-primary">Online</span>';
+                                        }
+                                        else
+                                        {
+                                            $status = '<span class="badge badge-danger">Offline</span>';
+                                        }
+                                        $output = "" ;
 
-                                    <div class="feed-element">
-                                        <a href="#" class="pull-left">
-                                            <img alt="image" class="img-circle" src="img/a2.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right">2h ago</small>
-                                            <strong>Mark Johnson</strong> posted message on <strong>Monica Smith</strong> site. <br>
-                                            <small class="text-muted">Today 2:10 pm - 12.06.2014</small>
-                                            <div class="well">
-                                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-                                                Over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                                            </div>
-                                            <div class="pull-right">
-                                                <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
-                                                <a class="btn btn-xs btn-white"><i class="fa fa-heart"></i> Love</a>
-                                                <a class="btn btn-xs btn-primary"><i class="fa fa-pencil"></i> Message</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="feed-element">
-                                        <a href="#" class="pull-left">
-                                            <img alt="image" class="img-circle" src="img/a3.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right">2h ago</small>
-                                            <strong>Janet Rosowski</strong> add 1 photo on <strong>Monica Smith</strong>. <br>
-                                            <small class="text-muted">2 days ago at 8:30am</small>
-                                            <div class="photos">
-                                                <a target="_blank" href="http://24.media.tumblr.com/20a9c501846f50c1271210639987000f/tumblr_n4vje69pJm1st5lhmo1_1280.jpg"> <img alt="image" class="feed-photo" src="img/p1.jpg"></a>
-                                                <a target="_blank" href="http://37.media.tumblr.com/9afe602b3e624aff6681b0b51f5a062b/tumblr_n4ef69szs71st5lhmo1_1280.jpg"> <img alt="image" class="feed-photo" src="img/p3.jpg"></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="feed-element">
-                                        <a href="#" class="pull-left">
-                                            <img alt="image" class="img-circle" src="img/a4.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right text-navy">5h ago</small>
-                                            <strong>Chris Johnatan Overtunk</strong> started following <strong>Monica Smith</strong>. <br>
-                                            <small class="text-muted">Yesterday 1:21 pm - 11.06.2014</small>
-                                            <div class="actions">
-                                                <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
-                                                <a class="btn btn-xs btn-white"><i class="fa fa-heart"></i> Love</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="feed-element">
-                                        <a href="#" class="pull-left">
-                                            <img alt="image" class="img-circle" src="img/a5.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right">2h ago</small>
-                                            <strong>Kim Smith</strong> posted message on <strong>Monica Smith</strong> site. <br>
-                                            <small class="text-muted">Yesterday 5:20 pm - 12.06.2014</small>
-                                            <div class="well">
-                                                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
-                                                Over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
-                                            </div>
-                                            <div class="pull-right">
-                                                <a class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="feed-element">
-                                        <a href="#" class="pull-left">
-                                            <img alt="image" class="img-circle" src="img/profile.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right">23h ago</small>
-                                            <strong>Monica Smith</strong> love <strong>Kim Smith</strong>. <br>
-                                            <small class="text-muted">2 days ago at 2:30 am - 11.06.2014</small>
-                                        </div>
-                                    </div>
-                                    <div class="feed-element">
-                                        <a href="#" class="pull-left">
-                                            <img alt="image" class="img-circle" src="img/a7.jpg">
-                                        </a>
-                                        <div class="media-body ">
-                                            <small class="pull-right">46h ago</small>
-                                            <strong>Mike Loreipsum</strong> started following <strong>Monica Smith</strong>. <br>
-                                            <small class="text-muted">3 days ago at 7:58 pm - 10.06.2014</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <button class="btn btn-primary btn-block m"><i class="fa fa-arrow-down"></i> Show More</button>
-
+                                        ?>
+                                        <tr class="gradeX">
+                                            <td><?= $row['name'].' '.count_unseen_message($row['id'], $_SESSION['id'], $conn) ?></td>
+                                            <td><?= $status ?></td>
+                                            <td>
+                                                <button type="button"
+                                                        class="btn btn-info btn-xs start_chat"
+                                                        data-touserid="<?= $row['id'] ?>"
+                                                        data-tousername="<?= $row['name'] ?>">
+                                                    Start Chat
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                    </tfoot>
+                                </table>
                             </div>
-
-                        </div>
+                            <div id="user_model_details"</div>
                     </div>
-
                 </div>
-            </div>
-        </div>
-        <div class="footer">
-            <div class="pull-right">
-                10GB of <strong>250GB</strong> Free.
-            </div>
-            <div>
-                <strong>Copyright</strong> Example Company &copy; 2014-2017
-            </div>
-        </div>
 
+            </div>
+        </div>
     </div>
+    <div class="footer">
+        <div class="pull-right">
+            10GB of <strong>250GB</strong> Free.
+        </div>
+        <div>
+            <strong>Copyright</strong> Example Company &copy; 2014-2017
+        </div>
+    </div>
+
+</div>
 </div>
 
 
@@ -368,9 +299,10 @@ while($row = mysqli_fetch_assoc($result_list)) {
 <!-- Mainly scripts -->
 <script src="js/jquery-3.1.1.min.js"></script>
 <script src="js/bootstrap.js"></script>
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
 <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="js/plugins/dataTables/datatables.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <!-- Custom and plugin javascript -->
 <script src="js/inspinia.js"></script>
@@ -379,8 +311,15 @@ while($row = mysqli_fetch_assoc($result_list)) {
 <!-- Peity -->
 <script src="js/plugins/peity/jquery.peity.min.js"></script>
 
-<!-- Peity -->
-<script src="js/demo/peity-demo.js"></script>
+<!-- Jasny -->
+<script src="js/plugins/jasny/jasny-bootstrap.min.js"></script>
+
+<!-- DROPZONE -->
+<script src="js/plugins/dropzone/dropzone.js"></script>
+
+<!-- CodeMirror -->
+<script src="js/plugins/codemirror/codemirror.js"></script>
+<script src="js/plugins/codemirror/mode/xml/xml.js"></script>
 
 </body>
 
@@ -391,13 +330,9 @@ while($row = mysqli_fetch_assoc($result_list)) {
 
     // Image click function
 
-    // $("#profileImage-user").click(function() {
-    //     $("#imageUpload-user").click();
-    // });
-
-    // Image click function
-
-    // Image upload or change function
+    $("#profileImage-user").click(function(e) {
+        $("#imageUpload-user").click();
+    });
 
     $("#imageUpload-user").change(function(){
         if (this){
@@ -405,18 +340,15 @@ while($row = mysqli_fetch_assoc($result_list)) {
         }
     });
 
-    // Image upload or change function
-
     // User profile info update from the user himself
-
-    function userupdate(id){
+    function userUpdate(id){
         var user_id = id;
         var name = $("#name").val();
         var surname = $("#surname").val();
         var email = $("#email").val();
 
         var data = {
-            "action": "userupdate",
+            "action": "userUpdate",
             "id": user_id,
             "name": name,
             "surname": surname,
@@ -425,7 +357,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
         };
 
         $.ajax({
-            url: "actions.php",
+            url: "ajax.php",
             method: 'POST',
             type: 'POST',
             data: data,
@@ -434,7 +366,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
                 var response = JSON.parse(result);
 
                 if (response.code == 200) {
-                    window.location.href = "userpage.php";
+                    window.location.href = "profile.php";
                 }
 
                 if (response.code == 404) {
@@ -464,7 +396,8 @@ while($row = mysqli_fetch_assoc($result_list)) {
         function update_last_activity(){
 
             $.ajax({
-                url:"../Controller/actions.php",
+                url:"ajax.php",
+                method: "POST",
                 data: {"action": "update_last_activity"},
                 success:function()
                 {
@@ -509,7 +442,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
             }
 
             $.ajax({
-                url:"../Controller/actions.php",
+                url:"ajax.php",
                 method: 'POST',
                 type: 'POST',
                 data: data,
@@ -530,7 +463,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
             var to_user_id = $(this).attr('id');
             var chat_message = $('#chat_message_'+to_user_id).val();
             $.ajax({
-                url:"../Controller/actions.php",
+                url:"ajax.php",
                 method:"POST",
                 data:{to_user_id:to_user_id, chat_message:chat_message, "action": "insert_chat"},
                 success:function(data)
@@ -554,9 +487,8 @@ while($row = mysqli_fetch_assoc($result_list)) {
                     "to_user_id": to_user_id
                 }
                 $.ajax({
-                    url:"../Controller/actions.php",
+                    url:"ajax.php",
                     method: 'POST',
-                    type: 'POST',
                     data: data,
                     cache: false,
                     success: function(result) {
@@ -578,6 +510,30 @@ while($row = mysqli_fetch_assoc($result_list)) {
         });
 
         // Exit chat modal with x button in the top corner
+
+        $('.dataTables-example').DataTable({
+            pageLength: 25,
+            responsive: true,
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                { extend: 'copy'},
+                {extend: 'csv'},
+                {extend: 'excel', title: 'ExampleFile'},
+                {extend: 'pdf', title: 'ExampleFile'},
+
+                {extend: 'print',
+                    customize: function (win){
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
+                    }
+                }
+            ]
+
+        });
     });
     // User chat configuration
 

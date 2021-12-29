@@ -113,12 +113,11 @@ while($row = mysqli_fetch_assoc($result_list)){
         <div class="sidebar-collapse">
             <ul class="nav metismenu" id="side-menu">
                 <li class="nav-header">
-                    <div class="dropdown profile-element"> <span>
+                        <span>
                             <img alt="image" class="img-circle" src="<?= $user['photo']?>"/>
-                             </span>
+                        </span>
                         <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $_SESSION['name']?></strong>
-                             </span> <span class="text-muted text-xs block"><?= $user['role']?><b class="caret"></b></span> </span>
-                    </div>
+                             </span> <span class="text-muted text-xs block"><?= $user['role']?><b class="fa fa-user"></b></span> </span>
                     <div class="logo-element">
                         IN+
                     </div>
