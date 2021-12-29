@@ -87,8 +87,6 @@ if ($_POST['action'] == "register") {
     }
 
 
-    // Register user in database for the first time  action code
-
 
     // Log in user into the webapage action code
 
@@ -135,7 +133,6 @@ if ($_POST['action'] == "register") {
         exit;
     }
 
-    // Log in user into the webpage action code
 
 
     // Update user details in the database from admin panel action code
@@ -168,8 +165,6 @@ if ($_POST['action'] == "register") {
     }
 
 
-    // Update user details in the database from admin panel action code
-
 
     // Delete user from database from admin panel action code
 
@@ -191,7 +186,6 @@ if ($_POST['action'] == "register") {
     }
 
 
-    // Delete user from database from admin panel action code
 
 
     // Personal user details update from userpage panel code
@@ -221,7 +215,6 @@ if ($_POST['action'] == "register") {
     }
 
 
-    // Personal user details update from userpage panel code
 
 
     // Get chat history when the pop up is initiated from start chat button click
@@ -239,7 +232,6 @@ if ($_POST['action'] == "register") {
 }
 
 
-// Get chat history when the pop up is initiated from start chat button click
 
 
 // Update last activity time of the user
@@ -257,7 +249,6 @@ elseif ($_POST['action'] == "update_last_activity") {
 
 
 
-// Update last activity time of the user
 
 
 // Insert chat from user to user with message body
@@ -282,8 +273,55 @@ SET to_user_id = '$to_user_id',
     if ($result) {
         echo fetch_user_chat_history($_SESSION['id'], $_POST['to_user_id'], $conn);
     }
+
+
+} elseif ($_POST['action'] == "fill_modal_user_data") {
+    $user_id = $conn->escape_string($_POST['user_id']);
+
+    $query_modal = "SELECT * FROM users WHERE id = '$user_id'";
+    $result_modal = mysqli_query($conn, $query_modal);
+    $user = mysqli_fetch_assoc($result_modal);
+
+    if(!$result_modal){
+        echo json_encode(array("code" => "422", "message" => "Internal server error"));
+        exit;
+    }
+
+    echo json_encode(array(
+        "code" => "200",
+        "message" => "Success",
+        "id" => $user['id'],
+        "email" => $user['email'],
+        "name" => $user['name'],
+        "surname" => $user['surname'],
+        "role" => $user['role']
+        ));
+
+
+}elseif ($_POST['action'] == "fill_user_delete") {
+
+    $user_id = $conn->escape_string($_POST['user_id']);
+
+    $query_delete = "SELECT * FROM users WHERE id = '$user_id'";
+    $result_modal = mysqli_query($conn, $query_delete);
+    $user = mysqli_fetch_assoc($result_modal);
+
+    if(!$result_modal){
+        echo json_encode(array("code" => "422", "message" => "Internal server error"));
+        exit;
+    }
+
+    echo json_encode(array(
+        "code" => "200",
+        "message" => "Success",
+        "id" => $user['id'],
+        "email" => $user['email'],
+        "name" => $user['name'],
+        "surname" => $user['surname'],
+        "role" => $user['role']
+        ));
+
+
 }
 
-
-// Insert chat from user to user with message body
 ?>

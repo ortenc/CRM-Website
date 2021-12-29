@@ -90,18 +90,9 @@ while($row = mysqli_fetch_assoc($result_list)){
 
 <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Userlist</title>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
-
-    <link href="css/plugins/dataTables/datatables.min.css" rel="stylesheet">
-
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+<?php include "header.php"; ?>
 
 </head>
 
@@ -109,46 +100,12 @@ while($row = mysqli_fetch_assoc($result_list)){
 
 <div id="wrapper">
 
-    <nav class="navbar-default navbar-static-side" role="navigation">
-        <div class="sidebar-collapse">
-            <ul class="nav metismenu" id="side-menu">
-                <li class="nav-header">
-                        <span>
-                            <img alt="image" class="img-circle" src="<?= $user['photo']?>"/>
-                        </span>
-                        <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $_SESSION['name']?></strong>
-                             </span> <span class="text-muted text-xs block"><?= $user['role']?><b class="fa fa-user"></b></span> </span>
-                    <div class="logo-element">
-                        IN+
-                    </div>
-                </li>
-                <li class="active">
-                    <a href="profile.php"><i class="fa fa-user"></i> <span class="nav-label">Profile</span></a>
-                </li>
-                <?php if($user_role == "Admin") { ?>
-                    <li class="active">
-                        <a href="userlist.php"><i class="fa fa-table"></i> <span class="nav-label">Admin</span></a>
-                    </li>
-                <?php } ?>
-            </ul>
-        </div>
-    </nav>
+    <?php include "navbar.php"; ?>
 
     <div id="page-wrapper" class="gray-bg">
-        <div class="row border-bottom">
-            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-                </div>
-                <ul class="nav navbar-top-links navbar-right">
-                    <li>
-                        <a href="login.php">
-                            <i class="fa fa-sign-out"></i> Log out
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+
+        <?php include "topbar.php"; ?>
+
         <div class="row wrapper border-bottom white-bg page-heading">
             <div class="col-lg-10">
                 <h2>User-List</h2>
@@ -184,26 +141,18 @@ while($row = mysqli_fetch_assoc($result_list)){
                                     <tbody>
                                     <?php foreach($users as $user){ ?>
                                     <tr class="gradeX">
-                                        <td>
-                                            <input type="text" id="fname_<?= $user['id']?>" name="fname" value="<?= $user['name']?>">
-                                        </td>
-                                        <td>
-                                            <input type="text" id="lname_<?= $user['id']?>" name="lname" value="<?= $user['surname']?>">
-                                        </td>
-                                        <td>
-                                            <input type="text" id="email_<?= $user['id']?>" name="email" value="<?= $user['email']?>">
-                                        </td>
-                                        <td class="center">
-                                            <select class="form-control" name="role" id="role_<?= $user['id']?>">
-                                                <option value="<?= $user['role']?>"><?= $user['role']?></option>
-                                                <option value="Admin">Admin</option>
-                                                <option value="User">User</option>
-                                            </select>
-                                        </td>
+                                        <td class="center"><?= $user['name']?></td>
+                                        <td class="center"><?= $user['surname']?></td>
+                                        <td class="center"><?= $user['email']?></td>
+                                        <td class="center"><?= $user['role']?></td>
                                         <td class="center"><?= $user['gender']?></td>
                                         <td style="white-space: nowrap">
-                                            <button class="btn btn-primary w-50" name="update" onclick="update('<?= $user['id']?>')">Update</button>
-                                            <button class="btn btn-primary w-50" name="erase" onclick="erase('<?= $user['id']?>')">Delete</button>
+                                            <button type="button" class="btn btn-primary w-50" onclick="fill_modal_user_data('<?= $user['id']?>')">
+                                                Update User
+                                            </button>
+                                            <button type="button" class="btn btn-primary w150" onclick="fill_user_delete('<?= $user['id']?>')">
+                                                Delete User
+                                            </button>
                                         </td>
                                     </tr>
                                     <?php } ?>
@@ -218,22 +167,126 @@ while($row = mysqli_fetch_assoc($result_list)){
     </div>
 </div>
 
+<!--modal for user info update-->
 
+<div class="modal inmodal" id="update_user_data" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-user modal-icon"></i>
+                <h4 class="modal-title">Update user</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="user_modal_id" name="user_modal_id">
+                <div class="form-group"><label>Name</label>
+                    <input type="text" class="form-control" id="fname" name="fname"></div>
+                <div class="form-group"><label>Surname</label>
+                    <input type="text" class="form-control" id="lname" name="lname"></div>
+                <div class="form-group"><label>Email</label>
+                    <input type="text" class="form-control" id="email" name="email"></div>
+                <b>Select role</b>
+                <select class="form-control" name="role" id="role">
+                    <option value="Admin">Admin</option>
+                    <option value="User">User</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" name="update" onclick="update()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- Mainly scripts -->
-<script src="js/jquery-3.1.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
-<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<!--modal for user info delete-->
 
-<script src="js/plugins/dataTables/datatables.min.js"></script>
+<div class="modal inmodal" id="delete_user_data" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-warning modal-icon"></i>
+                <h4 class="modal-title">Delete User</h4>
+                <h4 class="font-bold">Are you sure you want to delete user (<span id="d_fname"></span>)?</h4>
+                <input type="hidden" id="user_modal_id_delete" name="user_modal_id_delete">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" name="update" onclick="delete_user()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- Custom and plugin javascript -->
-<script src="js/inspinia.js"></script>
-<script src="js/plugins/pace/pace.min.js"></script>
+<?php include "footer.php"; ?>
 
-<!-- Page-Level Scripts -->
 <script>
+
+    function fill_modal_user_data(user_id) {
+        $("#update_user_data").modal("show");
+
+        var data = {
+            "action": "fill_modal_user_data",
+            user_id : user_id
+        };
+
+        $.ajax({
+            url: "ajax.php",
+            method: 'POST',
+            data: data,
+            cache: false,
+            success: function(result){
+                var response = JSON.parse(result);
+                if (response.code == 200) {
+                    $("#fname").val(response.name);
+                    $("#lname").val(response.surname);
+                    $("#email").val(response.email);
+                    $("#role").val(response.role);
+                    $("#user_modal_id").val(response.id);
+                }
+
+                if (response.code == 422) {
+                    Swal.fire(response.message);
+                }
+
+
+
+            }
+        });
+
+    }
+    function fill_user_delete(user_id_delete) {
+        $("#delete_user_data").modal("show");
+
+        var data = {
+            "action": "fill_user_delete",
+            user_id : user_id_delete
+        };
+
+        $.ajax({
+            url: "ajax.php",
+            method: 'POST',
+            data: data,
+            cache: false,
+            success: function(result){
+                var response = JSON.parse(result);
+                if (response.code == 200) {
+                    $("#d_fname").text(response.name +' '+response.surname);
+                    $("#user_modal_id_delete").val(response.id);
+                }
+
+                if (response.code == 422) {
+                    Swal.fire(response.message);
+                }
+
+
+
+            }
+        });
+
+    }
+
     $(document).ready(function(){
         $('.dataTables-example').DataTable({
             pageLength: 25,
@@ -265,12 +318,12 @@ while($row = mysqli_fetch_assoc($result_list)){
         return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
     }
 
-    function update(id) {
-        var user_id = id;
-        var fname = $("#fname_"+user_id).val();
-        var lname = $("#lname_"+user_id).val();
-        var email = $("#email_"+user_id).val();
-        var role = $("#role_"+user_id).val();
+    function update() {
+        var user_id = $("#user_modal_id").val();
+        var fname = $("#fname").val();
+        var lname = $("#lname").val();
+        var email = $("#email").val();
+        var role = $("#role").val();
 
         var data = {
             "action": "update",
@@ -279,7 +332,6 @@ while($row = mysqli_fetch_assoc($result_list)){
             "surname": lname,
             "email": email,
             "role": role
-
         };
 
         $.ajax({
@@ -304,8 +356,9 @@ while($row = mysqli_fetch_assoc($result_list)){
             }
         });
     }
-    function erase(id) {
-        var user_id = id;
+    function delete_user() {
+
+        var user_id = $("#user_modal_id_delete").val();
 
         var data = {
             "action": "erase",

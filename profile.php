@@ -64,22 +64,9 @@ while($row = mysqli_fetch_assoc($result_list)) {
 
 <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>INSPINIA | Profile</title>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="css/plugins/dataTables/datatables.min.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/plugins/dropzone/basic.css" rel="stylesheet">
-    <link href="css/plugins/dropzone/dropzone.css" rel="stylesheet">
-    <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
-    <link href="css/plugins/codemirror/codemirror.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link href="css/style.css" rel="stylesheet">
+    <?php include "header.php" ?>
 
 </head>
 
@@ -87,46 +74,12 @@ while($row = mysqli_fetch_assoc($result_list)) {
 
 <div id="wrapper">
 
-    <nav class="navbar-default navbar-static-side" role="navigation">
-        <div class="sidebar-collapse">
-            <ul class="nav metismenu" id="side-menu">
-                <li class="nav-header">
-                         <span>
-                            <img alt="image" class="img-circle" src="<?= $user['photo']?>"/>
-                         </span>
-                         <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $_SESSION['name']?></strong>
-                             </span> <span class="text-muted text-xs block"><?= $_SESSION['role']?><b class="fa fa-user"></b></span> </span>
-                    <div class="logo-element">
-                        IN+
-                    </div>
-                </li>
-                <li class="active">
-                    <a href="profile.php"><i class="fa fa-user"></i> <span class="nav-label">Profile</span></a>
-                </li>
-                <?php if($user_role == "Admin") { ?>
-                    <li class="active">
-                        <a href="userlist.php"><i class="fa fa-table"></i> <span class="nav-label">Admin</span></a>
-                    </li>
-                <?php } ?>
-            </ul>
-        </div>
-    </nav>
+    <?php include "navbar.php"; ?>
 
     <div id="page-wrapper" class="gray-bg">
-        <div class="row border-bottom">
-            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-                </div>
-                <ul class="nav navbar-top-links navbar-right">
-                    <li>
-                        <a href="logout.php">
-                            <i class="fa fa-sign-out"></i> Log out
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+
+        <?php include "topbar.php"; ?>
+
         <div class="wrapper wrapper-content">
             <div class="row animated fadeInRight">
                 <div class="col-md-4">
@@ -278,61 +231,22 @@ while($row = mysqli_fetch_assoc($result_list)) {
                             <div id="user_model_details"</div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
-    <div class="footer">
-        <div class="pull-right">
-            10GB of <strong>250GB</strong> Free.
-        </div>
-        <div>
-            <strong>Copyright</strong> Example Company &copy; 2014-2017
-        </div>
-    </div>
-
 </div>
 </div>
 
 
 
-<!-- Mainly scripts -->
-<script src="js/jquery-3.1.1.min.js"></script>
-<script src="js/bootstrap.js"></script>
-<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
-<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="js/plugins/dataTables/datatables.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-<!-- Custom and plugin javascript -->
-<script src="js/inspinia.js"></script>
-<script src="js/plugins/pace/pace.min.js"></script>
-
-<!-- Peity -->
-<script src="js/plugins/peity/jquery.peity.min.js"></script>
-
-<!-- Jasny -->
-<script src="js/plugins/jasny/jasny-bootstrap.min.js"></script>
-
-<!-- DROPZONE -->
-<script src="js/plugins/dropzone/dropzone.js"></script>
-
-<!-- CodeMirror -->
-<script src="js/plugins/codemirror/codemirror.js"></script>
-<script src="js/plugins/codemirror/mode/xml/xml.js"></script>
+<?php include "footer.php"; ?>
 
 </body>
 
 </html>
 <script>
 
-    // $.noConflict();
-
-    // Image click function
-
-    $("#profileImage-user").click(function(e) {
-        $("#imageUpload-user").click();
-    });
+    // image upload
 
     $("#imageUpload-user").change(function(){
         if (this){
