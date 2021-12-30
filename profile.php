@@ -64,9 +64,22 @@ while($row = mysqli_fetch_assoc($result_list)) {
 
 <head>
 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>INSPINIA | Profile</title>
 
-    <?php include "header.php" ?>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="css/plugins/dataTables/datatables.min.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/plugins/dropzone/basic.css" rel="stylesheet">
+    <link href="css/plugins/dropzone/dropzone.css" rel="stylesheet">
+    <link href="css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+    <link href="css/plugins/codemirror/codemirror.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="css/style.css" rel="stylesheet">
 
 </head>
 
@@ -74,12 +87,46 @@ while($row = mysqli_fetch_assoc($result_list)) {
 
 <div id="wrapper">
 
-    <?php include "navbar.php"; ?>
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="sidebar-collapse">
+            <ul class="nav metismenu" id="side-menu">
+                <li class="nav-header">
+                         <span>
+                            <img alt="image" class="img-circle" src="<?= $user['photo']?>"/>
+                         </span>
+                         <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $_SESSION['name']?></strong>
+                             </span> <span class="text-muted text-xs block"><?= $_SESSION['role']?><b class="fa fa-user"></b></span> </span>
+                    <div class="logo-element">
+                        IN+
+                    </div>
+                </li>
+                <li class="active">
+                    <a href="profile.php"><i class="fa fa-user"></i> <span class="nav-label">Profile</span></a>
+                </li>
+                <?php if($user_role == "Admin") { ?>
+                    <li class="active">
+                        <a href="userlist.php"><i class="fa fa-table"></i> <span class="nav-label">Admin</span></a>
+                    </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </nav>
 
     <div id="page-wrapper" class="gray-bg">
-
-        <?php include "topbar.php"; ?>
-
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                </div>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <a href="logout.php">
+                            <i class="fa fa-sign-out"></i> Log out
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
         <div class="wrapper wrapper-content">
             <div class="row animated fadeInRight">
                 <div class="col-md-4">
@@ -209,7 +256,6 @@ while($row = mysqli_fetch_assoc($result_list)) {
                                         {
                                             $status = '<span class="badge badge-danger">Offline</span>';
                                         }
-                                        $output = "" ;
 
                                         ?>
                                         <tr class="gradeX">
@@ -239,14 +285,39 @@ while($row = mysqli_fetch_assoc($result_list)) {
 
 
 
-<?php include "footer.php"; ?>
+<!-- Mainly scripts -->
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="js/plugins/dataTables/datatables.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="js/inspinia.js"></script>
+<script src="js/plugins/pace/pace.min.js"></script>
+
+<!-- Peity -->
+<script src="js/plugins/peity/jquery.peity.min.js"></script>
+
+<!-- Jasny -->
+<script src="js/plugins/jasny/jasny-bootstrap.min.js"></script>
+
+<!-- DROPZONE -->
+<script src="js/plugins/dropzone/dropzone.js"></script>
+
+<!-- CodeMirror -->
+<script src="js/plugins/codemirror/codemirror.js"></script>
+<script src="js/plugins/codemirror/mode/xml/xml.js"></script>
 
 </body>
 
 </html>
 <script>
 
-    // image upload
+    // $.noConflict();
+
+    // Image click function
 
     $("#imageUpload-user").change(function(){
         if (this){
@@ -290,8 +361,6 @@ while($row = mysqli_fetch_assoc($result_list)) {
         });
     }
 
-    // User profile info update from the user himself
-
     // User chat configuration
 
     $(document).ready(function(){
@@ -301,9 +370,8 @@ while($row = mysqli_fetch_assoc($result_list)) {
         setInterval(function(){
             update_last_activity();
             update_chat_history_data();
-        }, 5000);
+        }, 1000);
 
-        // we call these 2 functions every 5 seconds in order to update user activity and chat history
 
         // Create update activity function
 
@@ -320,8 +388,6 @@ while($row = mysqli_fetch_assoc($result_list)) {
             })
         }
 
-        // Create update activity function
-
         // Create modal pop up box for chat interface function
 
         function make_chat_dialog_box(to_user_id, to_user_name)
@@ -335,8 +401,6 @@ while($row = mysqli_fetch_assoc($result_list)) {
             modal_content+= '<button type="button" name="send_chat" id="'+to_user_id+'" class="btn btn-info send_chat">Send</button></div></div>';
             $('#user_model_details').html(modal_content);
         }
-
-        // Create modal pop up box for chat interface function
 
         // initiate the pop up with click action and load chat history
 
@@ -369,8 +433,6 @@ while($row = mysqli_fetch_assoc($result_list)) {
             })
         });
 
-        // initiate the pop up with click action and load chat history
-
         // Send chat with click action button
 
         $(document).on('click', '.send_chat', function(){
@@ -387,8 +449,6 @@ while($row = mysqli_fetch_assoc($result_list)) {
                 }
             })
         });
-
-        // Send chat with click action button
 
         // Create update chat history function
 
@@ -415,15 +475,13 @@ while($row = mysqli_fetch_assoc($result_list)) {
             });
         }
 
-        // Create update chat history function
-
         // Exit chat modal with x button in the top corner
 
         $(document).on('click', '.ui-button-icon', function(){
             $('.user_dialog').dialog('destroy').remove();
         });
 
-        // Exit chat modal with x button in the top corner
+        // template data table options
 
         $('.dataTables-example').DataTable({
             pageLength: 25,

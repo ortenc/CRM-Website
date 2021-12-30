@@ -1,6 +1,5 @@
 <?php
 
-
 include 'database.php';
 
 // Create fetch user last activity for the purpose of the user online/offline status
@@ -9,19 +8,18 @@ function fetch_user_last_activity($user_id, $conn)
 {
     $query_fetch_activity = "SELECT * FROM login_details 
                     WHERE user_id = '$user_id' 
-                    ORDER BY last_activity ASC
+                    ORDER BY last_activity DESC
                     LIMIT 1
                     ";
     $fetch_activity_statement = mysqli_query($conn, $query_fetch_activity);
     $result_fetch_activity = mysqli_fetch_all($fetch_activity_statement, MYSQLI_ASSOC);
+
     foreach($result_fetch_activity as $row)
     {
         return $row['last_activity'];
     }
 
 }
-
-// Create fetch user last activity for the purpose of the user online/offline status
 
 // Create fetch chat history in order to get the chat between the 2 users
 
@@ -78,8 +76,6 @@ function fetch_user_chat_history($from_user_id, $to_user_id, $conn)
     return $output;
 }
 
-// Create fetch chat history in order to get the chat between the 2 users
-
 // get username function for the chat history function so we can get the name according to the id for every row message in the chat
 
 function get_user_name($user_id, $conn)
@@ -93,10 +89,7 @@ function get_user_name($user_id, $conn)
     }
 }
 
-// get username function for the chat history function so we can get the name according to the id for every row message in the chat
-
 // Count unseen message function where we take all messages with the status 1 which are the messages sent and not read by the other user
-
 
 function count_unseen_message($from_user_id, $to_user_id, $conn)
 {
@@ -110,13 +103,10 @@ function count_unseen_message($from_user_id, $to_user_id, $conn)
     $output = '';
     if($count > 0)
     {
-
         $output = '<span class="label label-success">'.$count["status"].'</span>';
     }
     return $output;
 }
-
-// Count unseen message function where we take all messages with the status 1 which are the messages sent and not read by the other user
 
 // function for timestamp format hh
 

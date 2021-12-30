@@ -3,6 +3,7 @@ session_start();
 require 'database.php';
 include 'functions.php';
 
+
 if ($_POST['action'] == "register") {
 
     $txtname = $conn->escape_string($_POST['fname']);
@@ -97,11 +98,11 @@ if ($_POST['action'] == "register") {
     $txtemail = mysqli_real_escape_string($conn, $_POST['email']);
 
     if (empty($txtemail)) {
-        echo json_encode(array("code" => "404", "message" => "Email cannot be empty!"));
+        echo json_encode(array("code" => "422", "message" => "Email cannot be empty!"));
         exit;
     }
     if (empty($txtpassword)) {
-        echo json_encode(array("code" => "404", "message" => "Password cannot be empty!"));
+        echo json_encode(array("code" => "422", "message" => "Password cannot be empty!"));
         exit;
     }
 
@@ -129,7 +130,7 @@ if ($_POST['action'] == "register") {
         }
     }
     else{
-        echo json_encode(array("code" => "404", "message" => "Password incorrect!"));
+        echo json_encode(array("code" => "422", "message" => "Password incorrect!"));
         exit;
     }
 
@@ -244,7 +245,9 @@ elseif ($_POST['action'] == "update_last_activity") {
               WHERE login_details_id = '" . $_SESSION["login_details_id"] . "'
               ";
 
-    $statement = mysqli_query($conn, $query);
+
+
+    $result = mysqli_query($conn, $query);
 }
 
 
@@ -261,12 +264,11 @@ elseif ($_POST['action'] == "insert_chat") {
     $chat_message = $conn->escape_string($_POST['chat_message']);
     $status = 1;
 
-    $query = "
-INSERT INTO chat_message 
-SET to_user_id = '$to_user_id',
-    from_user_id = '$from_user_id',
-    chat_message = '$chat_message',
-    status = '1'";
+    $query = "INSERT INTO chat_message 
+              SET to_user_id = '$to_user_id',
+              from_user_id = '$from_user_id',
+              chat_message = '$chat_message',
+              status = '1'";
 
     $result = mysqli_query($conn, $query);
 
@@ -298,7 +300,7 @@ SET to_user_id = '$to_user_id',
         ));
 
 
-}elseif ($_POST['action'] == "fill_user_delete") {
+} elseif ($_POST['action'] == "fill_user_delete") {
 
     $user_id = $conn->escape_string($_POST['user_id']);
 
@@ -323,5 +325,4 @@ SET to_user_id = '$to_user_id',
 
 
 }
-
 ?>
