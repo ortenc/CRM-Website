@@ -325,4 +325,6 @@ elseif ($_POST['action'] == "insert_chat") {
 
 
 }
+
+
 ?>

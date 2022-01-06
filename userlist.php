@@ -49,31 +49,9 @@ if (!$result_list) {
     exit;
 }
 
-// Store all users except for the one logged in inside an array
-
-$user_list = array();
-while($row = mysqli_fetch_assoc($result_list)) {
-    $tmp = array();
-
-    $tmp["id"] = $row["id"];
-    $tmp["name"] = $row["name"];
-
-    $user_list[$row['id']] = $tmp;
-
-}
+// Display all users
 
 $query_list = "SELECT * FROM users WHERE 1=1";
-
-if(!empty($_POST['filterByGender'])) {
-    $query_list .= " AND gender = '".mysqli_real_escape_string($conn, $_POST['filterByGender'])."'";
-}
-
-if(!empty($_POST['filterByName'])) {
-    $data_name = explode(' ', $_POST['filterByName']);
-    $query_list .= " AND name = '".mysqli_real_escape_string($conn, $data_name[0])."' AND surname ='".mysqli_real_escape_string($conn, $data_name[1])."'";
-}
-
-
 $result_list = mysqli_query($conn,$query_list);
 $users = [];
 while($row = mysqli_fetch_assoc($result_list)){
@@ -127,7 +105,7 @@ while($row = mysqli_fetch_assoc($result_list)){
                         </div>
                         <div class="ibox-content">
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover dataTables-example" >
+                                <table class="table table-striped table-bordered table-hover dataTables-example" id="emptable" >
                                     <thead>
                                     <tr>
                                         <th>Name</th>
@@ -135,28 +113,9 @@ while($row = mysqli_fetch_assoc($result_list)){
                                         <th>Email</th>
                                         <th>Role</th>
                                         <th>Gender</th>
-                                        <th>Actions</th>
+                                        <th>Action</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    <?php foreach($users as $user){ ?>
-                                    <tr class="gradeX">
-                                        <td class="center"><?= $user['name']?></td>
-                                        <td class="center"><?= $user['surname']?></td>
-                                        <td class="center"><?= $user['email']?></td>
-                                        <td class="center"><?= $user['role']?></td>
-                                        <td class="center"><?= $user['gender']?></td>
-                                        <td style="white-space: nowrap">
-                                            <button type="button" class="btn btn-primary w-50" onclick="fill_modal_user_data('<?= $user['id']?>')">
-                                                Update User
-                                            </button>
-                                            <button type="button" class="btn btn-primary w150" onclick="fill_user_delete('<?= $user['id']?>')">
-                                                Delete User
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <?php } ?>
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -250,8 +209,6 @@ while($row = mysqli_fetch_assoc($result_list)){
                     Swal.fire(response.message);
                 }
 
-
-
             }
         });
 
@@ -287,32 +244,27 @@ while($row = mysqli_fetch_assoc($result_list)){
 
     }
 
-    $(document).ready(function(){
-        $('.dataTables-example').DataTable({
-            pageLength: 25,
-            responsive: true,
-            dom: '<"html5buttons"B>lTfgitp',
-            buttons: [
-                { extend: 'copy'},
-                {extend: 'csv'},
-                {extend: 'excel', title: 'ExampleFile'},
-                {extend: 'pdf', title: 'ExampleFile'},
+    $(document).ready(function () {
 
-                {extend: 'print',
-                    customize: function (win){
-                        $(win.document.body).addClass('white-bg');
-                        $(win.document.body).css('font-size', '10px');
-
-                        $(win.document.body).find('table')
-                            .addClass('compact')
-                            .css('font-size', 'inherit');
-                    }
-                }
-            ]
-
+        $('#emptable').DataTable({
+            processing: true,
+            serverSide: true,
+            paging: true,
+            serverMethod: 'POST',
+            ajax: {
+                url: "tablefill.php",
+            },
+            columns: [
+                {data: "name"},
+                {data: "surname"},
+                {data: "email"},
+                {data: "role"},
+                {data: "gender"}
+            ],
         });
 
     });
+
 
     function isEmpty(value) {
         return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
