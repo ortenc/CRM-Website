@@ -192,12 +192,23 @@ if ($_POST['action'] == "register") {
     // Personal user details update from userpage panel code
 
 
-} elseif ($_POST['action'] == "userupdate") {
+} elseif ($_POST['action'] == "userUpdate") {
 
     $id = $conn->escape_string($_POST['id']);
     $fname = $conn->escape_string($_POST['name']);
     $lname = $conn->escape_string($_POST['surname']);
     $email = $conn->escape_string($_POST['email']);
+
+    if (empty($fname)) {
+        echo json_encode(array("code" => "422", "message" => "name cannot be empty!"));
+        exit;
+    }if (empty($lname)) {
+        echo json_encode(array("code" => "422", "message" => "surname cannot be empty!"));
+        exit;
+    }if (empty($email)) {
+        echo json_encode(array("code" => "422", "message" => "Email cannot be empty!"));
+        exit;
+    }
 
     $query_update_users = "UPDATE users
       SET name = '$fname',

@@ -87,30 +87,8 @@ while($row = mysqli_fetch_assoc($result_list)) {
 
 <div id="wrapper">
 
-    <nav class="navbar-default navbar-static-side" role="navigation">
-        <div class="sidebar-collapse">
-            <ul class="nav metismenu" id="side-menu">
-                <li class="nav-header">
-                         <span>
-                            <img alt="image" class="img-circle" src="<?= $user['photo']?>"/>
-                         </span>
-                         <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?= $_SESSION['name']?></strong>
-                             </span> <span class="text-muted text-xs block"><?= $_SESSION['role']?><b class="fa fa-user"></b></span> </span>
-                    <div class="logo-element">
-                        IN+
-                    </div>
-                </li>
-                <li class="active">
-                    <a href="profile.php"><i class="fa fa-user"></i> <span class="nav-label">Profile</span></a>
-                </li>
-                <?php if($user_role == "Admin") { ?>
-                    <li class="active">
-                        <a href="userlist.php"><i class="fa fa-table"></i> <span class="nav-label">Admin</span></a>
-                    </li>
-                <?php } ?>
-            </ul>
-        </div>
-    </nav>
+
+    <?php include "navbar.php"; ?>
 
     <div id="page-wrapper" class="gray-bg">
         <div class="row border-bottom">
@@ -143,19 +121,10 @@ while($row = mysqli_fetch_assoc($result_list)) {
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <form id="fileinfo" enctype="multipart/form-data" method="POST" name="fileinfo">
-                                            <div class="fileinput fileinput-new input-group" data-provides="fileinput">
-                                                <div class="form-control" data-trigger="fileinput">
-                                                    <i class="glyphicon glyphicon-file fileinput-exists"></i>
-                                                    <span class="fileinput-filename"></span>
-                                                </div>
-                                                <span class="input-group-addon btn btn-default btn-file">
-                                                    <span class="fileinput-new">Select file</span>
-                                                    <span class="fileinput-exists">Change</span>
-                                                    <input id="imageUpload-user" type="file" name="profile_photo"/>
-                                                </span>
-                                                <a href="#" class="input-group-addon btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-                                            </div>
+                                        <form id="form" action="profile_photo.php" method="post" enctype="multipart/form-data">
+                                            <input id="uploadImage" type="file" accept="image/*" name="image" />
+                                            <div id="preview"><img src="photos" /></div><br>
+                                            <input class="btn btn-success" type="submit" value="Upload">
                                         </form>
                                     </div>
                                 </div>
@@ -177,7 +146,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Email address</label>
-                                            <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="<?= $user['email']?>">
+                                            <input type="email" id="email" name="email" class="form-control" placeholder="Email" value="<?= $user['email']?>" required>
                                         </div>
                                     </div>
                                 </div>
@@ -185,13 +154,13 @@ while($row = mysqli_fetch_assoc($result_list)) {
                                     <div class="col-md-6 pr-1">
                                         <div class="form-group">
                                             <label>First Name</label>
-                                            <input type="text" id="name" name="name" class="form-control" placeholder="Name" value="<?= $user['name']?>">
+                                            <input type="text" id="name" name="name" class="form-control" placeholder="Name" value="<?= $user['name']?>" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6 pl-1">
                                         <div class="form-group">
                                             <label>Last Name</label>
-                                            <input type="text" id="surname" name="surname" class="form-control" placeholder="Last Name" value="<?= $user['surname']?>">
+                                            <input type="text" id="surname" name="surname" class="form-control" placeholder="Last Name" value="<?= $user['surname']?>" required>
                                         </div>
                                     </div>
                                 </div>
@@ -275,6 +244,67 @@ while($row = mysqli_fetch_assoc($result_list)) {
                                 </table>
                             </div>
                             <div id="user_model_details"</div>
+
+                    </div>
+                </div>
+                <div class="col-md-">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>User Chat</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover dataTables-example" >
+                                    <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+                                    foreach ($user_list as $key => $row) {
+
+                                        $status = '';
+                                        $current_timestamp = strtotime(date("Y-m-d H:i:s") . '- 10 second');
+                                        $current_timestamp = date('Y-m-d H:i:s', $current_timestamp);
+                                        $user_last_activity = fetch_user_last_activity($row['id'], $conn);
+
+                                        if(strtotime($user_last_activity) > strtotime($current_timestamp))
+                                        {
+                                            $status = '<span class="badge badge-primary">Online</span>';
+                                        }
+                                        else
+                                        {
+                                            $status = '<span class="badge badge-danger">Offline</span>';
+                                        }
+
+                                        ?>
+                                        <tr class="gradeX">
+                                            <td><?= $row['name'].' '.count_unseen_message($row['id'], $_SESSION['id'], $conn) ?></td>
+                                            <td><?= $status ?></td>
+                                            <td>
+                                                <button type="button"
+                                                        class="btn btn-info btn-xs start_chat"
+                                                        data-touserid="<?= $row['id'] ?>"
+                                                        data-tousername="<?= $row['name'] ?>">
+                                                    Start Chat
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div id="user_model_details"</div>
+
                     </div>
                 </div>
             </div>
@@ -318,12 +348,46 @@ while($row = mysqli_fetch_assoc($result_list)) {
     // $.noConflict();
 
     // Image click function
-
-    $("#imageUpload-user").change(function(){
-        if (this){
-            $('#fileinfo').submit();
-        }
+    $(document).ready(function (e) {
+        $("#form").on('submit',(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "profile_photo.php",
+                type: "POST",
+                data:  new FormData(this),
+                contentType: false,
+                cache: false,
+                processData:false,
+                beforeSend : function()
+                {
+                    //$("#preview").fadeOut();
+                    $("#err").fadeOut();
+                },
+                success: function(data)
+                {
+                    if(data=='invalid')
+                    {
+                        // invalid file format.
+                        $("#err").html("Invalid File !").fadeIn();
+                    }
+                    else
+                    {
+                        // view uploaded file.
+                        $("#preview").html(data).fadeIn();
+                        $("#form")[0].reset();
+                    }
+                },
+                error: function(e)
+                {
+                    $("#err").html(e).fadeIn();
+                }
+            });
+        }));
     });
+
+    function isEmpty(value) {
+        return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
+    }
 
     // User profile info update from the user himself
     function userUpdate(id){
@@ -332,6 +396,25 @@ while($row = mysqli_fetch_assoc($result_list)) {
         var surname = $("#surname").val();
         var email = $("#email").val();
 
+        if (isEmpty(name)) {
+            error = "name must be entered.";
+            $("#name").addClass("input-error");
+            alert("enter name");
+            return;
+
+        }if (isEmpty(surname)) {
+            error = "name must be entered.";
+            $("#surname").addClass("input-error");
+            alert("enter surname");
+            return;
+
+        }if (isEmpty(email)) {
+            error = "name must be entered.";
+            $("#email").addClass("input-error");
+            alert("enter email");
+            return;
+
+        }
         var data = {
             "action": "userUpdate",
             "id": user_id,
@@ -370,7 +453,7 @@ while($row = mysqli_fetch_assoc($result_list)) {
         setInterval(function(){
             update_last_activity();
             update_chat_history_data();
-        }, 1000);
+        }, 5000);
 
 
         // Create update activity function

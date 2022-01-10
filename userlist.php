@@ -116,6 +116,7 @@ while($row = mysqli_fetch_assoc($result_list)){
                                         <th>Action</th>
                                     </tr>
                                     </thead>
+
                                 </table>
                             </div>
                         </div>
@@ -259,7 +260,14 @@ while($row = mysqli_fetch_assoc($result_list)){
                 {data: "surname"},
                 {data: "email"},
                 {data: "role"},
-                {data: "gender"}
+                {data: "gender"},
+                {
+                    data: "actions",
+                    // render: function(data, meta, row) {
+                    //     return '<button>Test</button>';
+                    // }
+                }
+
             ],
         });
 

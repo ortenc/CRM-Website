@@ -40,7 +40,14 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
         "surname"=>$row['surname'],
         "email"=>$row['email'],
         "role"=>$row['role'],
-        "gender"=>$row['gender']
+        "gender"=>$row['gender'],
+        "actions"=> "<center><nobr>	
+                            <div class='btn-group' style='width:130px'>	
+                                <input type='button' class='btn btn-primary' value='Update' data-toggle='modal' data-target='#edit_premission' onclick='fill_modal_user_data(\"$row[id]\")'>	
+                            <div class='btn-group' style='width:130px'>	
+                                <input type='button' class='btn btn-danger' value='Delete' onclick='fill_user_delete(\"$row[id]\")'>	
+                            </div>	
+                        </nobr></center>"
     );
 }
 
