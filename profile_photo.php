@@ -1,31 +1,21 @@
 <?php
-$valid_extensions = array('jpeg', 'jpg', 'png', 'gif', 'bmp' , 'pdf' , 'doc' , 'ppt'); // valid extensions
-$path = 'photos/'; // upload directory
-if($_FILES['image'])
-{
-    $img = $_FILES['image']['name'];
-    $tmp = $_FILES['image']['tmp_name'];
-// get uploaded file's extension
-    $ext = strtolower(pathinfo($img, PATHINFO_EXTENSION));
-// can upload same image using rand function
-    $final_image = rand(1000,1000000).$img;
-// check's valid format
-    if(in_array($ext, $valid_extensions))
-    {
-        $path = $path.strtolower($final_image);
-        if(move_uploaded_file($tmp,$path))
-        {
-            echo "<img src='$path' />";
-//include database configuration file
-            include_once 'database.php';
-//insert form data in the database
-            $insert = $conn->query("INSERT uploading (file_name) VALUES ('".$path."')");
-//echo $insert?'ok':'err';
-        }
-    }
-    else
-    {
-        echo 'invalid';
+require('database.php');
+
+// insert profile picture
+$user_id = $_SESSION['id'];
+
+if(isset($_FILES["profile_photo"]["name"])){
+    $target_dir = "photos/";
+    $target_file = $target_dir . basename($_FILES["profile_photo"]["name"]);
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    if (move_uploaded_file($_FILES["profile_photo"]["tmp_name"], $target_file)) {
+        $sql = "UPDATE users SET photo = '$target_file' WHERE id = '$user_id' ";
+        $rs = mysqli_query($conn,$sql);
+        header("Location: profile.php");
+    } else {
+        echo "Sorry, there was an error uploading your file.";
+        exit;
     }
 }
+
 ?>

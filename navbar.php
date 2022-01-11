@@ -6,7 +6,7 @@ if(!$_SESSION['id'])
 {
     header('location : login.php');
 }
-
+$_SESSION['last_activity'] = time();
 $user_id = $_SESSION['id'];
 $user_role = $_SESSION['role'];
 
@@ -73,6 +73,9 @@ while($row = mysqli_fetch_assoc($result_list)) {
             </li>
             <li class="active">
                 <a href="profile.php"><i class="fa fa-user"></i> <span class="nav-label">Profile</span></a>
+            </li>
+            <li class="active">
+                <a href="chat_room.php"><i class="fa fa-user-plus"></i> <span class="nav-label">Chat Room</span></a>
             </li>
             <?php if($user_role == "Admin") { ?>
                 <li class="active">

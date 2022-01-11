@@ -1,4 +1,5 @@
 <?php
+error_reporting(E_ERROR);
 session_start();
 require 'database.php';
 include 'functions.php';
