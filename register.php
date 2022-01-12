@@ -37,6 +37,9 @@
             <input type="email" class="form-control" placeholder="Email" id="email" required="">
         </div>
         <div class="form-group">
+            <input type="text" class="form-control" placeholder="Birthday" id="birthday" name="birthday" required="">
+        </div>
+        <div class="form-group">
             <input type="password" class="form-control" placeholder="Password" id="password1" required="">
         </div>
         <div class="form-group">
@@ -55,6 +58,9 @@
                 </label>
             </div>
         </div>
+        <div class="form-group">
+            <div class="checkbox i-checks"><label> <input type="checkbox"><i></i> Agree the terms and policy </label></div>
+        </div>  
         <button type="button" class="btn btn-primary block full-width m-b" onclick="register()">Register</button>
         <p
                 class="form-control" id="errorid">
@@ -85,6 +91,7 @@
         var fname = $("#fname").val();
         var lname = $("#lname").val();
         var email = $("#email").val();
+        var birthday = $('input[name="birthday"]').daterangepicker.val();
         var password1 = $("#password1").val();
         var password2 = $("#password2").val();
         var gender = $('input[name=gender]:checked').val();
@@ -105,8 +112,11 @@
             error = "Email must be entered.";
             document.getElementById("errorid").innerHTML = error;
             return false;
-        }
-        filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        }if (isEmpty(birthday)) {
+            error = "birthdate must be entered.";
+            document.getElementById("errorid").innerHTML = error;
+            return false;
+        }filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if (!filter.test(email)) {
             error = "Email not correct format.";
             document.getElementById("errorid").innerHTML = error;
@@ -148,6 +158,7 @@
                 "fname": fname,
                 "lname": lname,
                 "email": email,
+                "birthday": birthday,
                 "password1": password1,
                 "password2": password2,
                 "gender": gender

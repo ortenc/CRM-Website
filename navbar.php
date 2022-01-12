@@ -36,26 +36,6 @@ if(isset($_FILES["profile_photo"]["name"])){
 
 $user_id_list = $_SESSION['id'];
 
-$query_list = "SELECT * FROM users WHERE id != '".$user_id_list."'";
-$result_list = mysqli_query($conn, $query_list);
-
-if (!$result_list) {
-    echo "Internal server error";
-    exit;
-}
-
-// Store all users except for the one logged in inside an array
-
-$user_list = array();
-while($row = mysqli_fetch_assoc($result_list)) {
-    $tmp = array();
-
-    $tmp["id"] = $row["id"];
-    $tmp["name"] = $row["name"];
-
-    $user_list[$row['id']] = $tmp;
-
-}
 
 ?>
 <nav class="navbar-default navbar-static-side" role="navigation">

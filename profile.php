@@ -1,15 +1,19 @@
 <?php
 include('functions.php');
 require('database.php');
-session_start();
 
+//Start session
+session_start();
+//Check if session active
 if (!$_SESSION['id']) {
     header('location : login.php');
 }
-
+//Store session id and role in variables
 $user_id = $_SESSION['id'];
 $user_role = $_SESSION['role'];
 
+
+// Get the loged in user data
 $query = "SELECT * FROM users WHERE id= '$user_id'";
 
 $result = mysqli_query($conn, $query);
@@ -18,21 +22,26 @@ $user = mysqli_fetch_assoc($result);
 // Get session id for user chat
 $user_id_list = $_SESSION['id'];
 
+// Select all users where the loged in user has chatted with
 $query_get_ids = "SELECT DISTINCT to_user_id FROM chat_message WHERE from_user_id='$user_id_list'";
 $result_get_ids = mysqli_query($conn, $query_get_ids);
 
+// Check if query is executed
 if (!$result_get_ids) {
     echo "Internal server error";
     exit;
 }
 
+// Store all query data into an array
 $ids_arr = array();
 while ($row = mysqli_fetch_assoc($result_get_ids)) {
     $ids_arr[] = $row['to_user_id'];
 }
 
+// Separate the id taken from the array in sql syntax
 $ids_string = implode("','", $ids_arr);
 
+// select the names and id to display in the profile table chat
 $query_list = "SELECT id, name FROM users WHERE id IN ('$ids_string')";
 $result_list = mysqli_query($conn, $query_list);
 
@@ -85,6 +94,9 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                     <div class="col-md-12">
                                         <div id="profile-container-user">
                                             <img id="profileImage-user" src="<?= $user['photo'] ?>">
+
+                                            <input type="hidden" id = "photo_path" value="<?=$user['photo']?>">
+
                                         </div>
                                         <input id="profile_photo" type="file" name="profile_photo">
                                     </div>
@@ -104,11 +116,18 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6 pr-1">
                                         <div class="form-group">
                                             <label>Email address</label>
                                             <input type="email" id="email" name="email" class="form-control"
                                                    placeholder="Email" value="<?= $user['email'] ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pr-1">
+                                        <div class="form-group">
+                                            <label>Birthday</label>
+                                            <input type="date" id="birthday" name="birthday" class="form-control"
+                                                   placeholder="birthday" value="<?= $user['birthday'] ?>" required>
                                         </div>
                                     </div>
                                 </div>
@@ -233,9 +252,11 @@ include "footer.php";
             var post_data = new FormData();
             post_data.append('action', 'userUpdate');
             post_data.append('id', id);
+            post_data.append('photo_path', $("#photo_path").val());
             post_data.append("name", $("#name").val());
             post_data.append("surname", $("#surname").val());
             post_data.append("email", $("#email").val());
+            post_data.append("birthday", $("#birthday").val());
 
             var profile_photo = $("#profile_photo").prop('files')[0];
             post_data.append("profile_photo", profile_photo);

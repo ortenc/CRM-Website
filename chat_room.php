@@ -79,7 +79,7 @@ while($row = mysqli_fetch_assoc($result_list)){
                             </thead>
                             <tbody>
                             <?php
-                            foreach ($user_list as $key => $row) {
+                            foreach ($result_list as $key => $row) {
 
                                 $status = '';
                                 $current_timestamp = strtotime(date("Y-m-d H:i:s") . '- 10 second');

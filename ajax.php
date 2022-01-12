@@ -4,16 +4,18 @@ session_start();
 require 'database.php';
 include 'functions.php';
 
+// Register code for new users into the system
 
 if ($_POST['action'] == "register") {
 
     $txtname = $conn->escape_string($_POST['fname']);
     $txtsurname = $conn->escape_string($_POST['lname']);
     $txtemail = $conn->escape_string($_POST['email']);
+    $txtbirthday = $conn->escape_string($_POST['birthday']);
     $txtgender = $conn->escape_string($_POST['gender']);
     $txtpassword1 = $conn->escape_string($_POST['password1']);
 
-    //TODO: Te ndertohet dhe te perdoret nje funksion qe ben validimin dhe match me confirm passw
+    // password field validation and check for similarities between the two fields
 
     $number = preg_match('@[0-9]@', $txtpassword1);
     $uppercase = preg_match('@[A-Z]@', $txtpassword1);
@@ -32,7 +34,7 @@ if ($_POST['action'] == "register") {
     }
     $hash = password_hash($txtpassword1, PASSWORD_DEFAULT); // hashing the password with the default algorithm
 
-    //Return error code if one of the fields is empty
+//Return error code if one of the fields is empty
 
     if (empty($txtname)) {
         echo json_encode(array("code" => "422", "message" => "Name cannot be empty!"));
@@ -43,7 +45,11 @@ if ($_POST['action'] == "register") {
         exit;
     }
     if (empty($txtemail)) {
-        echo json_encode(array("code" => "422", "message" => "Name cannot be empty!"));
+        echo json_encode(array("code" => "422", "message" => "email cannot be empty!"));
+        exit;
+    }
+    if (empty($txtbirthday)) {
+        echo json_encode(array("code" => "422", "message" => "birthday cannot be empty!"));
         exit;
     }
     if (empty($txtgender)) {
@@ -54,12 +60,14 @@ if ($_POST['action'] == "register") {
         echo json_encode(array("code" => "422", "message" => "Password cannot be empty!"));
         exit;
     }
+
     // check if e-mail address is well-formed
     if (!filter_var($txtemail, FILTER_VALIDATE_EMAIL)) {
         echo json_encode(array("code" => "422", "message" => "Email is not correct"));
         exit;
     }
 
+    // Check if email already exists
     $query_check = "SELECT id FROM users WHERE email='$txtemail'";
     $result_check = mysqli_query($conn, $query_check);
     $numRows = mysqli_num_rows($result_check);
@@ -75,12 +83,14 @@ if ($_POST['action'] == "register") {
       SET name = '$txtname',
          surname = '$txtsurname',
          email = '$txtemail',
+         birthday = '$txtbirthday',
          gender = '$txtgender',
          password = '$hash',
          role = 'User'";
 
     $result_insert = mysqli_query($conn, $query_insert);
 
+    // If data inputed successfully into the database following conditions applied
     if ($result_insert) {
         echo json_encode(array("code" => "200", "message" => "Success"));
         exit;
@@ -90,7 +100,7 @@ if ($_POST['action'] == "register") {
 
 
 
-    // Log in user into the webapage action code
+// Log in user into the webapage action code
 
 
 } elseif ($_POST['action'] == "login") {
@@ -122,24 +132,17 @@ if ($_POST['action'] == "register") {
                              ";
         $sub_result = mysqli_query($conn, $sub_query_insert);
         $_SESSION['login_details_id'] = mysqli_insert_id($conn);
+        echo json_encode(array("code" => "200", "message" => "Success"));
 
-        if ($check['role'] == "User") {
-            echo json_encode(array("code" => "200", "message" => "Success"));
-            exit;
-        }
-        if ($check['role'] == "Admin") {
-            echo json_encode(array("code" => "200", "message" => "Success"));
-            exit;
-        }
     }
     else{
-        echo json_encode(array("code" => "422", "message" => "Password incorrect!"));
+        echo json_encode(array("code" => "422", "message" => "Password or Email incorrect!"));
         exit;
     }
 
 
 
-    // Update user details in the database from admin panel action code
+// Update user details in the database from admin panel action code
 
 
 } elseif ($_POST['action'] == "update") {
@@ -164,13 +167,13 @@ if ($_POST['action'] == "register") {
         echo json_encode(array("code" => "200", "message" => "Success"));
         exit;
     } else {
-        echo json_encode(array("code" => "404", "message" => "Error"));
+        echo json_encode(array("code" => "422", "message" => "Error"));
         exit;
     }
 
 
 
-    // Delete user from database from admin panel action code
+// Delete user from database from admin panel action code
 
 
 } elseif ($_POST['action'] == "erase") {
@@ -185,14 +188,14 @@ if ($_POST['action'] == "register") {
         echo json_encode(array("code" => "200", "message" => "Success"));
         exit;
     } else {
-        echo json_encode(array("code" => "404", "message" => "Error"));
+        echo json_encode(array("code" => "422", "message" => "Error"));
         exit;
     }
 
 
 
 
-    // Personal user details update from userpage panel code
+// Personal user details update from userpage panel code
 
 
 } elseif ($_POST['action'] == "userUpdate") {
@@ -200,19 +203,15 @@ if ($_POST['action'] == "register") {
     $fname = $conn->escape_string($_POST['name']);
     $lname = $conn->escape_string($_POST['surname']);
     $email = $conn->escape_string($_POST['email']);
+    $birthday = $conn->escape_string($_POST['birthday']);
+    $photo_path = $conn->escape_string($_POST['photo_path']);
 
+    $profile_photo = uploadPhoto($_FILES, $id, $photo_path);
 
-    if (isset($_POST['profile_photo'])) {
-        if ($_POST['profile_photo'] == 'undefined') {
-            $profile_photo = '';
-        } else {
-            $profile_photo = mysqli_real_escape_string($conn, $_POST['profile_photo']);
-        }
-    } else {
-        $profile_photo = uploadPhoto($_FILES, $id, '', "userUpdate");
-    }
-
-    if (empty($fname)) {
+    if (empty($profile_photo)) {
+        echo json_encode(array("code" => "422", "message" => "photo cannot be empty!"));
+        exit;
+    }if (empty($fname)) {
         echo json_encode(array("code" => "422", "message" => "name cannot be empty!"));
         exit;
     }if (empty($lname)) {
@@ -221,12 +220,25 @@ if ($_POST['action'] == "register") {
     }if (empty($email)) {
         echo json_encode(array("code" => "422", "message" => "Email cannot be empty!"));
         exit;
+    }if (empty($birthday)) {
+        echo json_encode(array("code" => "422", "message" => "Birthday cannot be empty!"));
+        exit;
     }
+    $query_check = "SELECT id FROM users WHERE email='$email' AND id != '$id'";
+    $result_check = mysqli_query($conn, $query_check);
+    $numRows = mysqli_num_rows($result_check);
+
+    if ($numRows > 0) {
+        echo json_encode(array("code" => "422", "message" => "This email already exist in our system!"));
+        exit;
+    }
+
 
     $query_update_users = "UPDATE users
       SET name = '$fname',
           surname = '$lname',
           email = '$email',
+          birthday = '$birthday',
           photo = '$profile_photo'
          WHERE id = '$id'";
 
@@ -236,14 +248,14 @@ if ($_POST['action'] == "register") {
         echo json_encode(array("code" => "200", "message" => "Success"));
         exit;
     } else {
-        echo json_encode(array("code" => "404", "message" => "Error"));
+        echo json_encode(array("code" => "422", "message" => "Error"));
         exit;
     }
 
 
 
 
-    // Get chat history when the pop up is initiated from start chat button click
+// Get chat history when the pop up is initiated from start chat button click
 
 
 } elseif ($_POST['action'] == "get_chat_history") {
@@ -348,10 +360,11 @@ elseif ($_POST['action'] == "insert_chat") {
         "role" => $user['role']
         ));
 } elseif ($_POST['action'] == "last_active_time") {
+
     $last_login =  strtotime($_SESSION['last_login']);
-    $now = strtotime(date('Y-m-d H:i:s'));
+    $now = strtotime(date('Y/m/d H:i:s'));
     $active_now = $now - $last_login;
-    $active_now = date('i', $active_now) . " min";
+    $active_now = date('i:s', $active_now) . " min";
 
     echo $active_now;
 

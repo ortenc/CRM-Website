@@ -141,7 +141,7 @@ function timeAgo($timestamp)
 }
 
 
-function uploadPhoto($data, $id, $profilePhotoPath, $type)
+function uploadPhoto($data, $id, $profilePhotoPath)
 {
     $extensions = array("jpeg", "jpg", "png", "JPG", "JPEG", "PNG", "doc", "docx", "pdf");
     if ($data["profile_photo"]["name"] != "") {
