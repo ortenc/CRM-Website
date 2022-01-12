@@ -15,28 +15,25 @@ $query = "SELECT * FROM users WHERE id= '$user_id'";
 $result = mysqli_query($conn, $query);
 $user = mysqli_fetch_assoc($result);
 
-
-// insert profile picture
-
-//if(isset($_FILES["profile_photo"]["name"])){
-//    $target_dir = "photos/";
-//    $target_file = $target_dir . basename($_FILES["profile_photo"]["name"]);
-//    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-//    if (move_uploaded_file($_FILES["profile_photo"]["tmp_name"], $target_file)) {
-//        $sql = "UPDATE users SET photo = '$target_file' WHERE id = '$user_id' ";
-//        $rs = mysqli_query($conn,$sql);
-//        header("Location: profile.php");
-//    } else {
-//        echo "Sorry, there was an error uploading your file.";
-//        exit;
-//    }
-//}
-
-// Store session id for user chat
-
+// Get session id for user chat
 $user_id_list = $_SESSION['id'];
 
-$query_list = "SELECT * FROM users WHERE id != '" . $user_id_list . "'";
+$query_get_ids = "SELECT DISTINCT to_user_id FROM chat_message WHERE from_user_id='$user_id_list'";
+$result_get_ids = mysqli_query($conn, $query_get_ids);
+
+if (!$result_get_ids) {
+    echo "Internal server error";
+    exit;
+}
+
+$ids_arr = array();
+while ($row = mysqli_fetch_assoc($result_get_ids)) {
+    $ids_arr[] = $row['to_user_id'];
+}
+
+$ids_string = implode("','", $ids_arr);
+
+$query_list = "SELECT id, name FROM users WHERE id IN ('$ids_string')";
 $result_list = mysqli_query($conn, $query_list);
 
 if (!$result_list) {
@@ -46,14 +43,14 @@ if (!$result_list) {
 
 // Store all users except for the one logged in inside an array
 
-$user_list = array();
+$chat_list = array();
 while ($row = mysqli_fetch_assoc($result_list)) {
     $tmp = array();
 
     $tmp["id"] = $row["id"];
     $tmp["name"] = $row["name"];
 
-    $user_list[$row['id']] = $tmp;
+    $chat_list[$row['id']] = $tmp;
 
 }
 
@@ -71,24 +68,10 @@ while ($row = mysqli_fetch_assoc($result_list)) {
 
 <div id="wrapper">
 
-    <?php include "navbar.php"; ?>
-
-    <div id="page-wrapper" class="gray-bg">
-        <div class="row border-bottom">
-            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i>
-                    </a>
-                </div>
-                <ul class="nav navbar-top-links navbar-right">
-                    <li>
-                        <a href="logout.php">
-                            <i class="fa fa-sign-out"></i> Log out
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+    <?php
+        include "navbar.php";
+        include "topbar.php";
+    ?>
         <div class="wrapper wrapper-content">
             <div class="row animated fadeInRight">
                 <div class="col-md-4">
@@ -103,8 +86,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                         <div id="profile-container-user">
                                             <img id="profileImage-user" src="<?= $user['photo'] ?>">
                                         </div>
-                                        <input id="profile_photo" type="file" name="profile_photo" placeholder="Photo"
-                                               required="">
+                                        <input id="profile_photo" type="file" name="profile_photo">
                                     </div>
                                 </div>
                             </div>
@@ -196,8 +178,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                     </thead>
                                     <tbody>
                                     <?php
-                                    foreach ($user_list as $key => $row) {
-
+                                    foreach ($chat_list as $key => $row) {
                                         $status = '';
                                         $current_timestamp = strtotime(date("Y-m-d H:i:s") . '- 10 second');
                                         $current_timestamp = date('Y-m-d H:i:s', $current_timestamp);
@@ -210,8 +191,8 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                         }
 
                                         ?>
-                                        <tr class="gradeX">
-                                            <td><?= $row['name'] . ' ' . count_unseen_message($row['id'], $_SESSION['id'], $conn) ?></td>
+                                        <tr>
+                                            <td><?= $row['name'] ?></td>
                                             <td><?= $status ?></td>
                                             <td>
                                                 <button type="button"
@@ -223,7 +204,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                             </td>
                                         </tr>
                                     <?php } ?>
-                                    </tfoot>
+                                    </tbody>
                                 </table>
                             </div>
                             <div id="user_model_details"
@@ -248,55 +229,34 @@ include "footer.php";
 
         // User profile info update from the user himself
         function userUpdate(id) {
-            var user_id = id;
-            var name = $("#name").val();
-            var surname = $("#surname").val();
-            var email = $("#email").val();
-            // var photo = $("#profile_photo").val();
 
-            if (isEmpty(name)) {
-                $("#name").addClass("input-error");
-                alert("enter name");
-                return;
+            var post_data = new FormData();
+            post_data.append('action', 'userUpdate');
+            post_data.append('id', id);
+            post_data.append("name", $("#name").val());
+            post_data.append("surname", $("#surname").val());
+            post_data.append("email", $("#email").val());
 
-            }
-            if (isEmpty(surname)) {
-                $("#surname").addClass("input-error");
-                alert("enter surname");
-                return;
-
-            }
-            if (isEmpty(email)) {
-                $("#email").addClass("input-error");
-                alert("enter email");
-                return;
-
-            }
-            var data = {
-                "action": "userUpdate",
-                "id": user_id,
-                "name": name,
-                "surname": surname,
-                "email": email,
-                "profile_photo": $("#profile_photo").prop("files")[0]
-            };
+            var profile_photo = $("#profile_photo").prop('files')[0];
+            post_data.append("profile_photo", profile_photo);
 
             $.ajax({
-                url: "ajax.php",
+                url: 'ajax.php',
                 method: 'POST',
                 type: 'POST',
-                data: data,
                 cache: false,
-                processData: false,
                 contentType: false,
-                success: function (result) {
-                    var response = JSON.parse(result);
-
-                    if (response.code == 200) {
-                        window.location.href = "profile.php";
-                    }
-
-                    if (response.code == 422) {
+                processData: false,
+                data: post_data,
+                success: function (response) {
+                    try {
+                        response = JSON.parse(response);
+                        if (response.code === '200') {
+                            window.location.href = "profile.php";
+                        } else {
+                            alert(response.message);
+                        }
+                    } catch (e) {
                         alert(response.message);
                     }
                 }

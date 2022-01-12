@@ -82,9 +82,6 @@ while($row = mysqli_fetch_assoc($result_list)) {
                     <a href="userlist.php"><i class="fa fa-table"></i> <span class="nav-label">Admin</span></a>
                 </li>
             <?php } ?>
-            <li class="text-box">
-                <a><i class="fa fa-user-circle"></i> <span class="nav-label"><?php echo $_SESSION['last_activity'] ?></span></a>
-            </li>
         </ul>
     </div>
 </nav>

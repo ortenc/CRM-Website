@@ -78,19 +78,11 @@ while($row = mysqli_fetch_assoc($result_list)){
 
 <div id="wrapper">
 
-    <?php include "navbar.php"; ?>
+    <?php
+        include "navbar.php";
+        include "topbar.php";
+    ?>
 
-    <div id="page-wrapper" class="gray-bg">
-
-        <?php include "topbar.php"; ?>
-
-        <div class="row wrapper border-bottom white-bg page-heading">
-            <div class="col-lg-10">
-                <h2>User-List</h2>
-            </div>
-            <div class="col-lg-2">
-            </div>
-        </div>
         <div class="wrapper wrapper-content animated fadeInRight">
             <div class="row">
                 <div class="col-lg-12">
@@ -124,7 +116,6 @@ while($row = mysqli_fetch_assoc($result_list)){
                 </div>
             </div>
         </div>
-    </div>
 </div>
 
 <!--modal for user info update-->

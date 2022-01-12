@@ -13,32 +13,7 @@ $user_id = $_SESSION['id'];
 $user_role = $_SESSION['role'];
 
 require('database.php');
-
-$query_photo ="SELECT * FROM users WHERE id= '$user_id'";
-
-$result_photo = mysqli_query($conn, $query_photo);
-$user = mysqli_fetch_assoc($result_photo);
-
-
-// insert profile picture
-
-if(isset($_FILES["profile_photo"]["name"])){
-    $target_dir = "photos/";
-    $target_file = $target_dir . basename($_FILES["profile_photo"]["name"]);
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-    if (move_uploaded_file($_FILES["profile_photo"]["tmp_name"], $target_file)) {
-        $sql = "UPDATE users SET photo = '$target_file' WHERE id = '$user_id' ";
-        $rs = mysqli_query($conn,$sql);
-        header("Location: profile.php");
-    } else {
-        echo "Sorry, there was an error uploading your file.";
-        exit;
-    }
-}
-
-
-// Store session id for user chat
-
+// Get session id for user chat
 $user_id_list = $_SESSION['id'];
 
 $query_list = "SELECT * FROM users WHERE id != '".$user_id_list."'";
@@ -49,10 +24,6 @@ if (!$result_list) {
     exit;
 }
 
-// Display all users
-
-$query_list = "SELECT * FROM users WHERE 1=1";
-$result_list = mysqli_query($conn,$query_list);
 $users = [];
 while($row = mysqli_fetch_assoc($result_list)){
     $users[$row['id']]['id']= $row['id'];
@@ -62,6 +33,7 @@ while($row = mysqli_fetch_assoc($result_list)){
     $users[$row['id']]['gender'] = $row['gender'];
     $users[$row['id']]['role'] = $row['role'];
 }
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -78,20 +50,12 @@ while($row = mysqli_fetch_assoc($result_list)){
 
 <div id="wrapper">
 
-    <?php include "navbar.php"; ?>
+    <?php
+        include "navbar.php";
+        include "topbar.php";
+    ?>
 
-    <div id="page-wrapper" class="gray-bg">
-
-        <?php include "topbar.php"; ?>
-
-        <div class="row wrapper border-bottom white-bg page-heading">
-            <div class="col-lg-10">
-                <h2>User-List</h2>
-            </div>
-            <div class="col-lg-2">
-            </div>
-        </div>
-        <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="wrapper wrapper-content animated fadeInRight">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="ibox float-e-margins">

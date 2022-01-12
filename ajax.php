@@ -115,9 +115,11 @@ if ($_POST['action'] == "register") {
         $_SESSION['id'] = $check['id'];
         $_SESSION['name'] = $check['name'];
         $_SESSION['role'] = $check['role'];
+        $_SESSION['last_login'] = date('Y-m-d H:i:s');
         $sub_query_insert = "INSERT INTO login_details 
-                      SET user_id = '" . $check['id'] . "'
-                      ";
+                             SET user_id = '" . $check['id'] . "',
+                                 last_login = '" . date('Y-m-d H:i:s') . "'
+                             ";
         $sub_result = mysqli_query($conn, $sub_query_insert);
         $_SESSION['login_details_id'] = mysqli_insert_id($conn);
 
@@ -194,11 +196,21 @@ if ($_POST['action'] == "register") {
 
 
 } elseif ($_POST['action'] == "userUpdate") {
-
     $id = $conn->escape_string($_POST['id']);
     $fname = $conn->escape_string($_POST['name']);
     $lname = $conn->escape_string($_POST['surname']);
     $email = $conn->escape_string($_POST['email']);
+
+
+    if (isset($_POST['profile_photo'])) {
+        if ($_POST['profile_photo'] == 'undefined') {
+            $profile_photo = '';
+        } else {
+            $profile_photo = mysqli_real_escape_string($conn, $_POST['profile_photo']);
+        }
+    } else {
+        $profile_photo = uploadPhoto($_FILES, $id, '', "userUpdate");
+    }
 
     if (empty($fname)) {
         echo json_encode(array("code" => "422", "message" => "name cannot be empty!"));
@@ -214,7 +226,8 @@ if ($_POST['action'] == "register") {
     $query_update_users = "UPDATE users
       SET name = '$fname',
           surname = '$lname',
-          email = '$email'
+          email = '$email',
+          photo = '$profile_photo'
          WHERE id = '$id'";
 
     $result_check = mysqli_query($conn, $query_update_users);
@@ -334,9 +347,16 @@ elseif ($_POST['action'] == "insert_chat") {
         "surname" => $user['surname'],
         "role" => $user['role']
         ));
+} elseif ($_POST['action'] == "last_active_time") {
+    $last_login =  strtotime($_SESSION['last_login']);
+    $now = strtotime(date('Y-m-d H:i:s'));
+    $active_now = $now - $last_login;
+    $active_now = date('i', $active_now) . " min";
 
+    echo $active_now;
 
 }
+
 
 
 ?>

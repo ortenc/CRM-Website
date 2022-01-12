@@ -140,7 +140,31 @@ function timeAgo($timestamp)
     return $timemsg;
 }
 
-// function for timestamp format hh
+
+function uploadPhoto($data, $id, $profilePhotoPath, $type)
+{
+    $extensions = array("jpeg", "jpg", "png", "JPG", "JPEG", "PNG", "doc", "docx", "pdf");
+    if ($data["profile_photo"]["name"] != "") {
+        $temp = explode(".", $data["profile_photo"]["name"]);
+        $doc = "profile_photo_" . $id . "." . end($temp);
+        $file_ext = end($temp);
+        if (in_array($file_ext, $extensions)) {
+            move_uploaded_file($data['profile_photo']['tmp_name'], 'photos/' . $doc);
+            $profile_photo = "photos/" . $doc;
+            return $profile_photo;
+        } else {
+            echo json_encode(array("code" => '0', "message" => "File format not supported"));
+            exit;
+        }
+    } else {
+        if (empty($profilePhotoPath)) {
+            return "";
+        } else {
+            return $profilePhotoPath;
+        }
+    }
+}
+
 
 
 ?>
