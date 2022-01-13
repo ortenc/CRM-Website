@@ -1,21 +1,32 @@
-<?php
-require('database.php');
+<html>
+<head>
 
-// insert profile picture
-$user_id = $_SESSION['id'];
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-if(isset($_FILES["profile_photo"]["name"])){
-    $target_dir = "photos/";
-    $target_file = $target_dir . basename($_FILES["profile_photo"]["name"]);
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-    if (move_uploaded_file($_FILES["profile_photo"]["tmp_name"], $target_file)) {
-        $sql = "UPDATE users SET photo = '$target_file' WHERE id = '$user_id' ";
-        $rs = mysqli_query($conn,$sql);
-        header("Location: profile.php");
-    } else {
-        echo "Sorry, there was an error uploading your file.";
-        exit;
-    }
-}
+</head>
+<body>
+<input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
 
-?>
+</body>
+
+<script>
+    $(function () {
+     var vk = $('input[name="daterange"]').daterangepicker({
+            dateFormat : 'yy-mm-dd',
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 1901,
+            maxYear: parseInt(moment().format('YYYY'),10)
+        }, function(start, end, label) {
+            var years = moment().diff(start, 'years');
+            alert("You are " + years + " years old!");
+            if (years < 18){
+                alert("je i vogel");
+                return false;
+            }
+        });
+    });
+</script>

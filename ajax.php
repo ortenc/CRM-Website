@@ -11,7 +11,7 @@ if ($_POST['action'] == "register") {
     $txtname = $conn->escape_string($_POST['fname']);
     $txtsurname = $conn->escape_string($_POST['lname']);
     $txtemail = $conn->escape_string($_POST['email']);
-    $txtbirthday = $conn->escape_string($_POST['birthday']);
+    $txtbirthday = $conn->escape_string($_POST['date_change']);
     $txtgender = $conn->escape_string($_POST['gender']);
     $txtpassword1 = $conn->escape_string($_POST['password1']);
 

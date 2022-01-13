@@ -3,16 +3,9 @@
 
 <head>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>INSPINIA | Register</title>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
-    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <?php include "header.php"; ?>
 
 </head>
 
@@ -20,10 +13,10 @@
 
 <div class="middle-box text-center loginscreen   animated fadeInDown">
     <div>
-        <div>
-            <h1 class="logo-name">LW</h1>
-
-        </div>
+<!--        <div>-->
+<!--            <h5 class="logo-name">LW</h5>-->
+<!---->
+<!--        </div>-->
         <h3>Register to Local Web</h3>
         <p>Create account to see it in action.</p>
 
@@ -34,10 +27,16 @@
             <input type="text" class="form-control" placeholder="Surname" id="lname" required="">
         </div>
         <div class="form-group">
+            <input type="text" class="form-control" placeholder="Atesia" id="atesia" required="">
+        </div>
+        <div class="form-group">
             <input type="email" class="form-control" placeholder="Email" id="email" required="">
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" placeholder="Birthday" id="birthday" name="birthday" required="">
+            <input type="text" class="form-control" placeholder="Phone" id="phone" required="">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control datepicker" placeholder="YY-MM-DD" id="birthday" name="birthday" required="">
         </div>
         <div class="form-group">
             <input type="password" class="form-control" placeholder="Password" id="password1" required="">
@@ -58,9 +57,6 @@
                 </label>
             </div>
         </div>
-        <div class="form-group">
-            <div class="checkbox i-checks"><label> <input type="checkbox"><i></i> Agree the terms and policy </label></div>
-        </div>  
         <button type="button" class="btn btn-primary block full-width m-b" onclick="register()">Register</button>
         <p
                 class="form-control" id="errorid">
@@ -70,12 +66,24 @@
     </div>
 </div>
 
-<!-- Mainly scripts -->
-<script src="js/jquery-3.1.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<!-- iCheck -->
-<script src="js/plugins/iCheck/icheck.min.js"></script>
+<?php include 'footer.php' ?>
+
 <script>
+
+
+    $(function () {
+        $('.datepicker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true,
+            dateFormat: "yy-mm-dd",
+            changeYear: true,
+            changeMonth: true
+        });
+    });
+
     $(document).ready(function () {
         $('.i-checks').iCheck({
             checkboxClass: 'icheckbox_square-green',
@@ -90,8 +98,10 @@
     function register() {
         var fname = $("#fname").val();
         var lname = $("#lname").val();
+        var atesia = $("#atesia").val();
         var email = $("#email").val();
-        var birthday = $('input[name="birthday"]').daterangepicker.val();
+        var birthday = $('input[name="birthday"]').val();
+        var date_change = birthday.replaceAll('/', '-');
         var password1 = $("#password1").val();
         var password2 = $("#password2").val();
         var gender = $('input[name=gender]:checked').val();
@@ -104,23 +114,55 @@
             error = "Name must be entered.";
             document.getElementById("errorid").innerHTML = error;
             return false;
+        }
+        filter_name = /^[a-zA-Z\s]+$/;
+        if (!filter_name.test(fname)) {
+            error = "name should be only letters.";
+            document.getElementById("errorid").innerHTML = error;
+            return false;
         }if (isEmpty(lname)) {
             error = "Surname must be entered.";
+            document.getElementById("errorid").innerHTML = error;
+            return false;
+        }if (!filter_name.test(lname)) {
+            error = "last name should be only letters.";
+            document.getElementById("errorid").innerHTML = error;
+            return false;
+        }if (isEmpty(atesia)) {
+            error = "atesia must be entered.";
+            document.getElementById("errorid").innerHTML = error;
+            return false;
+        }if (!filter_name.test(atesia)) {
+            error = "atesia should be only letters.";
             document.getElementById("errorid").innerHTML = error;
             return false;
         }if (isEmpty(email)) {
             error = "Email must be entered.";
             document.getElementById("errorid").innerHTML = error;
             return false;
-        }if (isEmpty(birthday)) {
+        }if (isEmpty(phone)) {
+            error = "phone must be entered.";
+            document.getElementById("errorid").innerHTML = error;
+            return false;
+        }
+        telephone = /^\d{10}$/;
+        if (!telephone.test(phone)) {
+            error = "Phone not correct format.";
+            document.getElementById("errorid").innerHTML = error;
+            return false;
+
+        }
+        if (isEmpty(date_change)) {
             error = "birthdate must be entered.";
             document.getElementById("errorid").innerHTML = error;
             return false;
-        }filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!filter.test(email)) {
+        }
+        filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (!filter_email.test(email)) {
             error = "Email not correct format.";
             document.getElementById("errorid").innerHTML = error;
             return false;
+
         }if (isEmpty(password1)) {
             error = "Password1 must be entered.";
             document.getElementById("errorid").innerHTML = error;
@@ -129,23 +171,24 @@
             error = "Password2 must be entered.";
             document.getElementById("errorid").innerHTML = error;
             return false;
-        }if(password1!=password2) {
+        }if (password1 != password2) {
             error = "Password is not the same.";
             document.getElementById("errorid").innerHTML = error;
             return false;
-        }if(password1!=password2) {
+        }if (password1 != password2) {
             error = "Password is not the same.";
             document.getElementById("errorid").innerHTML = error;
             return false;
         }
         var minNumberofChars = 6;
         var maxNumberofChars = 16;
-        var regularExpression  = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
-        if(password1.length < minNumberofChars || password1.length > maxNumberofChars) {
+        var regularExpression = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
+        if (password1.length < minNumberofChars || password1.length > maxNumberofChars) {
             error = "Password should contain One upper case one lower case one special character and 8 min characters.";
             document.getElementById("errorid").innerHTML = error;
             return false;
-        }if(!regularExpression.test(password1)) {
+        }
+        if (!regularExpression.test(password1)) {
             alert("password should contain at least one number and one special character");
             return false;
         }
@@ -157,8 +200,9 @@
                 "action": "register",
                 "fname": fname,
                 "lname": lname,
+                "atesia": atesia,
                 "email": email,
-                "birthday": birthday,
+                "date_change": date_change,
                 "password1": password1,
                 "password2": password2,
                 "gender": gender
@@ -168,9 +212,8 @@
                 var response = JSON.parse(result);
                 if (response.code == 200) {
                     window.location.href = "login.php";
-                }
-                else if(response.code == 422){
-                     window.alert(response.message)
+                } else if (response.code == 422) {
+                    window.alert(response.message)
                 }
             }
         });
