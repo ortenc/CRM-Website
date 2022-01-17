@@ -29,16 +29,16 @@
         <h3>Welcome to Ortenc Project</h3>
         <p>Login in.</p>
         <div class="form-group">
-            <input type="email" class="form-control" placeholder="Email" name="email" id="email" required="">
+            <input type="text" class="form-control" placeholder="Email or Phone" name="email" id="email" required="">
         </div>
         <div class="form-group">
             <input type="password" class="form-control" placeholder="Password" name="password" id="password" required="">
         </div>
         <button type="submit" class="btn btn-primary block full-width m-b" onclick="login()">Login</button>
-        <p
-                class="form-control" id="errorid">
+        <p class="form-control" id="errorid"></p>
+        <p class="text-muted text-center">
+            <small>Do not have an account?</small>
         </p>
-        <p class="text-muted text-center"><small>Do not have an account?</small></p>
         <a class="btn btn-sm btn-white btn-block" href="register.php">Create an account</a>
     </div>
 </div>
@@ -58,7 +58,7 @@
         if (isEmpty(email)) {
             error = "Email must be entered.";
             $("#staticEmail").addClass("input-error");
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             errors++;
         } else {
             $("#staticEmail").removeClass("input-error");
@@ -66,7 +66,7 @@
         if (isEmpty(password)) {
             error = "Password must be entered.";
             $("#password").addClass("input-error");
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             errors++;
         } else {
             $("#password").removeClass("input-error");

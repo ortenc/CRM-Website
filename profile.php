@@ -42,7 +42,7 @@ while ($row = mysqli_fetch_assoc($result_get_ids)) {
 $ids_string = implode("','", $ids_arr);
 
 // select the names and id to display in the profile table chat
-$query_list = "SELECT id, name FROM users WHERE id IN ('$ids_string')";
+$query_list = "SELECT id, name, username FROM users WHERE id IN ('$ids_string')";
 $result_list = mysqli_query($conn, $query_list);
 
 if (!$result_list) {
@@ -50,7 +50,7 @@ if (!$result_list) {
     exit;
 }
 
-// Store all users except for the one logged in inside an array
+// Store all users from the above query
 
 $chat_list = array();
 while ($row = mysqli_fetch_assoc($result_list)) {
@@ -58,6 +58,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
 
     $tmp["id"] = $row["id"];
     $tmp["name"] = $row["name"];
+    $tmp["username"] = $row["username"];
 
     $chat_list[$row['id']] = $tmp;
 
@@ -103,7 +104,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                 </div>
                             </div>
                             <div class="ibox-content profile-content">
-                                <h4><strong><?= $user['name'] . " " . $user['surname'] ?></strong></h4>
+                                <h4><strong><?= $user['username'] ?></strong></h4>
                                 <p>
                                     <i class="fa fa-envelope"></i>
                                     <span style="margin-left: 5px;"><?= $user['email'] ?></span>
@@ -113,22 +114,6 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h3>Edit Profile</h3>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 pr-1">
-                                        <div class="form-group">
-                                            <label>Email address</label>
-                                            <input type="email" id="email" name="email" class="form-control"
-                                                   placeholder="Email" value="<?= $user['email'] ?>" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 pr-1">
-                                        <div class="form-group">
-                                            <label>Birthday</label>
-                                            <input type="date" id="birthday" name="birthday" class="form-control"
-                                                   placeholder="birthday" value="<?= $user['birthday'] ?>" required>
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -144,6 +129,38 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                             <label>Last Name</label>
                                             <input type="text" id="surname" name="surname" class="form-control"
                                                    placeholder="Last Name" value="<?= $user['surname'] ?>" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 pr-1">
+                                        <div class="form-group">
+                                            <label>Email address</label>
+                                            <input type="email" id="email" name="email" class="form-control"
+                                                   placeholder="Email" value="<?= $user['email'] ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pr-1">
+                                        <div class="form-group">
+                                            <label>Birthday</label>
+                                            <input type="text" id="birthday" name="birthday" class="form-control datepicker"
+                                                   placeholder="birthday" value="<?= $user['birthday'] ?>" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 pr-1">
+                                        <div class="form-group">
+                                            <label>Username</label>
+                                            <input type="text" id="username" name="username" class="form-control"
+                                                   placeholder="Email" value="<?= $user['username'] ?>" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pr-1">
+                                        <div class="form-group">
+                                            <label>Phone Number</label>
+                                            <input type="text" id="phonenum" name="phonenum" class="form-control"
+                                                   placeholder="birthday" value="<?= $user['phone'] ?>" required>
                                         </div>
                                     </div>
                                 </div>
@@ -211,7 +228,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
 
                                         ?>
                                         <tr>
-                                            <td><?= $row['name'] ?></td>
+                                            <td><?= $row['username'] . ' ' . count_unseen_message($row['id'], $_SESSION['id'], $conn) ?></td>
                                             <td><?= $status ?></td>
                                             <td>
                                                 <button type="button"
@@ -242,6 +259,19 @@ include "footer.php";
 
 <script>
 
+    $(function () {
+        $('.datepicker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true,
+            dateFormat: "yy-mm-dd",
+            changeYear: true,
+            changeMonth: true
+        });
+    });
+
         function isEmpty(value) {
             return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
         }
@@ -255,6 +285,8 @@ include "footer.php";
             post_data.append('photo_path', $("#photo_path").val());
             post_data.append("name", $("#name").val());
             post_data.append("surname", $("#surname").val());
+            post_data.append("username", $("#username").val());
+            post_data.append("phonenum", $("#phonenum").val());
             post_data.append("email", $("#email").val());
             post_data.append("birthday", $("#birthday").val());
 

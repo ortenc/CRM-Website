@@ -58,7 +58,10 @@ while($row = mysqli_fetch_assoc($result_list)){
     $users[$row['id']]['id']= $row['id'];
     $users[$row['id']]['name']= $row['name'];
     $users[$row['id']]['surname'] = $row['surname'];
+    $users[$row['id']]['atesia'] = $row['atesia'];
+    $users[$row['id']]['username'] = $row['username'];
     $users[$row['id']]['email'] = $row['email'];
+    $users[$row['id']]['phone'] = $row['phone'];
     $users[$row['id']]['gender'] = $row['gender'];
     $users[$row['id']]['role'] = $row['role'];
 }
@@ -102,14 +105,19 @@ while($row = mysqli_fetch_assoc($result_list)){
                                     <tr>
                                         <th>Name</th>
                                         <th>Surname</th>
+                                        <th>Atesia</th>
+                                        <th>Username</th>
                                         <th>Email</th>
+                                        <th>Phone Number</th>
                                         <th>Role</th>
                                         <th>Gender</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
-
                                 </table>
+                                <div class='btn-group' style='width:130px'>
+                                    <input type='button' class='btn btn-block blue-bg' value='Add New User' data-toggle='modal' data-target='#edit_premission' onclick='create()'>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -133,7 +141,13 @@ while($row = mysqli_fetch_assoc($result_list)){
                 <div class="form-group"><label>Name</label>
                     <input type="text" class="form-control" id="fname" name="fname"></div>
                 <div class="form-group"><label>Surname</label>
-                    <input type="text" class="form-control" id="lname" name="lname"></div>
+                    <input type="text" class="form-control" id="surname" name="surname"></div>
+                <div class="form-group"><label>Atesia</label>
+                    <input type="text" class="form-control" id="atesia" name="atesia"></div>
+                <div class="form-group"><label>Username</label>
+                    <input type="text" class="form-control" id="username" name="username"></div>
+                <div class="form-group"><label>Phone Number</label>
+                    <input type="text" class="form-control" id="phone" name="phone"></div>
                 <div class="form-group"><label>Email</label>
                     <input type="text" class="form-control" id="email" name="email"></div>
                 <b>Select role</b>
@@ -145,6 +159,55 @@ while($row = mysqli_fetch_assoc($result_list)){
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" name="update" onclick="update()">Save changes</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!--modal for user Creation-->
+
+</div><div class="modal inmodal" id="create_user_data" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-user modal-icon"></i>
+                <h4 class="modal-title">Update user</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="user_modal_id" name="user_modal_id">
+                <div class="form-group"><label>Name</label>
+                    <input type="text" class="form-control" id="firstname" name="firstname"></div>
+                <div class="form-group"><label>Surname</label>
+                    <input type="text" class="form-control" id="lastname" name="lastname"></div>
+                <div class="form-group"><label>Atesia</label>
+                    <input type="text" class="form-control" id="fathername" name="fathername"></div>
+                <div class="form-group"><label>Username</label>
+                    <input type="text" class="form-control" id="user" name="user"></div>
+                <div class="form-group"><label>Phone Number</label>
+                    <input type="text" class="form-control" id="telephone" name="telephone"></div>
+                <div class="form-group"><label>Date of birth</label>
+                    <input type="text" class="form-control datepicker" id="birthday" name="birthday"></div>
+                <div class="form-group"><label>Select Gender</label>
+                <select class="form-control" name="gender" id="gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select></div>
+                <div class="form-group"><label>Email</label>
+                    <input type="text" class="form-control" id="mail" name="mail"></div>
+                <div class="form-group"><label>Password</label>
+                    <input type="text" class="form-control" id="password1" name="password1"></div>
+                <div class="form-group"><label>Re-Password</label>
+                    <input type="text" class="form-control" id="password2" name="password2"></div>
+                <b>Select role</b>
+                <select class="form-control" name="roles" id="roles">
+                    <option value="Admin">Admin</option>
+                    <option value="User">User</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" name="create" onclick="create()">Save changes</button>
             </div>
         </div>
     </div>
@@ -174,6 +237,25 @@ while($row = mysqli_fetch_assoc($result_list)){
 
 <script>
 
+    $(function () {
+        $('.datepicker').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true,
+            dateFormat: "yy-mm-dd",
+            changeYear: true,
+            changeMonth: true
+        });
+    });
+
+    function create(){
+        $("#create_user_data").modal("show");
+
+
+    }
+
     function fill_modal_user_data(user_id) {
         $("#update_user_data").modal("show");
 
@@ -191,14 +273,17 @@ while($row = mysqli_fetch_assoc($result_list)){
                 var response = JSON.parse(result);
                 if (response.code == 200) {
                     $("#fname").val(response.name);
-                    $("#lname").val(response.surname);
+                    $("#surname").val(response.surname);
+                    $("#atesia").val(response.atesia);
+                    $("#username").val(response.username);
+                    $("#phone").val(response.phone);
                     $("#email").val(response.email);
                     $("#role").val(response.role);
                     $("#user_modal_id").val(response.id);
                 }
 
                 if (response.code == 422) {
-                    Swal.fire(response.message);
+                    alert.fire(response.message);
                 }
 
             }
@@ -249,7 +334,10 @@ while($row = mysqli_fetch_assoc($result_list)){
             columns: [
                 {data: "name"},
                 {data: "surname"},
+                {data: "atesia"},
+                {data: "username"},
                 {data: "email"},
+                {data: "phone"},
                 {data: "role"},
                 {data: "gender"},
                 {
@@ -272,7 +360,10 @@ while($row = mysqli_fetch_assoc($result_list)){
     function update() {
         var user_id = $("#user_modal_id").val();
         var fname = $("#fname").val();
-        var lname = $("#lname").val();
+        var lname = $("#surname").val();
+        var atesia = $("#atesia").val();
+        var username = $("#username").val();
+        var phone = $("#phone").val();
         var email = $("#email").val();
         var role = $("#role").val();
 
@@ -281,6 +372,9 @@ while($row = mysqli_fetch_assoc($result_list)){
             "id": user_id,
             "name": fname,
             "surname": lname,
+            "atesia": atesia,
+            "username": username,
+            "phone": phone,
             "email": email,
             "role": role
         };

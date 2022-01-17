@@ -10,8 +10,10 @@ if ($_POST['action'] == "register") {
 
     $txtname = $conn->escape_string($_POST['fname']);
     $txtsurname = $conn->escape_string($_POST['lname']);
+    $atesia = $conn->escape_string($_POST['atesia']);
     $txtemail = $conn->escape_string($_POST['email']);
     $txtbirthday = $conn->escape_string($_POST['date_change']);
+    $phone = $conn->escape_string($_POST['phone']);
     $txtgender = $conn->escape_string($_POST['gender']);
     $txtpassword1 = $conn->escape_string($_POST['password1']);
 
@@ -36,27 +38,40 @@ if ($_POST['action'] == "register") {
 
 //Return error code if one of the fields is empty
 
+    $name_preg = preg_match("/^[a-zA-Z-'\s]*$/", $txtname);
+    $surname_preg = preg_match("/^[a-zA-Z-'\s]*$/", $txtsurname);
+    $atesia_preg = preg_match("/^[a-zA-Z-'\s]*$/", $atesia);
     if (empty($txtname)) {
         echo json_encode(array("code" => "422", "message" => "Name cannot be empty!"));
         exit;
-    }
-    if (empty($txtsurname)) {
+    }if (!$name_preg) {
+        echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
+        exit;
+    }if (empty($txtsurname)) {
         echo json_encode(array("code" => "422", "message" => "Surname cannot be empty!"));
         exit;
-    }
-    if (empty($txtemail)) {
+    }if (!$surname_preg) {
+        echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
+        exit;
+    }if (empty($atesia)) {
+        echo json_encode(array("code" => "422", "message" => "Atesia cannot be empty!"));
+        exit;
+    }if (!$atesia_preg) {
+        echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
+        exit;
+    }if (empty($txtemail)) {
         echo json_encode(array("code" => "422", "message" => "email cannot be empty!"));
         exit;
-    }
-    if (empty($txtbirthday)) {
+    }if (empty($txtbirthday)) {
         echo json_encode(array("code" => "422", "message" => "birthday cannot be empty!"));
         exit;
-    }
-    if (empty($txtgender)) {
+    }if (empty($phone)) {
+        echo json_encode(array("code" => "422", "message" => "Phone cannot be empty!"));
+        exit;
+    }if (empty($txtgender)) {
         echo json_encode(array("code" => "422", "message" => "Gender cannot be empty!"));
         exit;
-    }
-    if (empty($txtpassword1)) {
+    }if (empty($txtpassword1)) {
         echo json_encode(array("code" => "422", "message" => "Password cannot be empty!"));
         exit;
     }
@@ -66,6 +81,11 @@ if ($_POST['action'] == "register") {
         echo json_encode(array("code" => "422", "message" => "Email is not correct"));
         exit;
     }
+
+    // Username creation
+
+    $username = $txtname[0].$txtsurname ;
+
 
     // Check if email already exists
     $query_check = "SELECT id FROM users WHERE email='$txtemail'";
@@ -82,8 +102,11 @@ if ($_POST['action'] == "register") {
     $query_insert = "INSERT INTO users
       SET name = '$txtname',
          surname = '$txtsurname',
+         atesia = '$atesia',
          email = '$txtemail',
+         username = '$username',
          birthday = '$txtbirthday',
+         phone = '$phone',
          gender = '$txtgender',
          password = '$hash',
          role = 'User'";
@@ -117,7 +140,7 @@ if ($_POST['action'] == "register") {
         exit;
     }
 
-    $query_select = "SELECT * FROM users WHERE email='$txtemail'";
+    $query_select = "SELECT * FROM users WHERE email='$txtemail' OR phone='$txtemail'";
     $result = mysqli_query($conn, $query_select);
     $check = mysqli_fetch_assoc($result);
 
@@ -145,17 +168,24 @@ if ($_POST['action'] == "register") {
 // Update user details in the database from admin panel action code
 
 
-} elseif ($_POST['action'] == "update") {
+}
+elseif ($_POST['action'] == "update") {
 
     $id = $conn->escape_string($_POST['id']);
     $fname = $conn->escape_string($_POST['name']);
     $lname = $conn->escape_string($_POST['surname']);
+    $atesia = $conn->escape_string($_POST['atesia']);
+    $username = $conn->escape_string($_POST['username']);
+    $phone = $conn->escape_string($_POST['phone']);
     $email = $conn->escape_string($_POST['email']);
     $role = $conn->escape_string($_POST['role']);
 
     $query_update = "UPDATE users
       SET name = '$fname',
           surname = '$lname',
+          atesia = '$atesia',
+          username = '$username',
+          phone = '$phone',
           email = '$email',
           role = '$role'
          WHERE id = '$id'";
@@ -198,10 +228,13 @@ if ($_POST['action'] == "register") {
 // Personal user details update from userpage panel code
 
 
-} elseif ($_POST['action'] == "userUpdate") {
+}
+elseif ($_POST['action'] == "userUpdate") {
     $id = $conn->escape_string($_POST['id']);
     $fname = $conn->escape_string($_POST['name']);
     $lname = $conn->escape_string($_POST['surname']);
+    $username = $conn->escape_string($_POST['username']);
+    $phone = $conn->escape_string($_POST['phonenum']);
     $email = $conn->escape_string($_POST['email']);
     $birthday = $conn->escape_string($_POST['birthday']);
     $photo_path = $conn->escape_string($_POST['photo_path']);
@@ -216,6 +249,12 @@ if ($_POST['action'] == "register") {
         exit;
     }if (empty($lname)) {
         echo json_encode(array("code" => "422", "message" => "surname cannot be empty!"));
+        exit;
+    }if (empty($username)) {
+        echo json_encode(array("code" => "422", "message" => "username cannot be empty!"));
+        exit;
+    }if (empty($phone)) {
+        echo json_encode(array("code" => "422", "message" => "phone cannot be empty!"));
         exit;
     }if (empty($email)) {
         echo json_encode(array("code" => "422", "message" => "Email cannot be empty!"));
@@ -237,6 +276,8 @@ if ($_POST['action'] == "register") {
     $query_update_users = "UPDATE users
       SET name = '$fname',
           surname = '$lname',
+          username = '$username',
+          phone = '$phone',
           email = '$email',
           birthday = '$birthday',
           photo = '$profile_photo'
@@ -317,6 +358,7 @@ elseif ($_POST['action'] == "insert_chat") {
 } elseif ($_POST['action'] == "fill_modal_user_data") {
     $user_id = $conn->escape_string($_POST['user_id']);
 
+
     $query_modal = "SELECT * FROM users WHERE id = '$user_id'";
     $result_modal = mysqli_query($conn, $query_modal);
     $user = mysqli_fetch_assoc($result_modal);
@@ -333,6 +375,9 @@ elseif ($_POST['action'] == "insert_chat") {
         "email" => $user['email'],
         "name" => $user['name'],
         "surname" => $user['surname'],
+        "atesia" => $user['atesia'],
+        "username" => $user['username'],
+        "phone" => $user['phone'],
         "role" => $user['role']
         ));
 

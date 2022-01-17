@@ -101,6 +101,7 @@
         var atesia = $("#atesia").val();
         var email = $("#email").val();
         var birthday = $('input[name="birthday"]').val();
+        var phone = $("#phone").val();
         var date_change = birthday.replaceAll('/', '-');
         var password1 = $("#password1").val();
         var password2 = $("#password2").val();
@@ -112,72 +113,71 @@
 
         if (isEmpty(fname)) {
             error = "Name must be entered.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }
         filter_name = /^[a-zA-Z\s]+$/;
         if (!filter_name.test(fname)) {
             error = "name should be only letters.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (isEmpty(lname)) {
             error = "Surname must be entered.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (!filter_name.test(lname)) {
             error = "last name should be only letters.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (isEmpty(atesia)) {
             error = "atesia must be entered.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (!filter_name.test(atesia)) {
             error = "atesia should be only letters.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (isEmpty(email)) {
             error = "Email must be entered.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (isEmpty(phone)) {
             error = "phone must be entered.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }
-        telephone = /^\d{10}$/;
-        if (!telephone.test(phone)) {
+        var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        if (!phoneno.test(phone)) {
             error = "Phone not correct format.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
 
-        }
-        if (isEmpty(date_change)) {
+        }if (isEmpty(date_change)) {
             error = "birthdate must be entered.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }
         filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if (!filter_email.test(email)) {
             error = "Email not correct format.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
 
         }if (isEmpty(password1)) {
             error = "Password1 must be entered.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (isEmpty(password2)) {
             error = "Password2 must be entered.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (password1 != password2) {
             error = "Password is not the same.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }if (password1 != password2) {
             error = "Password is not the same.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
         }
         var minNumberofChars = 6;
@@ -185,10 +185,9 @@
         var regularExpression = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
         if (password1.length < minNumberofChars || password1.length > maxNumberofChars) {
             error = "Password should contain One upper case one lower case one special character and 8 min characters.";
-            document.getElementById("errorid").innerHTML = error;
+            $("#errorid").text(error);
             return false;
-        }
-        if (!regularExpression.test(password1)) {
+        }if (!regularExpression.test(password1)) {
             alert("password should contain at least one number and one special character");
             return false;
         }
@@ -202,6 +201,7 @@
                 "lname": lname,
                 "atesia": atesia,
                 "email": email,
+                "phone": phone,
                 "date_change": date_change,
                 "password1": password1,
                 "password2": password2,

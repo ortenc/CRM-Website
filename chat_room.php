@@ -29,6 +29,7 @@ while($row = mysqli_fetch_assoc($result_list)){
     $users[$row['id']]['id']= $row['id'];
     $users[$row['id']]['name']= $row['name'];
     $users[$row['id']]['surname'] = $row['surname'];
+    $users[$row['id']]['username'] = $row['username'];
     $users[$row['id']]['email'] = $row['email'];
     $users[$row['id']]['gender'] = $row['gender'];
     $users[$row['id']]['role'] = $row['role'];
@@ -94,7 +95,7 @@ while($row = mysqli_fetch_assoc($result_list)){
 
                                 ?>
                                 <tr class="gradeX">
-                                    <td><?= $row['name'] . ' ' . count_unseen_message($row['id'], $_SESSION['id'], $conn) ?></td>
+                                    <td><?= $row['username'] . ' ' . count_unseen_message($row['id'], $_SESSION['id'], $conn) ?></td>
                                     <td><?= $status ?></td>
                                     <td>
                                         <button type="button"
