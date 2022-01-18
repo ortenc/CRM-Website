@@ -100,24 +100,32 @@ while($row = mysqli_fetch_assoc($result_list)){
                             </div>
                         </div>
                         <div class="ibox-content">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <label>Date from</label>
-                                    <input class="datepicker" type="text" id="mindate" name="mindate">
+                            <form method="post">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <label>Date from</label>
+                                        <input class="form-control" type="text" id="mindate" name="mindate" autocomplete="off">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>Date until</label>
+                                        <input class="form-control" type="text" id="maxdate" name="maxdate" autocomplete="off">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>Email</label>
+                                        <input type="text" id="semail" name="semail" class="form-control">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>Phone</label>
+                                        <input type="text" id="sphone" name="sphone" class="form-control">
+                                    </div>
                                 </div>
-                                <div class="col-sm-3">
-                                    <label>Date until</label>
-                                    <input class="datepicker" type="text" id="maxdate" name="maxdate">
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <input type="submit" class="btn btn-primary" name="filter" id="filter" value="Filter">
+                                    </div>
                                 </div>
-                                <div class="col-sm-3">
-                                    <label>Email</label>
-                                    <input type="text" id="semail" name="semail">
-                                </div>
-                                <div class="col-sm-3">
-                                    <label>Phone</label>
-                                    <input type="text" id="sphone" name="sphone">
-                                </div>
-                            </div>
+                            </form>
                         </div>
                         <div class="ibox-content">
                             <div class="table-responsive">
@@ -279,6 +287,9 @@ while($row = mysqli_fetch_assoc($result_list)){
 <?php include "footer.php"; ?>
 
 <script>
+
+    $('input[name="mindate"]').daterangepicker();
+
 
     function isEmpty(value) {
         return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
@@ -489,23 +500,6 @@ while($row = mysqli_fetch_assoc($result_list)){
 
     }
 
-    $.fn.dataTable.ext.search.push(
-        function( settings, data, dataIndex ) {
-            var min = parseInt( $('#mindate').val(), 10 );
-            var max = parseInt( $('#maxdate').val(), 10 );
-            var age = parseFloat( data[9] ) || 0;
-
-            if ( ( isNaN( min ) && isNaN( max ) ) ||
-                ( isNaN( min ) && age <= max ) ||
-                ( min <= age   && isNaN( max ) ) ||
-                ( min <= age   && age <= max ) )
-            {
-                return true;
-            }
-            return false;
-        }
-    );
-
     $(document).ready(function () {
 
         $('#emptable').DataTable({
@@ -515,10 +509,11 @@ while($row = mysqli_fetch_assoc($result_list)){
             serverMethod: 'POST',
             ajax: {
                 url: "tablefill.php",
-                //data: {
-                //    mindate: "<?//= $_POST['mindate'] ?>//"
-                //    maxdate: "<?//= $_POST['maxdate'] ?>//"
-                //}
+                data: {
+                    // 'action': "user_list",
+                    //mindate: "<?//= $_POST['semail']?>//",
+                    //maxdate: "<?//= $_POST['sphone']?>//"
+                }
             },
             columns: [
                 {
@@ -625,6 +620,7 @@ while($row = mysqli_fetch_assoc($result_list)){
             }
         });
     }
+
 
 </script>
 

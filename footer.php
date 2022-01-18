@@ -6,7 +6,7 @@
 <script src="js/plugins/dataTables/datatables.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<!--<script src="js/plugins/datapicker/bootstrap-datepicker.js"></script>-->
+<script src="js/plugins/datapicker/bootstrap-datepicker.js"></script>
 
 <!-- Custom and plugin javascript -->
 <script src="js/inspinia.js"></script>
