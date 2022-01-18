@@ -13,38 +13,44 @@
 
 <div class="middle-box text-center loginscreen   animated fadeInDown">
     <div>
-<!--        <div>-->
-<!--            <h5 class="logo-name">LW</h5>-->
-<!---->
-<!--        </div>-->
+
         <h3>Register to Local Web</h3>
         <p>Create account to see it in action.</p>
 
         <div class="form-group">
+            <p id="errorfname" style="color: red"></p>
             <input type="text" class="form-control" placeholder="Name" id="fname" required="">
         </div>
         <div class="form-group">
+            <p id="errorlname" style="color: red"></p>
             <input type="text" class="form-control" placeholder="Surname" id="lname" required="">
         </div>
         <div class="form-group">
+            <p id="erroratesia" style="color: red"></p>
             <input type="text" class="form-control" placeholder="Atesia" id="atesia" required="">
         </div>
         <div class="form-group">
+            <p id="erroremail" style="color: red"></p>
             <input type="email" class="form-control" placeholder="Email" id="email" required="">
         </div>
         <div class="form-group">
+            <p id="errorphone" style="color: red"></p>
             <input type="text" class="form-control" placeholder="Phone" id="phone" required="">
         </div>
         <div class="form-group">
+            <p id="errorbirthday" style="color: red"></p>
             <input type="text" class="form-control datepicker" placeholder="YY-MM-DD" id="birthday" name="birthday" required="">
         </div>
         <div class="form-group">
+            <p id="errorpass1" style="color: red"></p>
             <input type="password" class="form-control" placeholder="Password" id="password1" required="">
         </div>
         <div class="form-group">
+            <p id="errorpass2" style="color: red"></p>
             <input type="password" class="form-control" placeholder="Re-Password" id="password2" required="">
         </div>
         <div class="form-group">
+            <p id="errorgender" style="color: red"></p>
             <label class="text m-r-45">Gender</label>
             <div class="p-t-10">
                 <label class="radio-container">Male
@@ -58,9 +64,9 @@
             </div>
         </div>
         <button type="button" class="btn btn-primary block full-width m-b" onclick="register()">Register</button>
-        <p
-                class="form-control" id="errorid">
-        </p>
+<!--        <p-->
+<!--                class="form-control" id="errorid">-->
+<!--        </p>-->
         <p class="text-muted text-center"><small>Already have an account?</small></p>
         <a class="btn btn-sm btn-white btn-block" href="login.php">Login</a>
     </div>
@@ -113,71 +119,68 @@
 
         if (isEmpty(fname)) {
             error = "Name must be entered.";
-            $("#errorid").text(error);
+            $("#errorfname").text(error);
             return false;
         }
         filter_name = /^[a-zA-Z\s]+$/;
         if (!filter_name.test(fname)) {
             error = "name should be only letters.";
-            $("#errorid").text(error);
+            $("#errorfname").text(error);
             return false;
         }if (isEmpty(lname)) {
             error = "Surname must be entered.";
-            $("#errorid").text(error);
+            $("#errorlname").text(error);
             return false;
         }if (!filter_name.test(lname)) {
             error = "last name should be only letters.";
-            $("#errorid").text(error);
+            $("#errorlname").text(error);
             return false;
         }if (isEmpty(atesia)) {
             error = "atesia must be entered.";
-            $("#errorid").text(error);
+            $("#erroratesia").text(error);
             return false;
         }if (!filter_name.test(atesia)) {
             error = "atesia should be only letters.";
-            $("#errorid").text(error);
+            $("#erroratesia").text(error);
             return false;
         }if (isEmpty(email)) {
             error = "Email must be entered.";
-            $("#errorid").text(error);
+            $("#erroremail").text(error);
             return false;
         }if (isEmpty(phone)) {
             error = "phone must be entered.";
-            $("#errorid").text(error);
+            $("#errorphone").text(error);
             return false;
         }
         var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
         if (!phoneno.test(phone)) {
             error = "Phone not correct format.";
-            $("#errorid").text(error);
+            $("#errorphone").text(error);
             return false;
 
         }if (isEmpty(date_change)) {
             error = "birthdate must be entered.";
-            $("#errorid").text(error);
+            $("#errorbirthday").text(error);
             return false;
         }
         filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if (!filter_email.test(email)) {
             error = "Email not correct format.";
-            $("#errorid").text(error);
+            $("#erroremail").text(error);
             return false;
 
         }if (isEmpty(password1)) {
             error = "Password1 must be entered.";
-            $("#errorid").text(error);
+            $("#errorpass1").text(error);
             return false;
         }if (isEmpty(password2)) {
             error = "Password2 must be entered.";
-            $("#errorid").text(error);
+            $("#errorpass2").text(error);
             return false;
         }if (password1 != password2) {
-            error = "Password is not the same.";
-            $("#errorid").text(error);
-            return false;
-        }if (password1 != password2) {
-            error = "Password is not the same.";
-            $("#errorid").text(error);
+            error = "Passwords are not the same.";
+            $("#errorpass1").text(error);
+            $("#errorpass2").text(error);
             return false;
         }
         var minNumberofChars = 6;
@@ -185,10 +188,11 @@
         var regularExpression = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
         if (password1.length < minNumberofChars || password1.length > maxNumberofChars) {
             error = "Password should contain One upper case one lower case one special character and 8 min characters.";
-            $("#errorid").text(error);
+            $("#errorpass1").text(error);
             return false;
         }if (!regularExpression.test(password1)) {
-            alert("password should contain at least one number and one special character");
+            error ="password should contain at least one number and one special character";
+            $("#errorpass1").text(error);
             return false;
         }
 

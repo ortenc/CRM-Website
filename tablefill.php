@@ -35,7 +35,11 @@ $empRecords = mysqli_query($conn, $empQuery);
 $data = array();
 
 while ($row = mysqli_fetch_assoc($empRecords)) {
+    if (empty($row['photo'])) {
+        $row['photo'] = 'photos/default.jpg';
+    }
     $data[] = array(
+        "photo"=>$row['photo'],
         "name"=>$row['name'],
         "surname"=>$row['surname'],
         "atesia"=>$row['atesia'],
@@ -44,6 +48,7 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
         "phone"=>$row['phone'],
         "role"=>$row['role'],
         "gender"=>$row['gender'],
+        "created_at"=>$row['created_at'],
         "actions"=> "<center><nobr>	
                             <div class='btn-group' style='width:130px'>	
                                 <input type='button' class='btn btn-primary' value='Update' data-toggle='modal' data-target='#edit_premission' onclick='fill_modal_user_data(\"$row[id]\")'>	

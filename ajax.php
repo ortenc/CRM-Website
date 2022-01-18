@@ -17,30 +17,12 @@ if ($_POST['action'] == "register") {
     $txtgender = $conn->escape_string($_POST['gender']);
     $txtpassword1 = $conn->escape_string($_POST['password1']);
 
-    // password field validation and check for similarities between the two fields
-
-    $number = preg_match('@[0-9]@', $txtpassword1);
-    $uppercase = preg_match('@[A-Z]@', $txtpassword1);
-    $lowercase = preg_match('@[a-z]@', $txtpassword1);
-    $specialChars = preg_match('@[^\w]@', $txtpassword1);
-
-    if (strlen($txtpassword1) < 8 || !$number || !$uppercase || !$lowercase || !$specialChars) {
-        echo json_encode(array("code" => "422", "message" => "Password must be at least 8 characters in length and must contain at least one number, one upper case letter, one lower case letter and one special character."));
-        exit;
-    }
-    $txtpassword2 = $conn->escape_string($_POST['password2']);
-
-    if ($txtpassword1 != $txtpassword2) {
-        echo json_encode(array("code" => "422", "message" => "Password fields are not the same"));
-        exit;
-    }
-    $hash = password_hash($txtpassword1, PASSWORD_DEFAULT); // hashing the password with the default algorithm
-
-//Return error code if one of the fields is empty
+    //Return error code if one of the fields is empty
 
     $name_preg = preg_match("/^[a-zA-Z-'\s]*$/", $txtname);
     $surname_preg = preg_match("/^[a-zA-Z-'\s]*$/", $txtsurname);
     $atesia_preg = preg_match("/^[a-zA-Z-'\s]*$/", $atesia);
+    $phone_preg = preg_match("/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im", $phone);
     if (empty($txtname)) {
         echo json_encode(array("code" => "422", "message" => "Name cannot be empty!"));
         exit;
@@ -62,11 +44,28 @@ if ($_POST['action'] == "register") {
     }if (empty($txtemail)) {
         echo json_encode(array("code" => "422", "message" => "email cannot be empty!"));
         exit;
+    }
+    // check if e-mail address is well-formed
+    if (!filter_var($txtemail, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(array("code" => "422", "message" => "Email is not correct"));
+        exit;
+    }
+    // Check if email already exists
+    $query_check = "SELECT id FROM users WHERE email='$txtemail'";
+    $result_check = mysqli_query($conn, $query_check);
+    $numRows = mysqli_num_rows($result_check);
+
+    if ($numRows > 0) {
+        echo json_encode(array("code" => "422", "message" => "This email already exist in our system!"));
+        exit;
     }if (empty($txtbirthday)) {
         echo json_encode(array("code" => "422", "message" => "birthday cannot be empty!"));
         exit;
     }if (empty($phone)) {
         echo json_encode(array("code" => "422", "message" => "Phone cannot be empty!"));
+        exit;
+    }if (!$phone_preg) {
+        echo json_encode(array("code" => "422", "message" => "Phone wrong format!"));
         exit;
     }if (empty($txtgender)) {
         echo json_encode(array("code" => "422", "message" => "Gender cannot be empty!"));
@@ -76,26 +75,29 @@ if ($_POST['action'] == "register") {
         exit;
     }
 
-    // check if e-mail address is well-formed
-    if (!filter_var($txtemail, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(array("code" => "422", "message" => "Email is not correct"));
+    // password field validation and check for similarities between the two fields
+
+    $number = preg_match('@[0-9]@', $txtpassword1);
+    $uppercase = preg_match('@[A-Z]@', $txtpassword1);
+    $lowercase = preg_match('@[a-z]@', $txtpassword1);
+    $specialChars = preg_match('@[^\w]@', $txtpassword1);
+
+    if (strlen($txtpassword1) < 8 || !$number || !$uppercase || !$lowercase || !$specialChars) {
+        echo json_encode(array("code" => "422", "message" => "Password must be at least 8 characters in length and must contain at least one number, one upper case letter, one lower case letter and one special character."));
         exit;
     }
+    $txtpassword2 = $conn->escape_string($_POST['password2']);
+
+    if ($txtpassword1 != $txtpassword2) {
+        echo json_encode(array("code" => "422", "message" => "Password fields are not the same"));
+        exit;
+    }
+    $hash = password_hash($txtpassword1, PASSWORD_DEFAULT); // hashing the password with the default algorithm
 
     // Username creation
 
     $username = $txtname[0].$txtsurname ;
-
-
-    // Check if email already exists
-    $query_check = "SELECT id FROM users WHERE email='$txtemail'";
-    $result_check = mysqli_query($conn, $query_check);
-    $numRows = mysqli_num_rows($result_check);
-
-    if ($numRows > 0) {
-        echo json_encode(array("code" => "422", "message" => "This email already exist in our system!"));
-        exit;
-    }
+    $registerdate = date("Y-m-d H:i:s");
 
     // database insert SQL code
 
@@ -109,10 +111,133 @@ if ($_POST['action'] == "register") {
          phone = '$phone',
          gender = '$txtgender',
          password = '$hash',
+         registerdate = '$registerdate',
          role = 'User'";
 
     $result_insert = mysqli_query($conn, $query_insert);
 
+    // If data inputed successfully into the database following conditions applied
+    if ($result_insert) {
+        echo json_encode(array("code" => "200", "message" => "Success"));
+        exit;
+    } else {
+        echo json_encode(array("code" => "422", "message" => "Error"));
+    }
+
+
+
+// Create user from admin panel
+
+
+}if ($_POST['action'] == "create") {
+
+    $txtname = $conn->escape_string($_POST['fname']);
+    $txtsurname = $conn->escape_string($_POST['lname']);
+    $atesia = $conn->escape_string($_POST['atesia']);
+    $txtemail = $conn->escape_string($_POST['email']);
+    $txtbirthday = $conn->escape_string($_POST['date_change']);
+    $phone = $conn->escape_string($_POST['phone']);
+    $txtgender = $conn->escape_string($_POST['gender']);
+    $txtpassword1 = $conn->escape_string($_POST['password1']);
+    $txtpassword2 = $conn->escape_string($_POST['password2']);
+    $role = $conn->escape_string($_POST['role']);
+
+    //Return error code if one of the fields is empty
+
+    $name_preg = preg_match("/^[a-zA-Z-'\s]*$/", $txtname);
+    $surname_preg = preg_match("/^[a-zA-Z-'\s]*$/", $txtsurname);
+    $atesia_preg = preg_match("/^[a-zA-Z-'\s]*$/", $atesia);
+    $phone_preg = preg_match("/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im", $phone);
+    if (empty($txtname)) {
+        echo json_encode(array("code" => "422", "message" => "Name cannot be empty!"));
+        exit;
+    }if (!$name_preg) {
+        echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
+        exit;
+    }if (empty($txtsurname)) {
+        echo json_encode(array("code" => "422", "message" => "Surname cannot be empty!"));
+        exit;
+    }if (!$surname_preg) {
+        echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
+        exit;
+    }if (empty($atesia)) {
+        echo json_encode(array("code" => "422", "message" => "Atesia cannot be empty!"));
+        exit;
+    }if (!$atesia_preg) {
+        echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
+        exit;
+    }if (empty($txtemail)) {
+        echo json_encode(array("code" => "422", "message" => "email cannot be empty!"));
+        exit;
+    }
+    // check if e-mail address is well-formed
+    if (!filter_var($txtemail, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(array("code" => "422", "message" => "Email is not correct"));
+        exit;
+    }
+    // Check if email already exists
+    $query_check = "SELECT id FROM users WHERE email='$txtemail'";
+    $result_check = mysqli_query($conn, $query_check);
+    $numRows = mysqli_num_rows($result_check);
+
+    if ($numRows > 0) {
+        echo json_encode(array("code" => "422", "message" => "This email already exist in our system!"));
+        exit;
+    }if (empty($txtbirthday)) {
+        echo json_encode(array("code" => "422", "message" => "birthday cannot be empty!"));
+        exit;
+    }if (empty($phone)) {
+        echo json_encode(array("code" => "422", "message" => "Phone cannot be empty!"));
+        exit;
+    }if (!$phone_preg) {
+        echo json_encode(array("code" => "422", "message" => "Phone wrong format!"));
+        exit;
+    }if (empty($txtpassword1)) {
+        echo json_encode(array("code" => "422", "message" => "Password cannot be empty!"));
+        exit;
+    }
+
+    // password field validation and check for similarities between the two fields
+
+    $number = preg_match('@[0-9]@', $txtpassword1);
+    $uppercase = preg_match('@[A-Z]@', $txtpassword1);
+    $lowercase = preg_match('@[a-z]@', $txtpassword1);
+    $specialChars = preg_match('@[^\w]@', $txtpassword1);
+
+    if (strlen($txtpassword1) < 8 || !$number || !$uppercase || !$lowercase || !$specialChars) {
+        echo json_encode(array("code" => "422", "message" => "Password must be at least 8 characters in length and must contain at least one number, one upper case letter, one lower case letter and one special character."));
+        exit;
+    }
+
+    if ($txtpassword1 != $txtpassword2) {
+        echo json_encode(array("code" => "422", "message" => "Password fields are not the same"));
+        exit;
+    }
+    $hash = password_hash($txtpassword1, PASSWORD_DEFAULT); // hashing the password with the default algorithm
+
+
+
+    // Username creation
+
+    $username = $txtname[0].$txtsurname ;
+    $registerdate = date("Y-m-d H:i:s");
+
+    // database insert SQL code
+
+    $query_insert = "INSERT INTO users
+      SET name = '$txtname',
+         surname = '$txtsurname',
+         atesia = '$atesia',
+         email = '$txtemail',
+         username = '$username',
+         birthday = '$txtbirthday',
+         phone = '$phone',
+         gender = '$txtgender',
+         password = '$hash',
+         registerdate = '$registerdate',
+         role = '$role'";
+
+    $result_insert = mysqli_query($conn, $query_insert);
     // If data inputed successfully into the database following conditions applied
     if ($result_insert) {
         echo json_encode(array("code" => "200", "message" => "Success"));
@@ -179,6 +304,61 @@ elseif ($_POST['action'] == "update") {
     $phone = $conn->escape_string($_POST['phone']);
     $email = $conn->escape_string($_POST['email']);
     $role = $conn->escape_string($_POST['role']);
+
+    $name_preg = preg_match("/^[a-zA-Z-'\s]*$/", $fname);
+    $surname_preg = preg_match("/^[a-zA-Z-'\s]*$/", $lname);
+    $atesia_preg = preg_match("/^[a-zA-Z-'\s]*$/", $atesia);
+    $username_preg = preg_match("/^[a-zA-Z-'\s]*$/", $username);
+    $phone_preg = preg_match("/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im", $phone);
+
+    if (empty($fname)){
+        echo json_encode(array("code" => "422", "message" => "Name cannot be empty"));
+        exit;
+    }if (!$name_preg){
+        echo json_encode(array("code" => "422", "message" => "Name must be only letters"));
+        exit;
+    }if (empty($lname)){
+        echo json_encode(array("code" => "422", "message" => "Surname cannot be empty"));
+        exit;
+    }if (!$surname_preg){
+        echo json_encode(array("code" => "422", "message" => "Surname must be only letters"));
+        exit;
+    }if (empty($atesia)){
+        echo json_encode(array("code" => "422", "message" => "Atesia cannot be empty"));
+        exit;
+    }if (!$atesia_preg){
+        echo json_encode(array("code" => "422", "message" => "Atesia must be only letters"));
+        exit;
+    }if (empty($username)){
+        echo json_encode(array("code" => "422", "message" => "Username cannot be empty"));
+        exit;
+    }if (!$username_preg){
+        echo json_encode(array("code" => "422", "message" => "Username must be only letters"));
+        exit;
+    }if (empty($phone)){
+        echo json_encode(array("code" => "422", "message" => "Phone cannot be empty"));
+        exit;
+    }if (!$phone_preg){
+        echo json_encode(array("code" => "422", "message" => "Phone wrong format"));
+        exit;
+    }if (empty($email)){
+        echo json_encode(array("code" => "422", "message" => "Email cannot be empty"));
+        exit;
+    }
+    // check if e-mail address is well-formed
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo json_encode(array("code" => "422", "message" => "Email is not correct"));
+        exit;
+    }
+    // Check if email already exists
+    $query_check = "SELECT id FROM users WHERE email='$email'";
+    $result_check = mysqli_query($conn, $query_check);
+    $numRows = mysqli_num_rows($result_check);
+
+    if ($numRows > 0) {
+        echo json_encode(array("code" => "422", "message" => "This email already exist in our system!"));
+        exit;
+    }
 
     $query_update = "UPDATE users
       SET name = '$fname',
@@ -404,6 +584,7 @@ elseif ($_POST['action'] == "insert_chat") {
         "surname" => $user['surname'],
         "role" => $user['role']
         ));
+
 } elseif ($_POST['action'] == "last_active_time") {
 
     $last_login =  strtotime($_SESSION['last_login']);

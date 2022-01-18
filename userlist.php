@@ -56,6 +56,7 @@ $result_list = mysqli_query($conn,$query_list);
 $users = [];
 while($row = mysqli_fetch_assoc($result_list)){
     $users[$row['id']]['id']= $row['id'];
+    $users[$row['id']]['photo']= $row['photo'];
     $users[$row['id']]['name']= $row['name'];
     $users[$row['id']]['surname'] = $row['surname'];
     $users[$row['id']]['atesia'] = $row['atesia'];
@@ -99,10 +100,31 @@ while($row = mysqli_fetch_assoc($result_list)){
                             </div>
                         </div>
                         <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label>Date from</label>
+                                    <input class="datepicker" type="text" id="mindate" name="mindate">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label>Date until</label>
+                                    <input class="datepicker" type="text" id="maxdate" name="maxdate">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label>Email</label>
+                                    <input type="text" id="semail" name="semail">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label>Phone</label>
+                                    <input type="text" id="sphone" name="sphone">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover dataTables-example" id="emptable" >
                                     <thead>
                                     <tr>
+                                        <th>Profile picture</th>
                                         <th>Name</th>
                                         <th>Surname</th>
                                         <th>Atesia</th>
@@ -111,12 +133,13 @@ while($row = mysqli_fetch_assoc($result_list)){
                                         <th>Phone Number</th>
                                         <th>Role</th>
                                         <th>Gender</th>
+                                        <th>Date registered</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
                                 </table>
                                 <div class='btn-group' style='width:130px'>
-                                    <input type='button' class='btn btn-block blue-bg' value='Add New User' data-toggle='modal' data-target='#edit_premission' onclick='create()'>
+                                    <input type='button' class='btn btn-block blue-bg' value='Add New User' data-toggle='modal' data-target='#edit_premission' onclick='showcreatemodal()'>
                                 </div>
                             </div>
                         </div>
@@ -138,7 +161,7 @@ while($row = mysqli_fetch_assoc($result_list)){
             </div>
             <div class="modal-body">
                 <input type="hidden" id="user_modal_id" name="user_modal_id">
-                <div class="form-group"><label>Name</label>
+                <div class="form-group"><label>Name<p id="errorufname" style="color: red"></p></label>
                     <input type="text" class="form-control" id="fname" name="fname"></div>
                 <div class="form-group"><label>Surname</label>
                     <input type="text" class="form-control" id="surname" name="surname"></div>
@@ -162,52 +185,72 @@ while($row = mysqli_fetch_assoc($result_list)){
             </div>
         </div>
     </div>
+</div>
 
 
-    <!--modal for user Creation-->
+<!--modal for user Creation-->
 
-</div><div class="modal inmodal" id="create_user_data" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal inmodal" id="create_user_data" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content animated bounceInRight">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 <i class="fa fa-user modal-icon"></i>
-                <h4 class="modal-title">Update user</h4>
+                <h4 class="modal-title">Create user</h4>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="user_modal_id" name="user_modal_id">
                 <div class="form-group"><label>Name</label>
-                    <input type="text" class="form-control" id="firstname" name="firstname"></div>
+                    <input type="text" class="form-control" id="firstname" name="firstname">
+                    <p id="errorcfname" style="color: red"></p>
+                </div>
                 <div class="form-group"><label>Surname</label>
-                    <input type="text" class="form-control" id="lastname" name="lastname"></div>
+                    <input type="text" class="form-control" id="lastname" name="lastname">
+                    <p id="errorclname" style="color: red"></p>
+                </div>
                 <div class="form-group"><label>Atesia</label>
-                    <input type="text" class="form-control" id="fathername" name="fathername"></div>
-                <div class="form-group"><label>Username</label>
-                    <input type="text" class="form-control" id="user" name="user"></div>
+                    <input type="text" class="form-control" id="fathername" name="fathername">
+                    <p id="errorcatesia" style="color: red"></p>
+                </div>
                 <div class="form-group"><label>Phone Number</label>
-                    <input type="text" class="form-control" id="telephone" name="telephone"></div>
+                    <input type="text" class="form-control" id="telephone" name="telephone">
+                    <p id="errorcphone" style="color: red"></p>
+                </div>
                 <div class="form-group"><label>Date of birth</label>
-                    <input type="text" class="form-control datepicker" id="birthday" name="birthday"></div>
+                    <input type="text" class="form-control datepicker" id="birthday" name="birthday">
+                    <p id="errorcbirth" style="color: red"></p>
+                </div>
                 <div class="form-group"><label>Select Gender</label>
-                <select class="form-control" name="gender" id="gender">
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select></div>
+                    <select class="form-control" name="gender" id="gender">
+                        <option disabled selected value> -- select gender -- </option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                    <p id="errorcgender" style="color: red"></p>
+                </div>
                 <div class="form-group"><label>Email</label>
-                    <input type="text" class="form-control" id="mail" name="mail"></div>
+                    <input type="text" class="form-control" id="mail" name="mail">
+                    <p id="errorcemail" style="color: red"></p>
+                </div>
                 <div class="form-group"><label>Password</label>
-                    <input type="text" class="form-control" id="password1" name="password1"></div>
+                    <input type="password" class="form-control" id="password1" name="password1">
+                    <p id="errorcpass1" style="color: red"></p>
+                </div>
                 <div class="form-group"><label>Re-Password</label>
-                    <input type="text" class="form-control" id="password2" name="password2"></div>
+                    <input type="password" class="form-control" id="password2" name="password2">
+                    <p id="errorcpass2" style="color: red"></p>
+                </div>
                 <b>Select role</b>
                 <select class="form-control" name="roles" id="roles">
+                    <option disabled selected value> -- select role -- </option>
                     <option value="Admin">Admin</option>
                     <option value="User">User</option>
                 </select>
+                <p id="errorcrole" style="color: red"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" name="create" onclick="create()">Save changes</button>
+                <button type="button" class="btn btn-primary" name="create" onclick="create()">Create User</button>
             </div>
         </div>
     </div>
@@ -237,6 +280,10 @@ while($row = mysqli_fetch_assoc($result_list)){
 
 <script>
 
+    function isEmpty(value) {
+        return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
+    }
+
     $(function () {
         $('.datepicker').datepicker({
             todayBtn: "linked",
@@ -250,10 +297,131 @@ while($row = mysqli_fetch_assoc($result_list)){
         });
     });
 
-    function create(){
+    function showcreatemodal(){
         $("#create_user_data").modal("show");
+    }
+
+    function create() {
+
+        var firstname = $("#firstname").val();
+        var lastname = $("#lastname").val();
+        var fathername = $("#fathername").val();
+        var mail = $("#mail").val();
+        var birthday = $('input[name="birthday"]').val();
+        var telephone = $("#telephone").val();
+        var date_change = birthday.replaceAll('/', '-');
+        var password1 = $("#password1").val();
+        var password2 = $("#password2").val();
+        var gender = $("#gender").val();
+        var role = $("#roles").val();
 
 
+        if (isEmpty(firstname)) {
+            error = "*Name must be entered.";
+            $("#errorcfname").text(error);
+            return false;
+        }
+        filter_name = /^[a-zA-Z\s]+$/;
+        if (!filter_name.test(firstname)) {
+            error = "name should be only letters.";
+            $("#errorcfname").text(error);
+            return false;
+        }if (isEmpty(lastname)) {
+            error = "Surname must be entered.";
+            $("#errorclname").text(error);
+            return false;
+        }if (!filter_name.test(lastname)) {
+            error = "last name should be only letters.";
+            $("#errorclname").text(error);
+            return false;
+        }if (isEmpty(fathername)) {
+            error = "atesia must be entered.";
+            $("#errorcatesia").text(error);
+            return false;
+        }if (!filter_name.test(fathername)) {
+            error = "atesia should be only letters.";
+            $("#errorcatesia").text(error);
+            return false;
+        }if (isEmpty(mail)) {
+            error = "Email must be entered.";
+            $("#errorcemail").text(error);
+            return false;
+        }
+        filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (!filter_email.test(mail)) {
+            error = "Email not correct format.";
+            $("#errorcemail").text(error);
+            return false;
+
+        }if (isEmpty(telephone)) {
+            error = "phone must be entered.";
+            $("#errorcphone").text(error);
+            return false;
+        }
+        var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        if (!phoneno.test(telephone)) {
+            error = "Phone not correct format.";
+            $("#errorcphone").text(error);
+            return false;
+
+        }if (isEmpty(date_change)) {
+            error = "birthdate must be entered.";
+            $("#errorcbirthday").text(error);
+            return false;
+        }
+        if (isEmpty(password1)) {
+            error = "Password1 must be entered.";
+            $("#errorcpass1").text(error);
+            return false;
+        }if (isEmpty(password2)) {
+            error = "Password2 must be entered.";
+            $("#errorcpass2").text(error);
+            return false;
+        }if (password1 != password2) {
+            error = "Passwords are not the same.";
+            $("#errorcpass1").text(error);
+            $("#errorcpass2").text(error);
+            return false;
+        }
+        var minNumberofChars = 6;
+        var maxNumberofChars = 16;
+        var regularExpression = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
+        if (password1.length < minNumberofChars || password1.length > maxNumberofChars) {
+            error = "Password should contain One upper case one lower case one special character and 8 min characters.";
+            $("#errorcpass1").text(error);
+            return false;
+        }if (!regularExpression.test(password1)) {
+            error ="password should contain at least one number and one special character";
+            $("#errorcpass1").text(error);
+            return false;
+        }
+
+        $.ajax({
+            url: "ajax.php",
+            type: 'POST',
+            data: {
+                "action": "create",
+                "fname": firstname,
+                "lname": lastname,
+                "atesia": fathername,
+                "email": mail,
+                "phone": telephone,
+                "date_change": date_change,
+                "password1": password1,
+                "password2": password2,
+                "gender": gender,
+                "role": role
+            },
+            cache: false,
+            success: function (result) {
+                var response = JSON.parse(result);
+                if (response.code == 200) {
+                    window.location.href = "userlist.php";
+                } else if (response.code == 422) {
+                    window.alert(response.message)
+                }
+            }
+        });
     }
 
     function fill_modal_user_data(user_id) {
@@ -321,6 +489,23 @@ while($row = mysqli_fetch_assoc($result_list)){
 
     }
 
+    $.fn.dataTable.ext.search.push(
+        function( settings, data, dataIndex ) {
+            var min = parseInt( $('#mindate').val(), 10 );
+            var max = parseInt( $('#maxdate').val(), 10 );
+            var age = parseFloat( data[9] ) || 0;
+
+            if ( ( isNaN( min ) && isNaN( max ) ) ||
+                ( isNaN( min ) && age <= max ) ||
+                ( min <= age   && isNaN( max ) ) ||
+                ( min <= age   && age <= max ) )
+            {
+                return true;
+            }
+            return false;
+        }
+    );
+
     $(document).ready(function () {
 
         $('#emptable').DataTable({
@@ -330,8 +515,18 @@ while($row = mysqli_fetch_assoc($result_list)){
             serverMethod: 'POST',
             ajax: {
                 url: "tablefill.php",
+                //data: {
+                //    mindate: "<?//= $_POST['mindate'] ?>//"
+                //    maxdate: "<?//= $_POST['maxdate'] ?>//"
+                //}
             },
             columns: [
+                {
+                    data: "photo",
+                    render: function(data, meta, row) {
+                        return '<img src="' + data + '" alt="' + data + '"height="50" width="50"/>';
+                    }
+                },
                 {data: "name"},
                 {data: "surname"},
                 {data: "atesia"},
@@ -340,22 +535,14 @@ while($row = mysqli_fetch_assoc($result_list)){
                 {data: "phone"},
                 {data: "role"},
                 {data: "gender"},
-                {
-                    data: "actions",
-                    // render: function(data, meta, row) {
-                    //     return '<button>Test</button>';
-                    // }
-                }
+                {data: "created_at"},
+                {data: "actions",}
 
             ],
         });
 
     });
 
-
-    function isEmpty(value) {
-        return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
-    }
 
     function update() {
         var user_id = $("#user_modal_id").val();
@@ -366,6 +553,12 @@ while($row = mysqli_fetch_assoc($result_list)){
         var phone = $("#phone").val();
         var email = $("#email").val();
         var role = $("#role").val();
+
+        if (isEmpty(fname)) {
+            error = "Name must be entered.";
+            $("#errorufname").text(error);
+            return false;
+        }
 
         var data = {
             "action": "update",
