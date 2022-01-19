@@ -305,6 +305,7 @@ include "footer.php";
                     try {
                         response = JSON.parse(response);
                         if (response.code === '200') {
+                            alert("Data updated successfuly");
                             window.location.href = "profile.php";
                         } else {
                             alert(response.message);
