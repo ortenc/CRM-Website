@@ -104,11 +104,11 @@ while($row = mysqli_fetch_assoc($result_list)){
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <label>Date from</label>
-                                        <input class="form-control" type="text" id="mindate" name="mindate" autocomplete="off">
+                                        <input class="form-control datepicker" type="text" id="flt_reg_date_start" name="flt_reg_date_start" autocomplete="off">
                                     </div>
                                     <div class="col-sm-3">
-                                        <label>Date until</label>
-                                        <input class="form-control" type="text" id="maxdate" name="maxdate" autocomplete="off">
+                                        <label>Date from</label>
+                                        <input class="form-control datepicker" type="text" id="flt_reg_date_end" name="flt_reg_date_end" autocomplete="off">
                                     </div>
                                     <div class="col-sm-3">
                                         <label>Email</label>
@@ -122,14 +122,15 @@ while($row = mysqli_fetch_assoc($result_list)){
                                 <br>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <input type="submit" class="btn btn-primary" name="filter" id="filter" value="Filter">
+<!--                                        <input type="submit" class="btn btn-primary" name="filter" id="filter" value="Filter">-->
+                                        <input type='button' class="btn btn-primary" id="filter" value="Search">
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="ibox-content">
                             <div class="table-responsive">
-                                <table class="table table-striped table-bordered table-hover dataTables-example" id="emptable" >
+                                <table class="table table-striped table-bordered table-hover dataTables" id="emptable" >
                                     <thead>
                                     <tr>
                                         <th>Profile picture</th>
@@ -241,7 +242,7 @@ while($row = mysqli_fetch_assoc($result_list)){
                     <p id="errorcemail" style="color: red"></p>
                 </div>
                 <div class="form-group"><label>Password</label>
-                    <input type="password" class="form-control" id="password1" name="password1">
+                    <input type="password" class="form-control" id="password1" name="password1" autocomplete="off">
                     <p id="errorcpass1" style="color: red"></p>
                 </div>
                 <div class="form-group"><label>Re-Password</label>
@@ -288,12 +289,6 @@ while($row = mysqli_fetch_assoc($result_list)){
 
 <script>
 
-    $('input[name="mindate"]').daterangepicker();
-
-
-    function isEmpty(value) {
-        return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
-    }
 
     $(function () {
         $('.datepicker').datepicker({
@@ -307,6 +302,10 @@ while($row = mysqli_fetch_assoc($result_list)){
             changeMonth: true
         });
     });
+
+    function isEmpty(value) {
+        return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
+    }
 
     function showcreatemodal(){
         $("#create_user_data").modal("show");
@@ -502,23 +501,31 @@ while($row = mysqli_fetch_assoc($result_list)){
 
     $(document).ready(function () {
 
-        $('#emptable').DataTable({
+       var dataTable =  $('#emptable').DataTable({
             processing: true,
             serverSide: true,
             paging: true,
             serverMethod: 'POST',
             ajax: {
                 url: "tablefill.php",
-                data: {
-                    // 'action': "user_list",
-                    //mindate: "<?//= $_POST['semail']?>//",
-                    //maxdate: "<?//= $_POST['sphone']?>//"
+                data: function (data) {
+                    // Read values
+                    var flt_reg_date_start = $('#flt_reg_date_start').val();
+                    var flt_reg_date_end = $('#flt_reg_date_end').val();
+                    var semail = $('#semail').val();
+                    var sphone = $('#sphone').val();
+
+                    // Append to data
+                    data.p_flt_reg_date_start = flt_reg_date_start;
+                    data.p_flt_reg_date_end = flt_reg_date_end;
+                    data.flt_semail = semail;
+                    data.flt_sphone = sphone;
                 }
             },
             columns: [
                 {
                     data: "photo",
-                    render: function(data, meta, row) {
+                    render: function (data, meta, row) {
                         return '<img src="' + data + '" alt="' + data + '"height="50" width="50"/>';
                     }
                 },
@@ -536,7 +543,17 @@ while($row = mysqli_fetch_assoc($result_list)){
             ],
         });
 
+
+        $('#filter').click(function () {
+            dataTable.draw();
+
+        });
+
     });
+
+
+
+
 
 
     function update() {

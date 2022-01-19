@@ -13,20 +13,45 @@
 </body>
 
 <script>
-    $(function () {
-     var vk = $('input[name="daterange"]').daterangepicker({
-            dateFormat : 'yy-mm-dd',
-            singleDatePicker: true,
-            showDropdowns: true,
-            minYear: 1901,
-            maxYear: parseInt(moment().format('YYYY'),10)
-        }, function(start, end, label) {
-            var years = moment().diff(start, 'years');
-            alert("You are " + years + " years old!");
-            if (years < 18){
-                alert("je i vogel");
-                return false;
-            }
+    $(document).ready(function(){
+
+        // Datapicker
+        $( ".datepicker" ).datepicker({
+            "dateFormat": "yy-mm-dd",
+            changeYear: true
         });
+
+        // DataTable
+        var dataTable = $('#empTable').DataTable({
+            'processing': true,
+            'serverSide': true,
+            'serverMethod': 'post',
+            'searching': true, // Set false to Remove default Search Control
+            'ajax': {
+                'url':'ajaxfile.php',
+                'data': function(data){
+                    // Read values
+                    var from_date = $('#search_fromdate').val();
+                    var to_date = $('#search_todate').val();
+
+                    // Append to data
+                    data.searchByFromdate = from_date;
+                    data.searchByTodate = to_date;
+                }
+            },
+            'columns': [
+                { data: 'emp_name' },
+                { data: 'email' },
+                { data: 'date_of_joining' },
+                { data: 'salary' },
+                { data: 'city' },
+            ]
+        });
+
+        // Search button
+        $('#btn_search').click(function(){
+            dataTable.draw();
+        });
+
     });
 </script>

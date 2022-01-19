@@ -1,8 +1,8 @@
 <?php
-## Database configuration
+// Database configuration
 include 'database.php';
 
-## Read value
+// Read value
 $draw = $_POST['draw'];
 $row = $_POST['start'];
 $rowperpage = $_POST['length']; // Rows display per page
@@ -11,25 +11,45 @@ $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
 $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 $searchValue = mysqli_real_escape_string($conn,$_POST['search']['value']); // Search value
 
-## Search
+// Search
 $searchQuery = " ";
 if($searchValue != ''){
     $searchQuery = " and (name like '%".$searchValue."%' or 
         surname like '%".$searchValue."%' or 
+        phone like '%".$searchValue."%' or 
+        role like '%".$searchValue."%' or 
+        gender like '%".$searchValue."%' or 
         email like'%".$searchValue."%' ) ";
 }
+$flt_reg_date_start = mysqli_real_escape_string($conn,$_POST['p_flt_reg_date_start']);
+$flt_reg_date_end = mysqli_real_escape_string($conn,$_POST['p_flt_reg_date_end']);
+$flt_semail = mysqli_real_escape_string($conn,$_POST['flt_semail']);
+$flt_sphone = mysqli_real_escape_string($conn,$_POST['flt_sphone']);
 
-## Total number of records without filtering
+if($flt_reg_date_start != '' && $flt_reg_date_end != ''){
+    $searchQuery .= " and (created_at between '".$flt_reg_date_start."' and '".$flt_reg_date_end."' ) ";
+}
+if($flt_semail != ''){
+    $searchQuery = " and ( email like'%".$flt_semail."%' ) ";
+}
+if($flt_sphone != ''){
+    $searchQuery = " and ( phone like'%".$flt_sphone."%' ) ";
+}
+
+
+// Total number of records without filtering
 $sel = mysqli_query($conn,"select count(*) as allcount from users");
+
 $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
-## Total number of record with filtering
-$sel = mysqli_query($conn,"select count(*) as allcount from users WHERE 1 ".$searchQuery);
+// Total number of record with filtering
+$query_select_users = "select count(*) as allcount from users WHERE 1=1 ".$searchQuery;
+$sel = mysqli_query($conn,$query_select_users);
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
-## Fetch records
+// Fetch records
 $empQuery = "select * from users WHERE 1 ".$searchQuery." order by ".$columnName." ".$columnSortOrder." limit ".$row.",".$rowperpage;
 $empRecords = mysqli_query($conn, $empQuery);
 $data = array();
