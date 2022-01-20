@@ -62,6 +62,9 @@ $user_id_list = $_SESSION['id'];
                     <a href="userlist.php"><i class="fa fa-table"></i> <span class="nav-label">Admin</span></a>
                 </li>
             <?php } ?>
+            <li class="active">
+                <a href="report.php"><i class="fa fa-file"></i> <span class="nav-label">Report</span></a>
+            </li>
         </ul>
     </div>
 </nav>

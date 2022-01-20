@@ -8,64 +8,8 @@ if(!$_SESSION['id'])
 {
     header('location : login.php');
 }
-
-$user_id = $_SESSION['id'];
-$user_role = $_SESSION['role'];
-
 require('database.php');
 
-$query_photo ="SELECT * FROM users WHERE id= '$user_id'";
-
-$result_photo = mysqli_query($conn, $query_photo);
-$user = mysqli_fetch_assoc($result_photo);
-
-
-// insert profile picture
-
-if(isset($_FILES["profile_photo"]["name"])){
-    $target_dir = "photos/";
-    $target_file = $target_dir . basename($_FILES["profile_photo"]["name"]);
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-    if (move_uploaded_file($_FILES["profile_photo"]["tmp_name"], $target_file)) {
-        $sql = "UPDATE users SET photo = '$target_file' WHERE id = '$user_id' ";
-        $rs = mysqli_query($conn,$sql);
-        header("Location: profile.php");
-    } else {
-        echo "Sorry, there was an error uploading your file.";
-        exit;
-    }
-}
-
-
-// Store session id for user chat
-
-$user_id_list = $_SESSION['id'];
-
-$query_list = "SELECT * FROM users WHERE id != '".$user_id_list."'";
-$result_list = mysqli_query($conn, $query_list);
-
-if (!$result_list) {
-    echo "Internal server error";
-    exit;
-}
-
-// Display all users
-
-$query_list = "SELECT * FROM users WHERE 1=1";
-$result_list = mysqli_query($conn,$query_list);
-$users = [];
-while($row = mysqli_fetch_assoc($result_list)){
-    $users[$row['id']]['id']= $row['id'];
-    $users[$row['id']]['photo']= $row['photo'];
-    $users[$row['id']]['name']= $row['name'];
-    $users[$row['id']]['surname'] = $row['surname'];
-    $users[$row['id']]['atesia'] = $row['atesia'];
-    $users[$row['id']]['username'] = $row['username'];
-    $users[$row['id']]['email'] = $row['email'];
-    $users[$row['id']]['phone'] = $row['phone'];
-    $users[$row['id']]['gender'] = $row['gender'];
-    $users[$row['id']]['role'] = $row['role'];
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -543,18 +487,11 @@ while($row = mysqli_fetch_assoc($result_list)){
             ],
         });
 
-
         $('#filter').click(function () {
             dataTable.draw();
 
         });
-
     });
-
-
-
-
-
 
     function update() {
         var user_id = $("#user_modal_id").val();
@@ -596,16 +533,13 @@ while($row = mysqli_fetch_assoc($result_list)){
                 if (response.code == 200) {
                     window.location.href = "userlist.php";
                 }
-
-                if (response.code == 404) {
+                if (response.code == 422) {
                     Swal.fire(response.message);
                 }
-
-
-
             }
         });
     }
+
     function delete_user() {
 
         var user_id = $("#user_modal_id_delete").val();
