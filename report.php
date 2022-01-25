@@ -13,6 +13,18 @@ require('database.php');
 ?>
 <!DOCTYPE html>
 <html>
+<style>
+
+    td.details-control {
+        background: url('photos/plus.jpg') no-repeat center center;
+        background-size: 35px;
+        cursor: pointer;
+    }
+    tr.details td.details-control {
+        background: url('photos/minus.jpg') no-repeat center center;
+        background-size: 35px;
+    }
+</style>
 
 <head>
 
@@ -48,6 +60,7 @@ require('database.php');
                             <table class="table table-striped table-bordered table-hover dataTables" id="emptable" >
                                 <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Name</th>
                                     <th>Surname</th>
                                     <th>Date</th>
@@ -68,15 +81,73 @@ require('database.php');
 
 <script>
 
-    function format ( d ) {
-        return 'Full name: '+d.name+' '+d.surname+'<br>'+
-            'Salary: '+d.date+'<br>'+
-            'The child row can contain any data you wish, including links, images, inner tables etc.';
+    function format ( details ) {
+
+
+        var table = "<table class = 'table'> " +
+                        "<thead> " +
+                            "<tr> " +
+                                 "<th> Name</th>"+
+                                 "<th> Surname</th>"+
+                                 "<th> Date</th>"+
+                                 "<th> Check In</th>"+
+                                 "<th> Check Out</th>"+
+                             "</tr>" +
+                        "</thead>" +
+                        "<tbody>";
+
+
+        $.each(details, function (check_out, check_in) {
+            table += "<tr>" +
+                        "<td> Test Name</td>"+
+                        "<td> Test Surname</td>"+
+                        "<td> Test Date</td>"+
+                        "<td> "+check_in+"</td>"+
+                        "<td> "+check_out+"</td>"+
+                    "</tr>"
+        });
+
+        table += "</tbody>" +
+                "<table>";
+
+        return table;
     }
+
+    function render_row_details(row_details) {
+
+        var table = "<table class='table table-hover' style='text-align: center'>" +
+            "<thead>" +
+            "<tr style='background-color: #737272;  color: white;'>" +
+            "<th><center>Name</center></th>" +
+            "<th><center>Surname</center></th>" +
+            "<th><center>Date</center></th>" +
+            "<th><center>hours_in</center></th>" +
+            "<th><center>hours_out</center></th>" +
+            "</tr>" +
+            "</thead>" +
+            "<tbody>";
+        $.each(row_details, function (index, row_data) {
+            console.log(index);
+            table +=
+                "<tr style='background-color: #e2e2e2'>" +
+                "<td><center>" + row_data.name + "</center></td>" +
+                "<td><center>" + row_data.surname + "</center> </td>" +
+                "<td><center>" + row_data.date + "</center></td>" +
+                "<td><center>" + row_data.hours_in + "</center></td>" +
+                "<td><center>" + row_data.hours_out + "</center></td>" +
+                "</tr>";
+
+        });
+
+        table += "</tbody></table>";
+        return table;
+    }
+
+
 
     $(document).ready(function () {
 
-        var dataTable =  $('#emptable').DataTable({
+        var dt =  $('#emptable').DataTable({
             processing: true,
             serverSide: true,
             paging: true,
@@ -87,13 +158,92 @@ require('database.php');
                 }
             },
             columns: [
+
+                {data: "actions"},
                 {data: "name"},
                 {data: "surname"},
                 {data: "date"},
                 {data: "hours_in"},
                 {data: "hours_out"}
             ],
+            columnsDefs: [
+                {
+                    orderable: false,
+                    searchable: false,
+                    targets: 0
+
+                },
+                {"targets":4, "type":"date-eu"}
+            ]
         });
+
+        // var detailRows = [];
+        //
+        // $('#emptable tbody').on( 'click', 'tr td.details-control', function () {
+        //     var tr = $(this).closest('tr');
+        //     var row = dataTable.row( tr );
+        //     var idx = $.inArray( tr.attr('id'), detailRows );
+        //
+        //     if ( row.child.isShown() ) {
+        //         tr.removeClass( 'details' );
+        //         row.child.hide();
+        //
+        //         // Remove from the 'open' array
+        //         detailRows.splice( idx, 1 );
+        //     }
+        //     else {
+        //         tr.addClass( 'details' );
+        //         row.child( format( row.data().row_details ) ).show();
+        //
+        //         // Add to the 'open' array
+        //         if ( idx === -1 ) {
+        //             detailRows.push( tr.attr('id') );
+        //         }
+        //     }
+        // } );
+        //
+        // dataTable.on( 'draw', function () {
+        //     $.each( detailRows, function ( i, id ) {
+        //         $('#'+id+' td.details-control').trigger( 'click' );
+        //     } );
+        // } );
+
+        // Array to track the ids of the details displayed rows
+        var detailRows = [];
+
+        $('#emptable tbody').on('click', '.details-control', function () {
+
+            var tr = $(this).parents('tr');
+            var row = dt.row(tr);
+            var idx = $.inArray(tr.attr('id'), detailRows);
+
+            $('#expand_' + tr.attr("id") + ' button').toggleClass('fa fa-plus');
+            $('#expand_' + tr.attr("id") + ' button').toggleClass('fa fa-minus');
+            if (row.child.isShown()) {
+                tr.removeClass('details bg-light');
+                row.child.hide();
+
+                // Remove from the 'open' array
+                detailRows.splice(idx, 1);
+            } else {
+                tr.addClass('details bg-light');
+                row.child(render_row_details(row.data().row_details)).show();
+
+                // Add to the 'open' array
+                if (idx === -1) {
+                    detailRows.push(tr.attr('id'));
+                }
+            }
+
+        });
+        // On each draw, loop over the `detailRows` array and show any child rows
+        dt.on('draw', function () {
+            $.each(detailRows, function (i, id) {
+                console.log('detailRows',detailRows);
+                $('#' + id + ' td:first-child').trigger('click');
+            });
+        });
+
 
 
         $('#filter').click(function () {
