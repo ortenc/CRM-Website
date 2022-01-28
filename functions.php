@@ -165,6 +165,10 @@ function uploadPhoto($data, $id, $profilePhotoPath)
     }
 }
 
-
+function printArray($a){
+    echo "<pre>";
+    print_r($a);
+    echo "</pre>";
+}
 
 ?>

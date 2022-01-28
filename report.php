@@ -176,16 +176,17 @@ require('database.php');
             var row = dt.row(tr);
             var idx = $.inArray(tr.attr('id'), detailRows);
 
-            // $('#expand_' + tr.attr("id") + ' button').toggleClass('fa fa-plus');
-
-            // $('#expand_' + tr.attr("id") + ' button').toggleClass('fa fa-minus');
+            $(this).removeClass("fa-plus").addClass("fa-minus");
 
             if (row.child.isShown()) {
+
+                $(this).removeClass("fa-minus").addClass("fa-plus");
                 tr.removeClass('details bg-light');
                 row.child.hide();
                 // Remove from the 'open' array
                 detailRows.splice(idx, 1);
             } else {
+                $(this).removeClass("fa-plus").addClass("fa-minus");
                 tr.addClass('details bg-light');
                 row.child(render_row_details(row.data().row_details)).show();
                 // Add to the 'open' array
