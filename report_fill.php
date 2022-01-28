@@ -59,9 +59,11 @@ $empQuery = "SELECT
 
 $empRecords = mysqli_query($conn, $empQuery);
 $data = array();
+$num_id = 1;
 while ($row = mysqli_fetch_assoc($empRecords)) {
-
-
+//    $data[$row['check_in_date']][$row['id']]['id'] = $row['id'];
+//    print_r($row_id);
+//    exit;
     $check_in = $row['check_in_date']." ".$row['check_in_hour'];
     $check_out = $row['check_in_date']." ".$row['check_out_hour'];
 
@@ -73,10 +75,14 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
     $data[$row['check_in_date']][$row['id']]['check_outs'][] = $check_out;
     $data[$row['check_in_date']][$row['id']]['all_checks'][] = $check_in;
     $data[$row['check_in_date']][$row['id']]['all_checks'][] = $check_out;
-    $data[$row['check_in_date']][$row['id']]['row_details']['name'] = $row['name'];
-    $data[$row['check_in_date']][$row['id']]['row_details']['surname'] = $row['surname'];
-    $data[$row['check_in_date']][$row['id']]['row_details'][$check_in] = $check_out;
+
+    $data[$row['check_in_date']][$row['id']]['row_details'][$check_in]['check_in'] = $row['check_in_hour'];
+    $data[$row['check_in_date']][$row['id']]['row_details'][$check_in]['date'] = $row['check_in_date'];
+    $data[$row['check_in_date']][$row['id']]['row_details'][$check_in]['check_out'] = $row['check_out_hour'];
+    $data[$row['check_in_date']][$row['id']]['row_details'][$check_in]['name'] = $row['name'];
+    $data[$row['check_in_date']][$row['id']]['row_details'][$check_in]['surname'] = $row['surname'];
 //    $data[$row['check_in_date']][$row['id']]['row_details'][$check_out] = $check_in;
+
 
 
     $check_in_cal = 0;
@@ -112,7 +118,6 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
 //echo "</pre>";
 
 
-$num_id = 1;
 foreach ($data as $date => $data_row) {
     foreach ($data_row as $user_id => $row) {
 
@@ -122,8 +127,8 @@ foreach ($data as $date => $data_row) {
 
         $tbl_data[] = array(
             "DT_RowId" => "row_" . $row['id'],
-            'actions' => "<span id = 'expand_row_" . $row['id'] . "'> <div class='row'>
-            <button class='btn btn-primary details-control fa fa-plus'></button></span>",
+            'actions' => "<span id = 'expand_row_" . $row['id'] . "'> <div class='row-center'>
+            <button class='btn btn-primary details-control fa fa-plus' p></button></span>",
             "name" => $row['name'],
             "surname" => $row['surname'],
             "date" => $date,

@@ -13,18 +13,6 @@ require('database.php');
 ?>
 <!DOCTYPE html>
 <html>
-<style>
-
-    td.details-control {
-        background: url('photos/plus.jpg') no-repeat center center;
-        background-size: 35px;
-        cursor: pointer;
-    }
-    tr.details td.details-control {
-        background: url('photos/minus.jpg') no-repeat center center;
-        background-size: 35px;
-    }
-</style>
 
 <head>
 
@@ -125,21 +113,22 @@ require('database.php');
             "<th><center>hours_out</center></th>" +
             "</tr>" +
             "</thead>" +
-            "<tbody>";
+            "<tbody><tr style='background-color: #e2e2e2'>";
+
+
         $.each(row_details, function (index, row_data) {
-            console.log(index);
             table +=
-                "<tr style='background-color: #e2e2e2'>" +
-                "<td><center>" + row_data.name + "</center></td>" +
+                "<tr>"+
+                "<td><center>" + row_data.name + "</center> </td>" +
                 "<td><center>" + row_data.surname + "</center> </td>" +
                 "<td><center>" + row_data.date + "</center></td>" +
-                "<td><center>" + row_data.hours_in + "</center></td>" +
-                "<td><center>" + row_data.hours_out + "</center></td>" +
-                "</tr>";
+                "<td><center>" + row_data.check_in + "</center></td>" +
+                "<td><center>" + row_data.check_out + "</center></td>" +
+            "<tr>"
 
         });
 
-        table += "</tbody></table>";
+        table += "</tr></tbody></table>";
         return table;
     }
 
@@ -177,38 +166,8 @@ require('database.php');
             ]
         });
 
-        // var detailRows = [];
-        //
-        // $('#emptable tbody').on( 'click', 'tr td.details-control', function () {
-        //     var tr = $(this).closest('tr');
-        //     var row = dataTable.row( tr );
-        //     var idx = $.inArray( tr.attr('id'), detailRows );
-        //
-        //     if ( row.child.isShown() ) {
-        //         tr.removeClass( 'details' );
-        //         row.child.hide();
-        //
-        //         // Remove from the 'open' array
-        //         detailRows.splice( idx, 1 );
-        //     }
-        //     else {
-        //         tr.addClass( 'details' );
-        //         row.child( format( row.data().row_details ) ).show();
-        //
-        //         // Add to the 'open' array
-        //         if ( idx === -1 ) {
-        //             detailRows.push( tr.attr('id') );
-        //         }
-        //     }
-        // } );
-        //
-        // dataTable.on( 'draw', function () {
-        //     $.each( detailRows, function ( i, id ) {
-        //         $('#'+id+' td.details-control').trigger( 'click' );
-        //     } );
-        // } );
-
         // Array to track the ids of the details displayed rows
+
         var detailRows = [];
 
         $('#emptable tbody').on('click', '.details-control', function () {
@@ -217,18 +176,18 @@ require('database.php');
             var row = dt.row(tr);
             var idx = $.inArray(tr.attr('id'), detailRows);
 
-            $('#expand_' + tr.attr("id") + ' button').toggleClass('fa fa-plus');
-            $('#expand_' + tr.attr("id") + ' button').toggleClass('fa fa-minus');
+            // $('#expand_' + tr.attr("id") + ' button').toggleClass('fa fa-plus');
+
+            // $('#expand_' + tr.attr("id") + ' button').toggleClass('fa fa-minus');
+
             if (row.child.isShown()) {
                 tr.removeClass('details bg-light');
                 row.child.hide();
-
                 // Remove from the 'open' array
                 detailRows.splice(idx, 1);
             } else {
                 tr.addClass('details bg-light');
                 row.child(render_row_details(row.data().row_details)).show();
-
                 // Add to the 'open' array
                 if (idx === -1) {
                     detailRows.push(tr.attr('id'));
@@ -239,7 +198,6 @@ require('database.php');
         // On each draw, loop over the `detailRows` array and show any child rows
         dt.on('draw', function () {
             $.each(detailRows, function (i, id) {
-                console.log('detailRows',detailRows);
                 $('#' + id + ' td:first-child').trigger('click');
             });
         });
