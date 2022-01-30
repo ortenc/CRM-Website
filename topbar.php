@@ -22,14 +22,14 @@
     </div>
 
     <script>
-        // setInterval(function () {
-        //     $.ajax({
-        //         url: "ajax.php",
-        //         method: "POST",
-        //         data: {"action": "last_active_time"},
-        //         success: function (res) {
-        //             $("#active_time").html(res);
-        //         }
-        //     })
-        // }, 1000);
+        setInterval(function () {
+            $.ajax({
+                url: "ajax.php",
+                method: "POST",
+                data: {"action": "last_active_time"},
+                success: function (res) {
+                    $("#active_time").html(res);
+                }
+            })
+        }, 1000);
     </script>

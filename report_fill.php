@@ -1,9 +1,12 @@
 <?php
+
 // Database configuration
+
 include 'database.php';
 include 'functions.php';
 
 // Read value
+
 $draw = $_POST['draw'];
 $row = $_POST['start'];
 $rowperpage = $_POST['length']; // Rows display per page
@@ -13,6 +16,7 @@ $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 $searchValue = mysqli_real_escape_string($conn, $_POST['search']['value']); // Search value
 
 // Search
+
 $searchQuery = " ";
 if ($searchValue != '') {
     $searchQuery = " and (name like '%" . $searchValue . "%' or 
@@ -21,6 +25,7 @@ if ($searchValue != '') {
 }
 
 // Total number of records without filtering
+
 $sel = mysqli_query($conn, "select count(*) as allcount from users INNER JOIN checkins ON users.id=checkins.user_id GROUP BY users.name");
 if(!$sel){
     echo "error ".__LINE__;
@@ -30,12 +35,15 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 
 // Total number of record with filtering
+
 $query_select_users = "select count(*) as allcount from users INNER JOIN checkins ON users.id=checkins.user_id WHERE 1=1 " . $searchQuery;
 $sel = mysqli_query($conn, $query_select_users);
+
 if(!$sel){
     echo "error ".__LINE__;
     exit;
 }
+
 $records = mysqli_fetch_assoc($sel);
 $totalRecordwithFilter = $records['allcount'];
 
@@ -54,8 +62,14 @@ if ($columnName == 'name') {
 
 $columnName = 'name';
 
-$query_get_10_dates = "SELECT distinct check_in_date,users.id   FROM users
-             LEFT JOIN checkins ON users.id=checkins.user_id WHERE 1=1 " . $searchQuery . " order by " . $columnName . " " . $columnSortOrder . " limit " . $row . "," . $rowperpage;
+$query_get_10_dates = "SELECT distinct 
+                            check_in_date,users.id   
+                            FROM users
+                            LEFT JOIN checkins ON users.id=checkins.user_id WHERE 1=1 
+                            " . $searchQuery . " 
+                            order by " . $columnName . " " . $columnSortOrder . " 
+                            limit " . $row . "," . $rowperpage;
+
 $result_get_10_dates = mysqli_query($conn, $query_get_10_dates);
 
 $ten_dates = array();
@@ -102,7 +116,6 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
     $data[$row['check_in_date']][$row['id']]['row_details'][$check_in]['differnece_checkins'] = strtotime($row['check_out_hour']) - strtotime($row['check_in_hour']);
     $data[$row['check_in_date']][$row['id']]['row_details'][$check_in]['name'] = $row['name'];
     $data[$row['check_in_date']][$row['id']]['row_details'][$check_in]['surname'] = $row['surname'];
-//    $data[$row['check_in_date']][$row['id']]['row_details'][$check_out] = $check_in;
 
     $check_in_cal = 0;
     $check_out_cal = 0;
@@ -112,24 +125,6 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
 
     $data[$row['check_in_date']][$row['id']]['time_in'] = $check_in_cal;
     $data[$row['check_in_date']][$row['id']]['out_time'] = round( 8 - ($check_in_cal/3600),2);
-
-
-//    $temp = array();
-//
-//    $temp['check_in_date'] = $row['check_in_date'];
-//    $temp['name'] = $row['name'];
-//    $temp['surname'] = $row['surname'];
-//    $temp[$row['check_in_date']]['check_in_hours'][] = $row['check_in_hour'];
-//    $temp[$row['check_in_date']]['check_out_hours'][] = $row['check_out_hour'];
-//    $temp['check_in_hour'] = $row['check_in_hour'];
-//    $temp['check_out_hour'] = $row['check_out_hour'];
-//
-//    $diff1 = new DateTime($temp['check_in_hour']);
-//    $diff2 = new DateTime($temp['check_out_hour']);
-//    $totaldiff = $diff2->diff($diff1);
-//    $temp['nrofhoursin'] = $totaldiff->format('%h:%i:%s');
-//
-//    $data[] = $temp;
 
 }
 
@@ -148,9 +143,6 @@ foreach ($data as $date => $data_row) {
             $difference += $diff4;
         }
         $data_row['hours_out_count'] = round($difference/3600,2);
-//        echo "<pre>";
-//        print_r($row);
-//        echo "</pre>";
 
         $tbl_data[] = array(
             "DT_RowId" => "row_" . $row['id'],

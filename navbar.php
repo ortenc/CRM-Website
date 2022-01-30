@@ -1,7 +1,6 @@
 <?php
 require('database.php');
 
-
 if(!$_SESSION['id'])
 {
     header('location : login.php');
@@ -14,23 +13,6 @@ $query ="SELECT * FROM users WHERE id= '$user_id'";
 
 $result = mysqli_query($conn, $query);
 $user = mysqli_fetch_assoc($result);
-
-
-// insert profile picture
-
-if(isset($_FILES["profile_photo"]["name"])){
-    $target_dir = "photos/";
-    $target_file = $target_dir . basename($_FILES["profile_photo"]["name"]);
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-    if (move_uploaded_file($_FILES["profile_photo"]["tmp_name"], $target_file)) {
-        $sql = "UPDATE users SET photo = '$target_file' WHERE id = '$user_id' ";
-        $rs = mysqli_query($conn,$sql);
-        header("Location: profile.php");
-    } else {
-        echo "Sorry, there was an error uploading your file.";
-        exit;
-    }
-}
 
 // Store session id for user chat
 

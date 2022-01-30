@@ -64,9 +64,6 @@
             </div>
         </div>
         <button type="button" class="btn btn-primary block full-width m-b" onclick="register()">Register</button>
-<!--        <p-->
-<!--                class="form-control" id="errorid">-->
-<!--        </p>-->
         <p class="text-muted text-center"><small>Already have an account?</small></p>
         <a class="btn btn-sm btn-white btn-block" href="login.php">Login</a>
     </div>
@@ -87,13 +84,6 @@
             dateFormat: "yy-mm-dd",
             changeYear: true,
             changeMonth: true
-        });
-    });
-
-    $(document).ready(function () {
-        $('.i-checks').iCheck({
-            checkboxClass: 'icheckbox_square-green',
-            radioClass: 'iradio_square-green',
         });
     });
 
@@ -122,8 +112,8 @@
             $("#errorfname").text(error);
             return false;
         }
-        filter_name = /^[a-zA-Z\s]+$/;
-        if (!filter_name.test(fname)) {
+        var filter_only_letters = /^[a-zA-Z\s]+$/;
+        if (!filter_only_letters.test(fname)) {
             error = "name should be only letters.";
             $("#errorfname").text(error);
             return false;
@@ -131,7 +121,7 @@
             error = "Surname must be entered.";
             $("#errorlname").text(error);
             return false;
-        }if (!filter_name.test(lname)) {
+        }if (!filter_only_letters.test(lname)) {
             error = "last name should be only letters.";
             $("#errorlname").text(error);
             return false;
@@ -139,7 +129,7 @@
             error = "atesia must be entered.";
             $("#erroratesia").text(error);
             return false;
-        }if (!filter_name.test(atesia)) {
+        }if (!filter_only_letters.test(atesia)) {
             error = "atesia should be only letters.";
             $("#erroratesia").text(error);
             return false;
@@ -147,13 +137,19 @@
             error = "Email must be entered.";
             $("#erroremail").text(error);
             return false;
+        }
+        filter_email_fomrat = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (!filter_email_fomrat.test(email)) {
+            error = "Email not correct format.";
+            $("#erroremail").text(error);
+            return false;
         }if (isEmpty(phone)) {
             error = "phone must be entered.";
             $("#errorphone").text(error);
             return false;
         }
-        var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-        if (!phoneno.test(phone)) {
+        var phone_number_filter = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        if (!phone_number_filter.test(phone)) {
             error = "Phone not correct format.";
             $("#errorphone").text(error);
             return false;
@@ -163,13 +159,7 @@
             $("#errorbirthday").text(error);
             return false;
         }
-        filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!filter_email.test(email)) {
-            error = "Email not correct format.";
-            $("#erroremail").text(error);
-            return false;
-
-        }if (isEmpty(password1)) {
+        if (isEmpty(password1)) {
             error = "Password1 must be entered.";
             $("#errorpass1").text(error);
             return false;
@@ -217,7 +207,7 @@
                 if (response.code == 200) {
                     window.location.href = "login.php";
                 } else if (response.code == 422) {
-                    window.alert(response.message)
+                    swal.fire(response.message)
                 }
             }
         });

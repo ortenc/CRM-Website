@@ -33,16 +33,16 @@ if ($_POST['action'] == "register") {
         echo json_encode(array("code" => "422", "message" => "Surname cannot be empty!"));
         exit;
     }if (!$surname_preg) {
-        echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
+        echo json_encode(array("code" => "422", "message" => "Surname must have only letters!"));
         exit;
     }if (empty($atesia)) {
         echo json_encode(array("code" => "422", "message" => "Atesia cannot be empty!"));
         exit;
     }if (!$atesia_preg) {
-        echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
+        echo json_encode(array("code" => "422", "message" => "Atesia must have only letters!"));
         exit;
     }if (empty($txtemail)) {
-        echo json_encode(array("code" => "422", "message" => "email cannot be empty!"));
+        echo json_encode(array("code" => "422", "message" => "Email cannot be empty!"));
         exit;
     }
     // check if e-mail address is well-formed
@@ -254,7 +254,7 @@ if ($_POST['action'] == "register") {
 } elseif ($_POST['action'] == "login") {
 
     $txtpassword = $_POST['password'];
-    $txtemail = mysqli_real_escape_string($conn, $_POST['email']);
+    $txtemail = $_POST['email'];
 
     if (empty($txtemail)) {
         echo json_encode(array("code" => "422", "message" => "Email cannot be empty!"));
@@ -268,6 +268,7 @@ if ($_POST['action'] == "register") {
     $query_select = "SELECT * FROM users WHERE email='$txtemail' OR phone='$txtemail'";
     $result = mysqli_query($conn, $query_select);
     $check = mysqli_fetch_assoc($result);
+
 
     if (password_verify($txtpassword, $check['password'])) {
         $_SESSION['id'] = $check['id'];

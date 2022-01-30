@@ -14,9 +14,9 @@ $user_role = $_SESSION['role'];
 
 
 // Get the loged in user data
-$query = "SELECT * FROM users WHERE id= '$user_id'";
+$query_id = "SELECT * FROM users WHERE id= '$user_id'";
 
-$result = mysqli_query($conn, $query);
+$result = mysqli_query($conn, $query_id);
 $user = mysqli_fetch_assoc($result);
 
 // Get session id for user chat
@@ -305,10 +305,10 @@ include "footer.php";
                     try {
                         response = JSON.parse(response);
                         if (response.code === '200') {
-                            alert("Data updated successfuly");
+                            swal.fire("Data updated successfuly");
                             window.location.href = "profile.php";
                         } else {
-                            alert(response.message);
+                            swal.fire(response.message);
                         }
                     } catch (e) {
                         alert(response.message);
