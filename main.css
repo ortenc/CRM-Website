@@ -1,0 +1,13 @@
+.profile_content_id{
+    width: 300px;
+    margin: 0 auto;
+}
+.user_submit_button{
+    width: 300px;
+    margin: 0 auto;
+    padding: 6px 71px;
+    margin-bottom: 4px;
+}
+    .Round_corners_id {
+        border-radius: 15px;
+    }

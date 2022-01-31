@@ -73,7 +73,15 @@ while ($row = mysqli_fetch_assoc($result_list)) {
     <?php
     include "header.php";
     ?>
+
 </head>
+
+<style>
+    <?php
+    include "main.css";
+    ?>
+</style>
+
 <body>
 
 <div id="wrapper">
@@ -82,6 +90,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
         include "navbar.php";
         include "topbar.php";
     ?>
+
         <div class="wrapper wrapper-content">
             <div class="row animated fadeInRight">
                 <div class="col-md-4">
@@ -91,7 +100,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                         </div>
                         <div>
                             <div class="ibox-content no-padding border-left-right">
-                                <div class="row">
+                                <div class="row profile_content_id">
                                     <div class="col-md-12">
                                         <div id="profile-container-user">
                                             <img id="profileImage-user" src="<?= $user['photo'] ?>">
@@ -180,7 +189,7 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row user_submit_button" >
                                     <div class="col-md-12">
                                         <button type="submit" class="btn btn-primary btn-round"
                                                 onclick="userUpdate('<?= $user['id'] ?>')">Update Profile

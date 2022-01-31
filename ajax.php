@@ -61,7 +61,14 @@ if ($_POST['action'] == "register") {
     }if (empty($txtbirthday)) {
         echo json_encode(array("code" => "422", "message" => "birthday cannot be empty!"));
         exit;
-    }if (empty($phone)) {
+    }
+    $check_age = strtotime($txtbirthday);
+    $age = 18;
+    if(time() - $check_age < $age * 31536000){
+        echo json_encode(array("code" => "422", "message" => "Age required is over 18!"));
+        exit;
+    }
+    if (empty($phone)) {
         echo json_encode(array("code" => "422", "message" => "Phone cannot be empty!"));
         exit;
     }if (!$phone_preg) {
@@ -251,7 +258,7 @@ if ($_POST['action'] == "register") {
 // Log in user into the webapage action code
 
 
-} elseif ($_POST['action'] == "login") {
+}elseif ($_POST['action'] == "login") {
 
     $txtpassword = $_POST['password'];
     $txtemail = $_POST['email'];
@@ -294,8 +301,7 @@ if ($_POST['action'] == "register") {
 // Update user details in the database from admin panel action code
 
 
-}
-elseif ($_POST['action'] == "update") {
+}elseif ($_POST['action'] == "update") {
 
     $id = $conn->escape_string($_POST['id']);
     $fname = $conn->escape_string($_POST['name']);
@@ -387,7 +393,7 @@ elseif ($_POST['action'] == "update") {
 // Delete user from database from admin panel action code
 
 
-} elseif ($_POST['action'] == "erase") {
+}elseif ($_POST['action'] == "erase") {
 
     $id = $conn->escape_string($_POST['id']);
 
@@ -409,8 +415,7 @@ elseif ($_POST['action'] == "update") {
 // Personal user details update from userpage panel code
 
 
-}
-elseif ($_POST['action'] == "userUpdate") {
+}elseif ($_POST['action'] == "userUpdate") {
     $id = $conn->escape_string($_POST['id']);
     $fname = $conn->escape_string($_POST['name']);
     $lname = $conn->escape_string($_POST['surname']);
@@ -476,11 +481,10 @@ elseif ($_POST['action'] == "userUpdate") {
 
 
 
-
 // Get chat history when the pop up is initiated from start chat button click
 
 
-} elseif ($_POST['action'] == "get_chat_history") {
+}elseif ($_POST['action'] == "get_chat_history") {
 
     $to_user_id = $conn->escape_string($_POST['to_user_id']);
     $from_user_id = $conn->escape_string($_SESSION['id']);
@@ -489,15 +493,10 @@ elseif ($_POST['action'] == "userUpdate") {
     echo json_encode(array("code" => "200", "message" => "Success", 'chat' => $data));
 
 
-}
-
-
-
-
 // Update last activity time of the user
 
 
-elseif ($_POST['action'] == "update_last_activity") {
+}elseif ($_POST['action'] == "update_last_activity") {
 
     $query = "UPDATE login_details 
               SET last_activity = now() 
@@ -505,18 +504,13 @@ elseif ($_POST['action'] == "update_last_activity") {
               ";
 
 
-
     $result = mysqli_query($conn, $query);
-}
-
-
-
 
 
 // Insert chat from user to user with message body
 
 
-elseif ($_POST['action'] == "insert_chat") {
+}elseif ($_POST['action'] == "insert_chat") {
 
     $to_user_id = $conn->escape_string($_POST['to_user_id']);
     $from_user_id = $conn->escape_string($_SESSION['id']);
@@ -535,8 +529,10 @@ elseif ($_POST['action'] == "insert_chat") {
         echo fetch_user_chat_history($_SESSION['id'], $_POST['to_user_id'], $conn);
     }
 
+    // Fill update modal with existing user info
 
-} elseif ($_POST['action'] == "fill_modal_user_data") {
+
+}elseif ($_POST['action'] == "fill_modal_user_data") {
     $user_id = $conn->escape_string($_POST['user_id']);
 
 
@@ -560,10 +556,12 @@ elseif ($_POST['action'] == "insert_chat") {
         "username" => $user['username'],
         "phone" => $user['phone'],
         "role" => $user['role']
-        ));
+    ));
 
 
-} elseif ($_POST['action'] == "fill_user_delete") {
+    // Fill delete modal with existing user info
+
+}elseif ($_POST['action'] == "fill_user_delete") {
 
     $user_id = $conn->escape_string($_POST['user_id']);
 
@@ -584,18 +582,23 @@ elseif ($_POST['action'] == "insert_chat") {
         "name" => $user['name'],
         "surname" => $user['surname'],
         "role" => $user['role']
-        ));
+    ));
 
-} elseif ($_POST['action'] == "last_active_time") {
+
+    // Timer for user log in session displayed in i:s minutes/seconds
+
+}elseif ($_POST['action'] == "last_active_time") {
 
     $last_login =  strtotime($_SESSION['last_login']);
     $now = strtotime(date('Y/m/d H:i:s'));
-    $active_now = $now - $last_login;
-    $active_now = date('i:s', $active_now) . " min";
+    $active_now = $now - $last_login - 3600;
+    $active_now = date('H:i:s', $active_now) . " Hours";
 
     echo $active_now;
 
 }
+
+
 
 
 
