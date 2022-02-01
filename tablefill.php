@@ -21,17 +21,27 @@ if($searchValue != ''){
         gender like '%".$searchValue."%' or 
         email like'%".$searchValue."%' ) ";
 }
-$flt_reg_date_start = mysqli_real_escape_string($conn,$_POST['p_flt_reg_date_start']);
-$flt_reg_date_end = mysqli_real_escape_string($conn,$_POST['p_flt_reg_date_end']);
-$flt_semail = mysqli_real_escape_string($conn,$_POST['flt_semail']);
+
+
+if (!empty($_POST['p_flt_reg_date_start'])) {
+    $date_filter = explode(" - ", $_POST['p_flt_reg_date_start']);
+    $flt_reg_date_start = mysqli_real_escape_string($conn, $date_filter[0]);
+    $flt_reg_date_end = mysqli_real_escape_string($conn, $date_filter[1]);
+} else {
+    $flt_reg_date_start = date('Y-m-d');
+    $flt_reg_date_end = date('Y-m-d');
+}
+
+if (!empty($_POST['flt_semail'])) {
+    $flt_semail = mysqli_real_escape_string($conn,$_POST['flt_semail']);
+    $searchQuery = " and ( email like'%".$flt_semail."%' ) ";
+}
 $flt_sphone = mysqli_real_escape_string($conn,$_POST['flt_sphone']);
 
 if($flt_reg_date_start != '' && $flt_reg_date_end != ''){
     $searchQuery .= " and (created_at between '".$flt_reg_date_start."' and '".$flt_reg_date_end."' ) ";
 }
-if($flt_semail != ''){
-    $searchQuery = " and ( email like'%".$flt_semail."%' ) ";
-}
+
 if($flt_sphone != ''){
     $searchQuery = " and ( phone like'%".$flt_sphone."%' ) ";
 }

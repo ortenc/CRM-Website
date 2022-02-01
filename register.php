@@ -111,42 +111,69 @@
             error = "Name must be entered.";
             $("#errorfname").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorfname").text(error);
         }
         var filter_only_letters = /^[a-zA-Z\s]+$/;
         if (!filter_only_letters.test(fname)) {
             error = "name should be only letters.";
             $("#errorfname").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorfname").text(error);
         }if (isEmpty(lname)) {
             error = "Surname must be entered.";
             $("#errorlname").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorlname").text(error);
         }if (!filter_only_letters.test(lname)) {
             error = "last name should be only letters.";
             $("#errorlname").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorlname").text(error);
         }if (isEmpty(atesia)) {
             error = "atesia must be entered.";
             $("#erroratesia").text(error);
             return false;
+        }else{
+            error = "";
+            $("#erroratesia").text(error);
         }if (!filter_only_letters.test(atesia)) {
             error = "atesia should be only letters.";
             $("#erroratesia").text(error);
             return false;
+        }else{
+            error = "";
+            $("#erroratesia").text(error);
         }if (isEmpty(email)) {
             error = "Email must be entered.";
             $("#erroremail").text(error);
             return false;
+        }else{
+            error = "";
+            $("#erroremail").text(error);
         }
         filter_email_fomrat = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if (!filter_email_fomrat.test(email)) {
             error = "Email not correct format.";
             $("#erroremail").text(error);
             return false;
+        }else{
+            error = "";
+            $("#erroremail").text(error);
         }if (isEmpty(phone)) {
             error = "phone must be entered.";
             $("#errorphone").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorphone").text(error);
         }
         var phone_number_filter = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
         if (!phone_number_filter.test(phone)) {
@@ -154,24 +181,39 @@
             $("#errorphone").text(error);
             return false;
 
+        }else{
+            error = "";
+            $("#errorphone").text(error);
         }if (isEmpty(date_change)) {
             error = "birthdate must be entered.";
             $("#errorbirthday").text(error);
             return false;
-        }
-        if (isEmpty(password1)) {
+        }else{
+            error = "";
+            $("#errorbirthday").text(error);
+        }if (isEmpty(password1)) {
             error = "Password1 must be entered.";
             $("#errorpass1").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorpass1").text(error);
         }if (isEmpty(password2)) {
             error = "Password2 must be entered.";
             $("#errorpass2").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorpass2").text(error);
         }if (password1 != password2) {
             error = "Passwords are not the same.";
             $("#errorpass1").text(error);
             $("#errorpass2").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorpass1").text(error);
+            $("#errorpass2").text(error);
         }
         var minNumberofChars = 6;
         var maxNumberofChars = 16;
@@ -180,10 +222,16 @@
             error = "Password should contain One upper case one lower case one special character and 8 min characters.";
             $("#errorpass1").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorpass1").text(error);
         }if (!regularExpression.test(password1)) {
             error ="password should contain at least one number and one special character";
             $("#errorpass1").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorpass1").text(error);
         }
 
         $.ajax({

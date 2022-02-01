@@ -18,9 +18,16 @@ require('database.php');
 
     <title>Userlist</title>
 
-<?php include "header.php"; ?>
+<?php
+include "header.php";
+?>
 
 </head>
+<style>
+<?php
+include "main.css";
+?>
+</style>
 
 <body>
 
@@ -48,26 +55,59 @@ require('database.php');
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <label>Date from</label>
-                                        <input class="form-control datepicker" type="text" id="flt_reg_date_start" name="flt_reg_date_start" autocomplete="off">
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <label>Date from</label>
-                                        <input class="form-control datepicker" type="text" id="flt_reg_date_end" name="flt_reg_date_end" autocomplete="off">
+                                        <?php
+                                        if (empty($_POST['flt_reg_date_start'])) {
+                                            $_POST['flt_reg_date_start'] = date('Y-m-d') ." - ". date('Y-m-d');
+                                        }
+                                        ?>
+                                        <input class="form-control datepicker"
+                                               type="text"
+                                               id="flt_reg_date_start"
+                                               name="flt_reg_date_start"
+                                               value="<?= $_POST['flt_reg_date_start'] ?>"
+                                               autocomplete="off">
                                     </div>
                                     <div class="col-sm-3">
                                         <label>Email</label>
-                                        <input type="text" id="semail" name="semail" class="form-control">
+                                        <select class="select2_email form-control" id="semail" name="semail">
+                                            <?php if (!empty($_POST['semail'])) { ?>
+                                                <option value="<?=$_POST['semail']?>"><?=$_POST['semail']?></option>
+                                           <?php } ?>
+                                            <option value=""></option>
+                                            <?php
+                                            $query_email = "SELECT DISTINCT email FROM users";
+                                            $result_email = mysqli_query($conn, $query_email);
+                                            while($row = mysqli_fetch_assoc($result_email)) { ?>
+                                                <option value="<?=$row['email']?>"><?=$row['email']?></option>
+                                            <?php } ?>
+                                        </select>
                                     </div>
                                     <div class="col-sm-3">
                                         <label>Phone</label>
-                                        <input type="text" id="sphone" name="sphone" class="form-control">
+                                        <select class="select2_phone form-control" id="sphone" name="sphone">
+                                            <?php if (!empty($_POST['sphone'])) { ?>
+                                                <option value="<?=$_POST['sphone']?>"><?=$_POST['sphone']?></option>
+                                            <?php } ?>
+                                            <option value=""></option>
+                                            <?php
+                                            $query_phone = "SELECT DISTINCT phone FROM users";
+                                            $result_phone = mysqli_query($conn, $query_phone);
+                                            while($row = mysqli_fetch_assoc($result_phone)) { ?>
+                                                <option value="<?=$row['phone']?>"><?=$row['phone']?></option>
+                                            <?php } ?>
+                                        </select>
                                     </div>
                                 </div>
                                 <br>
                                 <div class="row">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-6">
 <!--                                        <input type="submit" class="btn btn-primary" name="filter" id="filter" value="Filter">-->
                                         <input type='button' class="btn btn-primary" id="filter" value="Search">
+                                    </div>
+                                    <div class="col-sm-6">
+                                    <div class="btn-group create_user_button_id" style='width:150px'>
+                                        <input type='button' class='btn btn-block blue-bg' value='Add New User' data-toggle='modal' data-target='#edit_premission' onclick='showcreatemodal()'>
+                                    </div>
                                     </div>
                                 </div>
                             </form>
@@ -91,9 +131,6 @@ require('database.php');
                                     </tr>
                                     </thead>
                                 </table>
-                                <div class='btn-group' style='width:130px'>
-                                    <input type='button' class='btn btn-block blue-bg' value='Add New User' data-toggle='modal' data-target='#edit_premission' onclick='showcreatemodal()'>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -213,7 +250,7 @@ require('database.php');
 
 <div class="modal inmodal" id="delete_user_data" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content animated bounceInRight">
+        <div class="modal-content animated fadeIn">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 <i class="fa fa-warning modal-icon"></i>
@@ -232,20 +269,6 @@ require('database.php');
 <?php include "footer.php"; ?>
 
 <script>
-
-
-    $(function () {
-        $('.datepicker').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            calendarWeeks: true,
-            autoclose: true,
-            dateFormat: "yy-mm-dd",
-            changeYear: true,
-            changeMonth: true
-        });
-    });
 
     function isEmpty(value) {
         return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
@@ -274,43 +297,53 @@ require('database.php');
             error = "*Name must be entered.";
             $("#errorcfname").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorcfname").text(error);
         }
         filter_name = /^[a-zA-Z\s]+$/;
         if (!filter_name.test(firstname)) {
             error = "name should be only letters.";
             $("#errorcfname").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorcfname").text(error);
         }if (isEmpty(lastname)) {
             error = "Surname must be entered.";
             $("#errorclname").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorclname").text(error);
         }if (!filter_name.test(lastname)) {
             error = "last name should be only letters.";
             $("#errorclname").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorclname").text(error);
         }if (isEmpty(fathername)) {
             error = "atesia must be entered.";
             $("#errorcatesia").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorcatesia").text(error);
         }if (!filter_name.test(fathername)) {
             error = "atesia should be only letters.";
             $("#errorcatesia").text(error);
             return false;
-        }if (isEmpty(mail)) {
-            error = "Email must be entered.";
-            $("#errorcemail").text(error);
-            return false;
-        }
-        filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!filter_email.test(mail)) {
-            error = "Email not correct format.";
-            $("#errorcemail").text(error);
-            return false;
-
+        }else{
+            error = "";
+            $("#errorcatesia").text(error);
         }if (isEmpty(telephone)) {
             error = "phone must be entered.";
             $("#errorcphone").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorcphone").text(error);
         }
         var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
         if (!phoneno.test(telephone)) {
@@ -318,24 +351,68 @@ require('database.php');
             $("#errorcphone").text(error);
             return false;
 
+        }else{
+            error = "";
+            $("#errorcphone").text(error);
         }if (isEmpty(date_change)) {
             error = "birthdate must be entered.";
-            $("#errorcbirthday").text(error);
+            $("#errorcbirth").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorcbirthday").text(error);
+        }if(isEmpty(gender)){
+            error = "Gender must be entered.";
+            $("#errorcgender").text(error);
+            return false;
+        }else{
+            error = "";
+            $("#errorcgender").text(error);
+        }if (isEmpty(mail)) {
+            error = "Email must be entered.";
+            $("#errorcemail").text(error);
+            return false;
+        }else{
+            error = "";
+            $("#errorcemail").text(error);
         }
+        filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (!filter_email.test(mail)) {
+            error = "Email not correct format.";
+            $("#errorcemail").text(error);
+            return false;
+
+        }else{
+            error = "";
+            $("#errorcemail").text(error);
+        }
+
         if (isEmpty(password1)) {
             error = "Password1 must be entered.";
             $("#errorcpass1").text(error);
             return false;
-        }if (isEmpty(password2)) {
+        }else{
+            error = "";
+            $("#errorcpass1").text(error);
+        }
+
+        if (isEmpty(password2)) {
             error = "Password2 must be entered.";
             $("#errorcpass2").text(error);
             return false;
-        }if (password1 != password2) {
+        }else{
+            error = "";
+            $("#errorcpass2").text(error);
+        }
+        if (password1 != password2) {
             error = "Passwords are not the same.";
             $("#errorcpass1").text(error);
             $("#errorcpass2").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorcpass1").text(error);
+            $("#errorcpass2").text(error);
         }
         var minNumberofChars = 6;
         var maxNumberofChars = 16;
@@ -344,10 +421,25 @@ require('database.php');
             error = "Password should contain One upper case one lower case one special character and 8 min characters.";
             $("#errorcpass1").text(error);
             return false;
-        }if (!regularExpression.test(password1)) {
+        }else{
+            error = "";
+            $("#errorcpass1").text(error);
+        }
+        if (!regularExpression.test(password1)) {
             error ="password should contain at least one number and one special character";
             $("#errorcpass1").text(error);
             return false;
+        }else{
+            error = "";
+            $("#errorcpass1").text(error);
+        }
+        if(isEmpty(role)){
+            error = "Role should not be empty.";
+            $("#errorcrole").text(error);
+            return false;
+        }else{
+            error = "";
+            $("#errorcrole").text(error);
         }
 
         $.ajax({
@@ -455,13 +547,11 @@ require('database.php');
                 data: function (data) {
                     // Read values
                     var flt_reg_date_start = $('#flt_reg_date_start').val();
-                    var flt_reg_date_end = $('#flt_reg_date_end').val();
                     var semail = $('#semail').val();
                     var sphone = $('#sphone').val();
 
                     // Append to data
                     data.p_flt_reg_date_start = flt_reg_date_start;
-                    data.p_flt_reg_date_end = flt_reg_date_end;
                     data.flt_semail = semail;
                     data.flt_sphone = sphone;
                 }
@@ -490,6 +580,49 @@ require('database.php');
         $('#filter').click(function () {
             dataTable.draw();
 
+        });
+
+        var dateToday = new Date();
+        $('.datepicker').daterangepicker({
+            today: dateToday,
+            todayHighlight: true,
+            format: "YYYY/MM/DD",
+            // ranges: {
+            //     'Today': [moment(), moment()],
+            //     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            //     'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+            //     'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+            //     'This Month': [moment().startOf('month'), moment().endOf('month')],
+            //     'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            // },
+            // opens: 'right',
+            // drops: 'down',
+            // buttonClasses: ['btn', 'btn-sm'],
+            // applyClass: 'btn-primary',
+            // cancelClass: 'btn-default',
+            // separator: ' to ',
+            // locale: {
+            //     applyLabel: 'Submit',
+            //     cancelLabel: 'Cancel',
+            //     fromLabel: 'From',
+            //     toLabel: 'To',
+            //     customRangeLabel: 'Custom',
+            //     daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+            //     monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            //     firstDay: 1
+            // }
+        });
+
+        $(".select2_email").select2({
+            placeholder: "Select email",
+            width: "100%",
+            allowClear: true
+        });
+
+        $(".select2_phone").select2({
+            placeholder: "Select phone",
+            width: "100%",
+            allowClear: true
         });
     });
 
@@ -571,7 +704,6 @@ require('database.php');
             }
         });
     }
-
 
 </script>
 

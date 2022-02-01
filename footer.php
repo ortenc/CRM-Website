@@ -8,6 +8,8 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!--<script src="js/plugins/datapicker/bootstrap-datepicker.js"></script>-->
+<script src="js/bootstrap-datepicker.js"></script>
+<script src="js/daterangepicker.js"></script>
 
 <!--<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>-->
 <!--<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>-->
@@ -32,3 +34,4 @@
 
 <!-- iCheck -->
 <script src="js/plugins/iCheck/icheck.min.js"></script>
+<script src="js/plugins/select2/select2.full.min.js"></script>

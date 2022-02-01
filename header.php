@@ -13,5 +13,8 @@
 <link href="css/style.css" rel="stylesheet">
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />-->
 <!--<link href="css/plugins/datapicker/datepicker3.css" rel="stylesheet">-->
+<link href="css/datepicker3.css" rel="stylesheet">
+<link href="css/daterangepicker-bs3.css" rel="stylesheet">
+<link href="css/plugins/select2/select2.min.css" rel="stylesheet">

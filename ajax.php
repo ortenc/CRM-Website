@@ -118,7 +118,7 @@ if ($_POST['action'] == "register") {
          phone = '$phone',
          gender = '$txtgender',
          password = '$hash',
-         registerdate = '$registerdate',
+         created_at = '$registerdate',
          role = 'User'";
 
     $result_insert = mysqli_query($conn, $query_insert);
@@ -158,22 +158,28 @@ if ($_POST['action'] == "register") {
     if (empty($txtname)) {
         echo json_encode(array("code" => "422", "message" => "Name cannot be empty!"));
         exit;
-    }if (!$name_preg) {
+    }
+    if (!$name_preg) {
         echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
         exit;
-    }if (empty($txtsurname)) {
+    }
+    if (empty($txtsurname)) {
         echo json_encode(array("code" => "422", "message" => "Surname cannot be empty!"));
         exit;
-    }if (!$surname_preg) {
+    }
+    if (!$surname_preg) {
         echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
         exit;
-    }if (empty($atesia)) {
+    }
+    if (empty($atesia)) {
         echo json_encode(array("code" => "422", "message" => "Atesia cannot be empty!"));
         exit;
-    }if (!$atesia_preg) {
+    }
+    if (!$atesia_preg) {
         echo json_encode(array("code" => "422", "message" => "Name must have only letters!"));
         exit;
-    }if (empty($txtemail)) {
+    }
+    if (empty($txtemail)) {
         echo json_encode(array("code" => "422", "message" => "email cannot be empty!"));
         exit;
     }
@@ -193,13 +199,22 @@ if ($_POST['action'] == "register") {
     }if (empty($txtbirthday)) {
         echo json_encode(array("code" => "422", "message" => "birthday cannot be empty!"));
         exit;
-    }if (empty($phone)) {
+    }
+    $check_age = strtotime($txtbirthday);
+    $age = 18;
+    if(time() - $check_age < $age * 31536000){
+        echo json_encode(array("code" => "422", "message" => "Age required is over 18!"));
+        exit;
+    }
+    if (empty($phone)) {
         echo json_encode(array("code" => "422", "message" => "Phone cannot be empty!"));
         exit;
-    }if (!$phone_preg) {
+    }
+    if (!$phone_preg) {
         echo json_encode(array("code" => "422", "message" => "Phone wrong format!"));
         exit;
-    }if (empty($txtpassword1)) {
+    }
+    if (empty($txtpassword1)) {
         echo json_encode(array("code" => "422", "message" => "Password cannot be empty!"));
         exit;
     }
@@ -241,8 +256,9 @@ if ($_POST['action'] == "register") {
          phone = '$phone',
          gender = '$txtgender',
          password = '$hash',
-         registerdate = '$registerdate',
+         created_at = '$registerdate',
          role = '$role'";
+
 
     $result_insert = mysqli_query($conn, $query_insert);
     // If data inputed successfully into the database following conditions applied
@@ -250,7 +266,7 @@ if ($_POST['action'] == "register") {
         echo json_encode(array("code" => "200", "message" => "Success"));
         exit;
     } else {
-        echo json_encode(array("code" => "422", "message" => "Error"));
+        echo json_encode(array("code" => "422", "message" => "Something is wrong"));
     }
 
 
@@ -416,6 +432,7 @@ if ($_POST['action'] == "register") {
 
 
 }elseif ($_POST['action'] == "userUpdate") {
+
     $id = $conn->escape_string($_POST['id']);
     $fname = $conn->escape_string($_POST['name']);
     $lname = $conn->escape_string($_POST['surname']);
@@ -426,6 +443,8 @@ if ($_POST['action'] == "register") {
     $photo_path = $conn->escape_string($_POST['photo_path']);
 
     $profile_photo = uploadPhoto($_FILES, $id, $photo_path);
+    $name_preg = preg_match("/^[a-zA-Z-'\s]*$/", $fname);
+    $lname_preg = preg_match("/^[a-zA-Z-'\s]*$/", $lname);
 
     if (empty($profile_photo)) {
         echo json_encode(array("code" => "422", "message" => "photo cannot be empty!"));
@@ -433,8 +452,14 @@ if ($_POST['action'] == "register") {
     }if (empty($fname)) {
         echo json_encode(array("code" => "422", "message" => "name cannot be empty!"));
         exit;
+    }if(!$name_preg){
+        echo json_encode(array("code" => "422", "message" => "Name should contain only letters!"));
+        exit;
     }if (empty($lname)) {
         echo json_encode(array("code" => "422", "message" => "surname cannot be empty!"));
+        exit;
+    }if(!$lname_preg){
+        echo json_encode(array("code" => "422", "message" => "Surname should contain only letters!"));
         exit;
     }if (empty($username)) {
         echo json_encode(array("code" => "422", "message" => "username cannot be empty!"));

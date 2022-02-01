@@ -8,6 +8,40 @@
     padding: 6px 71px;
     margin-bottom: 4px;
 }
-    .Round_corners_id {
-        border-radius: 15px;
-    }
+.Round_corners_id {
+    border-radius: 15px;
+}
+.create_user_button_id{
+    left: 77%;
+}
+
+.select2-container--default .select2-selection--single {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #e5e6e7;
+    border-radius: 1px;
+    color: inherit;
+    display: block;
+    padding: 3px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+    font-size: 14px;
+    height: 35px
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    top: 60%;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #18A689;
+    color: white;
+}
+
+.select-in-modal + .select2-container {
+    z-index: 10000;
+}
+
+.select2-container--open {
+    z-index: 10000;
+}
