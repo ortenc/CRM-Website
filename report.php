@@ -69,41 +69,9 @@ require('database.php');
 
 <script>
 
-    function format ( details ) {
-
-
-        var table = "<table class = 'table'> " +
-                        "<thead> " +
-                            "<tr> " +
-                                 "<th> Name</th>"+
-                                 "<th> Surname</th>"+
-                                 "<th> Date</th>"+
-                                 "<th> Check In</th>"+
-                                 "<th> Check Out</th>"+
-                             "</tr>" +
-                        "</thead>" +
-                        "<tbody>";
-
-
-        $.each(details, function (check_out, check_in) {
-            table += "<tr>" +
-                        "<td> Test Name</td>"+
-                        "<td> Test Surname</td>"+
-                        "<td> Test Date</td>"+
-                        "<td> "+check_in+"</td>"+
-                        "<td> "+check_out+"</td>"+
-                    "</tr>"
-        });
-
-        table += "</tbody>" +
-                "<table>";
-
-        return table;
-    }
-
     function render_row_details(row_details) {
 
-        var table = "<table class='table table-hover' style='text-align: center'>" +
+        var table = "<table class='table table-hover test_id_per_qef' style='text-align: center'>" +
             "<thead>" +
             "<tr style='background-color: #737272;  color: white;'>" +
             "<th><center>Name</center></th>" +
@@ -114,6 +82,7 @@ require('database.php');
             "</tr>" +
             "</thead>" +
             "<tbody><tr style='background-color: #e2e2e2'>";
+
 
 
         $.each(row_details, function (index, row_data) {
@@ -129,8 +98,28 @@ require('database.php');
         });
 
         table += "</tr></tbody></table>";
+
+
+
         return table;
+
+
+
     }
+
+   var test_id_per_qef = $('.test_id_per_qef').DataTable({
+        dom: '<"html5buttons"B>lTfgitp',
+        buttons: [
+            {extend: 'excel', title: 'Data'},
+        ],
+        columnsDefs: [
+            {
+                orderable: true,
+                searchable: true,
+                targets: 0
+            },
+        ]
+    });
 
 
 
@@ -160,7 +149,6 @@ require('database.php');
                     orderable: false,
                     searchable: false,
                     targets: 0
-
                 },
                 {"targets":4, "type":"date-eu"}
             ]
@@ -173,7 +161,7 @@ require('database.php');
         $('#emptable tbody').on('click', '.details-control', function () {
 
             var tr = $(this).parents('tr');
-            var row = dt.row(tr);
+            var row = test_id_per_qef.row(tr);
             var idx = $.inArray(tr.attr('id'), detailRows);
 
             $(this).removeClass("fa-plus").addClass("fa-minus");

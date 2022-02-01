@@ -60,7 +60,7 @@ include "main.css";
                                             $_POST['flt_reg_date_start'] = date('Y-m-d') ." - ". date('Y-m-d');
                                         }
                                         ?>
-                                        <input class="form-control datepicker"
+                                        <input class="form-control datepicker filter_date_picker"
                                                type="text"
                                                id="flt_reg_date_start"
                                                name="flt_reg_date_start"
@@ -153,21 +153,22 @@ include "main.css";
                 <input type="hidden" id="user_modal_id" name="user_modal_id">
                 <div class="form-group"><label>Name<p id="errorufname" style="color: red"></p></label>
                     <input type="text" class="form-control" id="fname" name="fname"></div>
-                <div class="form-group"><label>Surname</label>
+                <div class="form-group"><label>Surname<p id="errorulname" style="color: red"></p></label>
                     <input type="text" class="form-control" id="surname" name="surname"></div>
-                <div class="form-group"><label>Atesia</label>
+                <div class="form-group"><label>Atesia<p id="erroruatesia" style="color: red"></p></label>
                     <input type="text" class="form-control" id="atesia" name="atesia"></div>
-                <div class="form-group"><label>Username</label>
+                <div class="form-group"><label>Username<p id="errorusername" style="color: red"></p></label>
                     <input type="text" class="form-control" id="username" name="username"></div>
-                <div class="form-group"><label>Phone Number</label>
+                <div class="form-group"><label>Phone Number<p id="erroruphonenumber" style="color: red"></p></label>
                     <input type="text" class="form-control" id="phone" name="phone"></div>
-                <div class="form-group"><label>Email</label>
+                <div class="form-group"><label>Email<p id="erroruemail" style="color: red"></p></label>
                     <input type="text" class="form-control" id="email" name="email"></div>
                 <b>Select role</b>
                 <select class="form-control" name="role" id="role">
                     <option value="Admin">Admin</option>
                     <option value="User">User</option>
                 </select>
+                <p id="errorurole" style="color: red"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
@@ -207,7 +208,7 @@ include "main.css";
                     <p id="errorcphone" style="color: red"></p>
                 </div>
                 <div class="form-group"><label>Date of birth</label>
-                    <input type="text" class="form-control datepicker" id="birthday" name="birthday">
+                    <input type="text" class="form-control datepicker" id="birthday" name="birthday" autocomplete="off">
                     <p id="errorcbirth" style="color: red"></p>
                 </div>
                 <div class="form-group"><label>Select Gender</label>
@@ -227,7 +228,7 @@ include "main.css";
                     <p id="errorcpass1" style="color: red"></p>
                 </div>
                 <div class="form-group"><label>Re-Password</label>
-                    <input type="password" class="form-control" id="password2" name="password2">
+                    <input type="password" class="form-control" id="password2" name="password2" autocomplete="off">
                     <p id="errorcpass2" style="color: red"></p>
                 </div>
                 <b>Select role</b>
@@ -259,7 +260,7 @@ include "main.css";
                 <input type="hidden" id="user_modal_id_delete" name="user_modal_id_delete">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal" onclick="notification()">Close</button>
                 <button type="button" class="btn btn-primary" name="update" onclick="delete_user()">Delete</button>
             </div>
         </div>
@@ -278,6 +279,28 @@ include "main.css";
         $("#create_user_data").modal("show");
     }
 
+    function validate_data(val, validation_rule, message, error_field ){
+
+        if (isEmpty(val)) {
+            error = "*This field is required.";
+            $("#"+error_field).text(error);
+            return false;
+        }else{
+            error = "";
+            $("#"+error_field).text(error);
+        }
+
+        if (!validation_rule.test(val)) {
+            error = message;
+            $("#"+error_field).text(error);
+            return false;
+        }else{
+            error = "";
+            $("#"+error_field).text(error);
+        }
+    }
+
+
     function create() {
 
         var firstname = $("#firstname").val();
@@ -291,156 +314,67 @@ include "main.css";
         var password2 = $("#password2").val();
         var gender = $("#gender").val();
         var role = $("#roles").val();
+        var alphanumeric_validation = /^[a-zA-Z]{3,}$/;
+        var phoneno_validation = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        var email_validation = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        var pass_validation = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
+        var dateformat_validation = /^(0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])[\/\-]\d{4}$/;
 
 
-        if (isEmpty(firstname)) {
-            error = "*Name must be entered.";
-            $("#errorcfname").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcfname").text(error);
-        }
-        filter_name = /^[a-zA-Z\s]+$/;
-        if (!filter_name.test(firstname)) {
-            error = "name should be only letters.";
-            $("#errorcfname").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcfname").text(error);
-        }if (isEmpty(lastname)) {
-            error = "Surname must be entered.";
-            $("#errorclname").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorclname").text(error);
-        }if (!filter_name.test(lastname)) {
-            error = "last name should be only letters.";
-            $("#errorclname").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorclname").text(error);
-        }if (isEmpty(fathername)) {
-            error = "atesia must be entered.";
-            $("#errorcatesia").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcatesia").text(error);
-        }if (!filter_name.test(fathername)) {
-            error = "atesia should be only letters.";
-            $("#errorcatesia").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcatesia").text(error);
-        }if (isEmpty(telephone)) {
-            error = "phone must be entered.";
-            $("#errorcphone").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcphone").text(error);
-        }
-        var phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-        if (!phoneno.test(telephone)) {
-            error = "Phone not correct format.";
-            $("#errorcphone").text(error);
-            return false;
 
-        }else{
-            error = "";
-            $("#errorcphone").text(error);
-        }if (isEmpty(date_change)) {
-            error = "birthdate must be entered.";
-            $("#errorcbirth").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcbirthday").text(error);
-        }if(isEmpty(gender)){
-            error = "Gender must be entered.";
-            $("#errorcgender").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcgender").text(error);
-        }if (isEmpty(mail)) {
-            error = "Email must be entered.";
-            $("#errorcemail").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcemail").text(error);
-        }
-        filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!filter_email.test(mail)) {
-            error = "Email not correct format.";
-            $("#errorcemail").text(error);
-            return false;
+        /**
+         * Validimi i fushave
+         */
 
-        }else{
-            error = "";
-            $("#errorcemail").text(error);
-        }
 
-        if (isEmpty(password1)) {
-            error = "Password1 must be entered.";
-            $("#errorcpass1").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcpass1").text(error);
-        }
+        // // Validim i emrit
+        // if (isEmpty(firstname)) {
+        //     error = "*Name must be entered.";
+        //     $("#errorcfname").text(error);
+        //     return false;
+        // }else{
+        //     error = "";
+        //     $("#errorcfname").text(error);
+        // }
+        //
+        // filter_name = /^[a-zA-Z\s]+$/;
+        // if (!filter_name.test(firstname)) {
+        //     error = "Name should be only letters.";
+        //     $("#errorcfname").text(error);
+        //     return false;
+        // }else{
+        //     error = "";
+        //     $("#errorcfname").text(error);
+        // }
+        // Validimi i Emrit
+        validate_data(firstname, alphanumeric_validation, "Name should be only letters",  "errorcfname");
 
-        if (isEmpty(password2)) {
-            error = "Password2 must be entered.";
-            $("#errorcpass2").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcpass2").text(error);
-        }
-        if (password1 != password2) {
-            error = "Passwords are not the same.";
-            $("#errorcpass1").text(error);
-            $("#errorcpass2").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcpass1").text(error);
-            $("#errorcpass2").text(error);
-        }
-        var minNumberofChars = 6;
-        var maxNumberofChars = 16;
-        var regularExpression = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
-        if (password1.length < minNumberofChars || password1.length > maxNumberofChars) {
-            error = "Password should contain One upper case one lower case one special character and 8 min characters.";
-            $("#errorcpass1").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcpass1").text(error);
-        }
-        if (!regularExpression.test(password1)) {
-            error ="password should contain at least one number and one special character";
-            $("#errorcpass1").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcpass1").text(error);
-        }
-        if(isEmpty(role)){
-            error = "Role should not be empty.";
-            $("#errorcrole").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorcrole").text(error);
-        }
+        // Validimi i mbiemrit
+        validate_data(lastname, alphanumeric_validation, "Last name should be only letters.",  "errorclname");
+
+        // Validimi Atesise
+        validate_data(fathername, alphanumeric_validation, "Atesia should be only letters.",  "errorcatesia");
+
+        // Validimi i numrit
+        validate_data(telephone, phoneno_validation, "Phone should contain only numbers and 10-12 digits.",  "errorcphone");
+
+        // Validimi i ditelindjes
+        validate_data(birthday, dateformat_validation , "should not be empty.",  "errorcbirth");
+
+        // Validimi i Gjinise
+        validate_data(gender, isEmpty(gender) , "Phone should contain only numbers and 10-12 digits.",  "errorcgender");
+
+        // Validimi i Emailit
+        validate_data(mail, email_validation, "Email should be .",  "errorcemail");
+
+        // Validimi i Fushes se pare te passwordit
+        validate_data(password1, pass_validation, "Password should contain 1 uper casse, lower casse and between 6 and 16 chars.",  "errorcpass1");
+
+        // Validimi i Fushes se dyte te passwordit
+        validate_data(password2, pass_validation , "Not the same password.",  "errorcpass2");
+
+        // Validimi i Rolit
+        validate_data(role, isEmpty(role) , "Select a role for the user",  "errorcrole");
 
         $.ajax({
             url: "ajax.php",
@@ -583,34 +517,17 @@ include "main.css";
         });
 
         var dateToday = new Date();
-        $('.datepicker').daterangepicker({
+        $('.filter_date_picker').daterangepicker({
             today: dateToday,
             todayHighlight: true,
             format: "YYYY/MM/DD",
-            // ranges: {
-            //     'Today': [moment(), moment()],
-            //     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            //     'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            //     'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            //     'This Month': [moment().startOf('month'), moment().endOf('month')],
-            //     'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            // },
-            // opens: 'right',
-            // drops: 'down',
-            // buttonClasses: ['btn', 'btn-sm'],
-            // applyClass: 'btn-primary',
-            // cancelClass: 'btn-default',
-            // separator: ' to ',
-            // locale: {
-            //     applyLabel: 'Submit',
-            //     cancelLabel: 'Cancel',
-            //     fromLabel: 'From',
-            //     toLabel: 'To',
-            //     customRangeLabel: 'Custom',
-            //     daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
-            //     monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            //     firstDay: 1
-            // }
+        });
+
+        var dateBirthday = new Date();
+        $('.datepicker').datepicker({
+            today: dateBirthday,
+            todayHighlight: true,
+            format: "yyyy/mm/dd",
         });
 
         $(".select2_email").select2({
@@ -640,6 +557,116 @@ include "main.css";
             error = "Name must be entered.";
             $("#errorufname").text(error);
             return false;
+        }
+        else{
+            error = "";
+            $("#errorufname").text(error);
+        }
+       var filter_name = /^[a-zA-Z\s]+$/;
+        if(!filter_name.test(fname)){
+            error = "Name must be only letters.";
+            $("#errorufname").text(error);
+            return false;
+        }
+        else {error = "";
+            $("#errorufname").text(error);
+        }
+        if (isEmpty(lname)) {
+            error = "Surname must be entered.";
+            $("#errorulname").text(error);
+            return false;
+        }
+        else{
+            error = "";
+            $("#errorulname").text(error);
+        }
+        if(!filter_name.test(lname)){
+            error = "Surname must be only letters.";
+            $("#errorulname").text(error);
+            return false;
+        }
+        else{
+            error = "";
+            $("#errorulname").text(error);
+        }
+        if (isEmpty(atesia)) {
+            error = "Atesia must be entered.";
+            $("#erroruatesia").text(error);
+            return false;
+        }
+        else{
+            error = "";
+            $("#erroruatesia").text(error);
+        }
+        if(!filter_name.test(atesia)){
+            error = "Atesia must be only letters.";
+            $("#erroruatesia").text(error);
+            return false;
+        }
+        else{
+            error = "";
+            $("#erroruatesia").text(error);
+        }
+        if (isEmpty(username)) {
+            error = "Username must be entered.";
+            $("#errorusername").text(error);
+            return false;
+        }
+        else{
+            error = "";
+            $("#errorusername").text(error);
+        }
+        if(!filter_name.test(username)){
+            error = "Username must be only letters.";
+            $("#errorusername").text(error);
+            return false;
+        }
+        else{
+            error = "";
+            $("#errorusername").text(error);
+        }
+        if (isEmpty(phone)) {
+            error = "Phone must be entered.";
+            $("#erroruphonenumber").text(error);
+            return false;
+        }
+        else{
+            error = "";
+            $("#erroruphonenumber").text(error);
+        }
+        var phonenumber = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        if(!phonenumber.test(phone)){
+            error = "Phone is not correct format.";
+            $("#erroruphonenumber").text(error);
+            return false;
+        }
+        else {
+            error = "";
+            $("#erroruphonenumber").text(error);
+        }
+        if (isEmpty(email)) {
+            error = "Email must be entered.";
+            $("#erroruemail").text(error);
+            return false;
+        }
+       var filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if(!filter_email.test(email)){
+            error = "Email not correct format";
+            $("#erroruemail").text(error);
+            return false;
+        }
+        else {
+            error = "";
+            $("#erroruemail").text(error);
+        }
+        if (isEmpty(role)) {
+            error = "Role must be entered.";
+            $("#errorurole").text(error);
+            return false;
+        }
+        else {
+            error = "";
+            $("#errorurole").text(error);
         }
 
         var data = {
@@ -693,16 +720,22 @@ include "main.css";
                 var response = JSON.parse(result);
 
                 if (response.code == 200) {
-                    window.location.href = "userlist.php";
+                    $('#delete_user_data').modal('hide');
+                    Swal.fire("User deleted successfully",response.message,"success");
+                    setTimeout(function(){
+                        location.reload();
+                    },2000);
                 }
 
                 if (response.code == 404) {
                     Swal.fire(response.message);
                 }
-
-
             }
         });
+    }
+
+    function notification() {
+        Swal.fire("Canceled","",'error');
     }
 
 </script>

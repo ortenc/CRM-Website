@@ -159,7 +159,7 @@
             error = "";
             $("#erroremail").text(error);
         }
-        filter_email_fomrat = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            filter_email_fomrat = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if (!filter_email_fomrat.test(email)) {
             error = "Email not correct format.";
             $("#erroremail").text(error);
