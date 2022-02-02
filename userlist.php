@@ -317,8 +317,8 @@ include "main.css";
         var alphanumeric_validation = /^[a-zA-Z]{3,}$/;
         var phoneno_validation = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
         var email_validation = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        var pass_validation = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
-        var dateformat_validation = /^(0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])[\/\-]\d{4}$/;
+        var pass_validation = /^[a-zA-Z0-9!@#$%^&*.]{8,16}$/;
+        var birthday_validation = /(((19|20)\d\d)\/(0[1-9]|1[0-2])\/((0|1)[0-9]|2[0-9]|3[0-1]))$/;
 
 
 
@@ -326,26 +326,6 @@ include "main.css";
          * Validimi i fushave
          */
 
-
-        // // Validim i emrit
-        // if (isEmpty(firstname)) {
-        //     error = "*Name must be entered.";
-        //     $("#errorcfname").text(error);
-        //     return false;
-        // }else{
-        //     error = "";
-        //     $("#errorcfname").text(error);
-        // }
-        //
-        // filter_name = /^[a-zA-Z\s]+$/;
-        // if (!filter_name.test(firstname)) {
-        //     error = "Name should be only letters.";
-        //     $("#errorcfname").text(error);
-        //     return false;
-        // }else{
-        //     error = "";
-        //     $("#errorcfname").text(error);
-        // }
         // Validimi i Emrit
         validate_data(firstname, alphanumeric_validation, "Name should be only letters",  "errorcfname");
 
@@ -359,10 +339,10 @@ include "main.css";
         validate_data(telephone, phoneno_validation, "Phone should contain only numbers and 10-12 digits.",  "errorcphone");
 
         // Validimi i ditelindjes
-        validate_data(birthday, dateformat_validation , "should not be empty.",  "errorcbirth");
+        validate_data(birthday, birthday_validation , "Not correct format.",  "errorcbirth");
 
         // Validimi i Gjinise
-        validate_data(gender, isEmpty(gender) , "Phone should contain only numbers and 10-12 digits.",  "errorcgender");
+        validate_data(gender, alphanumeric_validation , "Select a gender for the user.",  "errorcgender");
 
         // Validimi i Emailit
         validate_data(mail, email_validation, "Email should be .",  "errorcemail");
@@ -374,7 +354,7 @@ include "main.css";
         validate_data(password2, pass_validation , "Not the same password.",  "errorcpass2");
 
         // Validimi i Rolit
-        validate_data(role, isEmpty(role) , "Select a role for the user",  "errorcrole");
+        validate_data(role, alphanumeric_validation , "Select a role for the user",  "errorcrole");
 
         $.ajax({
             url: "ajax.php",
@@ -552,122 +532,37 @@ include "main.css";
         var phone = $("#phone").val();
         var email = $("#email").val();
         var role = $("#role").val();
+        var alphanumeric_validation = /^[a-zA-Z]{3,}$/;
+        var phoneno_validation = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        var email_validation = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        var pass_validation = /^[a-zA-Z0-9!@#$%^&*.]{8,16}$/;
+        var birthday_validation = /(((19|20)\d\d)\/(0[1-9]|1[0-2])\/((0|1)[0-9]|2[0-9]|3[0-1]))$/;
 
-        if (isEmpty(fname)) {
-            error = "Name must be entered.";
-            $("#errorufname").text(error);
-            return false;
-        }
-        else{
-            error = "";
-            $("#errorufname").text(error);
-        }
-       var filter_name = /^[a-zA-Z\s]+$/;
-        if(!filter_name.test(fname)){
-            error = "Name must be only letters.";
-            $("#errorufname").text(error);
-            return false;
-        }
-        else {error = "";
-            $("#errorufname").text(error);
-        }
-        if (isEmpty(lname)) {
-            error = "Surname must be entered.";
-            $("#errorulname").text(error);
-            return false;
-        }
-        else{
-            error = "";
-            $("#errorulname").text(error);
-        }
-        if(!filter_name.test(lname)){
-            error = "Surname must be only letters.";
-            $("#errorulname").text(error);
-            return false;
-        }
-        else{
-            error = "";
-            $("#errorulname").text(error);
-        }
-        if (isEmpty(atesia)) {
-            error = "Atesia must be entered.";
-            $("#erroruatesia").text(error);
-            return false;
-        }
-        else{
-            error = "";
-            $("#erroruatesia").text(error);
-        }
-        if(!filter_name.test(atesia)){
-            error = "Atesia must be only letters.";
-            $("#erroruatesia").text(error);
-            return false;
-        }
-        else{
-            error = "";
-            $("#erroruatesia").text(error);
-        }
-        if (isEmpty(username)) {
-            error = "Username must be entered.";
-            $("#errorusername").text(error);
-            return false;
-        }
-        else{
-            error = "";
-            $("#errorusername").text(error);
-        }
-        if(!filter_name.test(username)){
-            error = "Username must be only letters.";
-            $("#errorusername").text(error);
-            return false;
-        }
-        else{
-            error = "";
-            $("#errorusername").text(error);
-        }
-        if (isEmpty(phone)) {
-            error = "Phone must be entered.";
-            $("#erroruphonenumber").text(error);
-            return false;
-        }
-        else{
-            error = "";
-            $("#erroruphonenumber").text(error);
-        }
-        var phonenumber = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-        if(!phonenumber.test(phone)){
-            error = "Phone is not correct format.";
-            $("#erroruphonenumber").text(error);
-            return false;
-        }
-        else {
-            error = "";
-            $("#erroruphonenumber").text(error);
-        }
-        if (isEmpty(email)) {
-            error = "Email must be entered.";
-            $("#erroruemail").text(error);
-            return false;
-        }
-       var filter_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if(!filter_email.test(email)){
-            error = "Email not correct format";
-            $("#erroruemail").text(error);
-            return false;
-        }
-        else {
-            error = "";
-            $("#erroruemail").text(error);
-        }
-        if (isEmpty(role)) {
-            error = "Role must be entered.";
-            $("#errorurole").text(error);
-            return false;
-        }
-        else {
-            error = "";
-            $("#errorurole").text(error);
-        }
+        /**
+         * Validimi i fushave
+         */
+
+
+        // Validimi i emrit
+        validate_data(fname, alphanumeric_validation , "Name should contain only letters",  "errorufname");
+
+        // Validimi i mbiemrit
+        validate_data(lname, alphanumeric_validation , "Surname should contain only letters",  "errorulname");
+
+        // Validimi i atesise
+        validate_data(atesia, alphanumeric_validation , "Atesia should contain only letters",  "erroruatesia");
+
+        // Validimi i username
+        validate_data(username, alphanumeric_validation , "Atesia should contain only letters",  "errorusername");
+
+        // Validimi i telefonit
+        validate_data(phone, phoneno_validation , "Phone wrong format",  "erroruphonenumber");
+
+        // Validimi i emailit
+        validate_data(email, email_validation , "Email wrong format",  "erroruemail");
+
+        // Validimi i rolit
+        validate_data(role, alphanumeric_validation , "Select role for user",  "errorurole");
 
         var data = {
             "action": "update",
@@ -720,7 +615,6 @@ include "main.css";
                 var response = JSON.parse(result);
 
                 if (response.code == 200) {
-                    $('#delete_user_data').modal('hide');
                     Swal.fire("User deleted successfully",response.message,"success");
                     setTimeout(function(){
                         location.reload();

@@ -257,9 +257,11 @@ if ($_POST['action'] == "register") {
          gender = '$txtgender',
          password = '$hash',
          created_at = '$registerdate',
-         role = '$role'";
+         role = '$role',
+         photo = ''";
 
-
+//print_r($query_insert);
+//exit;
     $result_insert = mysqli_query($conn, $query_insert);
     // If data inputed successfully into the database following conditions applied
     if ($result_insert) {

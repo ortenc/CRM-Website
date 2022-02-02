@@ -73,6 +73,27 @@
 
 <script>
 
+    function validate_data(val, validation_rule, message, error_field ){
+
+        if (isEmpty(val)) {
+            error = "*This field is required.";
+            $("#"+error_field).text(error);
+            return false;
+        }else{
+            error = "";
+            $("#"+error_field).text(error);
+        }
+
+        if (!validation_rule.test(val)) {
+            error = message;
+            $("#"+error_field).text(error);
+            return false;
+        }else{
+            error = "";
+            $("#"+error_field).text(error);
+        }
+    }
+
 
     $(function () {
         $('.datepicker').datepicker({
@@ -102,10 +123,18 @@
         var password1 = $("#password1").val();
         var password2 = $("#password2").val();
         var gender = $('input[name=gender]:checked').val();
+        var alphanumeric_validation = /^[a-zA-Z]{3,}$/;
+        var phoneno_validation = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+        var email_validation = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        var pass_validation = /^[a-zA-Z0-9!@#$%^&*.]{8,16}$/;
+        var birthday_validation = /(((19|20)\d\d)\/(0[1-9]|1[0-2])\/((0|1)[0-9]|2[0-9]|3[0-1]))$/;
 
         /**
          * Validojme emrin
          */
+
+        // Validojme emrin
+        validate_data(fname, alphanumeric_validation, "Name should be only letters",  "errorcfname");
 
         if (isEmpty(fname)) {
             error = "Name must be entered.";

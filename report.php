@@ -21,6 +21,11 @@ require('database.php');
     <?php include "header.php"; ?>
 
 </head>
+<style>
+    <?php
+    include "main.css";
+    ?>
+</style>
 
 <body>
 
@@ -49,11 +54,11 @@ require('database.php');
                                 <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Name</th>
-                                    <th>Surname</th>
-                                    <th>Date</th>
-                                    <th>Nr of hours in</th>
-                                    <th>Nr of hours out</th>
+                                    <th style="text-align:center">Name</th>
+                                    <th style="text-align:center">Surname</th>
+                                    <th style="text-align:center">Date</th>
+                                    <th style="text-align:center">Nr of hours in</th>
+                                    <th style="text-align:center">Nr of hours out</th>
                                 </tr>
                                 </thead>
                             </table>
@@ -83,8 +88,6 @@ require('database.php');
             "</thead>" +
             "<tbody><tr style='background-color: #e2e2e2'>";
 
-
-
         $.each(row_details, function (index, row_data) {
             table +=
                 "<tr>"+
@@ -98,30 +101,8 @@ require('database.php');
         });
 
         table += "</tr></tbody></table>";
-
-
-
         return table;
-
-
-
     }
-
-   var test_id_per_qef = $('.test_id_per_qef').DataTable({
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [
-            {extend: 'excel', title: 'Data'},
-        ],
-        columnsDefs: [
-            {
-                orderable: true,
-                searchable: true,
-                targets: 0
-            },
-        ]
-    });
-
-
 
     $(document).ready(function () {
 
@@ -161,13 +142,12 @@ require('database.php');
         $('#emptable tbody').on('click', '.details-control', function () {
 
             var tr = $(this).parents('tr');
-            var row = test_id_per_qef.row(tr);
+            var row = dt.row(tr);
             var idx = $.inArray(tr.attr('id'), detailRows);
 
             $(this).removeClass("fa-plus").addClass("fa-minus");
 
             if (row.child.isShown()) {
-
                 $(this).removeClass("fa-minus").addClass("fa-plus");
                 tr.removeClass('details bg-light');
                 row.child.hide();
@@ -177,7 +157,9 @@ require('database.php');
                 $(this).removeClass("fa-plus").addClass("fa-minus");
                 tr.addClass('details bg-light');
                 row.child(render_row_details(row.data().row_details)).show();
-                // Add to the 'open' array
+
+
+
                 if (idx === -1) {
                     detailRows.push(tr.attr('id'));
                 }
@@ -190,8 +172,6 @@ require('database.php');
                 $('#' + id + ' td:first-child').trigger('click');
             });
         });
-
-
 
         $('#filter').click(function () {
             dataTable.draw();
