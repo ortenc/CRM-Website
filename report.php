@@ -4,8 +4,7 @@ include('functions.php');
 <?php
 session_start();
 
-if(!$_SESSION['id'])
-{
+if (!$_SESSION['id']) {
     header('location : login.php');
 }
 require('database.php');
@@ -50,7 +49,7 @@ require('database.php');
                     </div>
                     <div class="ibox-content">
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover dataTables" id="emptable" >
+                            <table class="table table-striped table-bordered table-hover dataTables" id="emptable">
                                 <thead>
                                 <tr>
                                     <th></th>
@@ -86,35 +85,33 @@ require('database.php');
             "<th><center>hours_out</center></th>" +
             "</tr>" +
             "</thead>" +
-            "<tbody><tr style='background-color: #e2e2e2'>";
+            "<tbody>";
 
         $.each(row_details, function (index, row_data) {
             table +=
-                "<tr>"+
+                "<tr>" +
                 "<td><center>" + row_data.name + "</center> </td>" +
                 "<td><center>" + row_data.surname + "</center> </td>" +
                 "<td><center>" + row_data.date + "</center></td>" +
                 "<td><center>" + row_data.check_in + "</center></td>" +
                 "<td><center>" + row_data.check_out + "</center></td>" +
-            "<tr>"
-
+                "<tr>"
         });
 
-        table += "</tr></tbody></table>";
         return table;
     }
 
     $(document).ready(function () {
 
-        var dt =  $('#emptable').DataTable({
+        var dt = $('#emptable').DataTable({
+
             processing: true,
             serverSide: true,
             paging: true,
             serverMethod: 'POST',
             ajax: {
                 url: "report_fill.php",
-                data:  {
-                }
+                data: {}
             },
             columns: [
 
@@ -131,11 +128,12 @@ require('database.php');
                     searchable: false,
                     targets: 0
                 },
-                {"targets":4, "type":"date-eu"}
+                {"targets": 4, "type": "date-eu"}
             ]
         });
 
-        // Array to track the ids of the details displayed rows
+        $('.test_id_per_qef').DataTable();
+
 
         var detailRows = [];
 
@@ -156,28 +154,24 @@ require('database.php');
             } else {
                 $(this).removeClass("fa-plus").addClass("fa-minus");
                 tr.addClass('details bg-light');
-                row.child(render_row_details(row.data().row_details)).show();
 
+
+                var table_details = $(render_row_details(row.data().row_details));
+                row.child(table_details).show();
+                console.log($( row.child() ));
+                console.log(table_details);
+                console.log(table_details[0]);
+                $(table_details[0]).DataTable();
+
+
+                // $( row.child() ).DataTable();
 
 
                 if (idx === -1) {
                     detailRows.push(tr.attr('id'));
                 }
             }
-
         });
-        // On each draw, loop over the `detailRows` array and show any child rows
-        dt.on('draw', function () {
-            $.each(detailRows, function (i, id) {
-                $('#' + id + ' td:first-child').trigger('click');
-            });
-        });
-
-        $('#filter').click(function () {
-            dataTable.draw();
-
-        });
-
     });
 
 </script>

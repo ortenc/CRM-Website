@@ -134,134 +134,35 @@
          */
 
         // Validojme emrin
-        validate_data(fname, alphanumeric_validation, "Name should be only letters",  "errorcfname");
+        validate_data(fname, alphanumeric_validation, "Name should be only letters",  "errorfname");
 
-        if (isEmpty(fname)) {
-            error = "Name must be entered.";
-            $("#errorfname").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorfname").text(error);
-        }
-        var filter_only_letters = /^[a-zA-Z\s]+$/;
-        if (!filter_only_letters.test(fname)) {
-            error = "name should be only letters.";
-            $("#errorfname").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorfname").text(error);
-        }if (isEmpty(lname)) {
-            error = "Surname must be entered.";
-            $("#errorlname").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorlname").text(error);
-        }if (!filter_only_letters.test(lname)) {
-            error = "last name should be only letters.";
-            $("#errorlname").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorlname").text(error);
-        }if (isEmpty(atesia)) {
-            error = "atesia must be entered.";
-            $("#erroratesia").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#erroratesia").text(error);
-        }if (!filter_only_letters.test(atesia)) {
-            error = "atesia should be only letters.";
-            $("#erroratesia").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#erroratesia").text(error);
-        }if (isEmpty(email)) {
-            error = "Email must be entered.";
-            $("#erroremail").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#erroremail").text(error);
-        }
-            filter_email_fomrat = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!filter_email_fomrat.test(email)) {
-            error = "Email not correct format.";
-            $("#erroremail").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#erroremail").text(error);
-        }if (isEmpty(phone)) {
-            error = "phone must be entered.";
-            $("#errorphone").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorphone").text(error);
-        }
-        var phone_number_filter = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-        if (!phone_number_filter.test(phone)) {
-            error = "Phone not correct format.";
-            $("#errorphone").text(error);
-            return false;
+        // Validojme mbiemrin
+        validate_data(lname, alphanumeric_validation, "Surname should be only letters",  "errorlname");
 
-        }else{
-            error = "";
-            $("#errorphone").text(error);
-        }if (isEmpty(date_change)) {
-            error = "birthdate must be entered.";
-            $("#errorbirthday").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorbirthday").text(error);
-        }if (isEmpty(password1)) {
-            error = "Password1 must be entered.";
-            $("#errorpass1").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorpass1").text(error);
-        }if (isEmpty(password2)) {
-            error = "Password2 must be entered.";
-            $("#errorpass2").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorpass2").text(error);
-        }if (password1 != password2) {
-            error = "Passwords are not the same.";
-            $("#errorpass1").text(error);
-            $("#errorpass2").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorpass1").text(error);
-            $("#errorpass2").text(error);
-        }
-        var minNumberofChars = 6;
-        var maxNumberofChars = 16;
-        var regularExpression = /^[a-zA-Z0-9!@#$%^&*.]{6,16}$/;
-        if (password1.length < minNumberofChars || password1.length > maxNumberofChars) {
-            error = "Password should contain One upper case one lower case one special character and 8 min characters.";
-            $("#errorpass1").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorpass1").text(error);
-        }if (!regularExpression.test(password1)) {
-            error ="password should contain at least one number and one special character";
-            $("#errorpass1").text(error);
-            return false;
-        }else{
-            error = "";
-            $("#errorpass1").text(error);
-        }
+        // Validojme atesine
+        validate_data(atesia, alphanumeric_validation, "Atesia should be only letters",  "erroratesia");
+
+        // Validojme emailin
+        validate_data(email, email_validation, "Email wrong format",  "erroremail");
+
+        // Validojme ditelindjen
+        validate_data(birthday, birthday_validation, "Date wrong format",  "errorbirthday");
+
+        // Validojme telefonin
+        validate_data(phone, phoneno_validation, "Phone number wrong format",  "errorphone");
+
+        // Validojme pass1
+        validate_data(password1, pass_validation, "Password should be 8 or 16 letters long and contain one uper case and lower case edhe nji shenj piksimi",  "errorpass1");
+
+        // Validojme pass2
+        validate_data(password2, pass_validation, "Password should be 8 or 16 letters long and contain one uper case and lower case edhe nji shenj piksimi",  "errorpass2");
+
+        // Validojme gjinine
+        validate_data(gender, alphanumeric_validation, "Gjinia should not be empty",  "errorgender");
+
+        /**
+         * Bejme thirrjen ne ajax te te dhenave mbasi mbarojm kontrollin e te dhenave
+         */
 
         $.ajax({
             url: "ajax.php",

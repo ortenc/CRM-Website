@@ -268,18 +268,18 @@ include "footer.php";
 
 <script>
 
-    $(function () {
-        $('.datepicker').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: false,
-            calendarWeeks: true,
-            autoclose: true,
-            dateFormat: "yy-mm-dd",
-            changeYear: true,
-            changeMonth: true
+        $(function () {
+            $('.datepicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                dateFormat: "yy-mm-dd",
+                changeYear: true,
+                changeMonth: true
+            });
         });
-    });
 
         function isEmpty(value) {
             return typeof value == 'string' && !value.trim() || typeof value == 'undefined' || value === null;
@@ -404,7 +404,11 @@ include "footer.php";
                 $.ajax({
                     url: "ajax.php",
                     method: "POST",
-                    data: {to_user_id: to_user_id, chat_message: chat_message, "action": "insert_chat"},
+                    data: {
+                           to_user_id: to_user_id,
+                           chat_message: chat_message,
+                           "action": "insert_chat"
+                          },
                     success: function (data) {
                         $('#chat_message_' + to_user_id).val('');
                         $('#chat_history_' + to_user_id).html(data);
