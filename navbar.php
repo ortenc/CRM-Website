@@ -47,6 +47,9 @@ $user_id_list = $_SESSION['id'];
             <li class="active">
                 <a href="report.php"><i class="fa fa-file"></i> <span class="nav-label">Report</span></a>
             </li>
+            <li class="active">
+                <a href="index.php"><i class="fa fa-money"></i> <span class="nav-label">Wages</span></a>
+            </li>
         </ul>
     </div>
 </nav>

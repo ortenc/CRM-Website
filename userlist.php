@@ -3,10 +3,9 @@ include('functions.php');
 ?>
 <?php
 session_start();
-
-if(!$_SESSION['id'])
-{
-    header('location : login.php');
+if (!isset($_SESSION['role']) || ($_SESSION['role'] != 'Admin')) {
+    header('Location: profile.php');
+    exit;
 }
 require('database.php');
 
@@ -378,7 +377,7 @@ include "main.css";
                 if (response.code == 200) {
                     window.location.href = "userlist.php";
                 } else if (response.code == 422) {
-                    window.alert(response.message)
+                    swal.fire(response.message)
                 }
             }
         });
