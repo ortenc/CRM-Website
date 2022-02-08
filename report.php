@@ -132,9 +132,6 @@ require('database.php');
             ]
         });
 
-        $('.test_id_per_qef').DataTable();
-
-
         var detailRows = [];
 
         $('#emptable tbody').on('click', '.details-control', function () {
