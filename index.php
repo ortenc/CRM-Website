@@ -18,6 +18,20 @@ function isWeekend($date)
 }
 
 /**
+ * Funksioni qe mer fillimin dhe fundin e javes
+ */
+
+function getStartAndEndDateWeek($week, $year)
+{
+    $dto = new DateTime();
+    $dto->setISODate($year, $week);
+    $ret['week_start'] = $dto->format('Y-m-d');
+    $dto->modify('+6 days');
+    $ret['week_end'] = $dto->format('Y-m-d');
+    return $ret;
+}
+
+/**
  * Lidhemi me databazen
  */
 
@@ -57,7 +71,8 @@ $query_users_data = "SELECT
                             date,
                             hours,
                             total_paga
-                     FROM working_days left join test_users ON working_days.user_id = test_users.id;";
+                     FROM working_days left join test_users ON working_days.user_id = test_users.id
+                     ORDER BY date ASC;";
 
 $result_users_data = mysqli_query( $conn, $query_users_data );
 
@@ -82,8 +97,12 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
         $out_hours = $row['hours'] - 8;
     }
 
+
+
     $users_data[$row['id']]['in_hours'] += $in_hours;
     $users_data[$row['id']]['out_hours'] += $out_hours;
+
+
 
 
     // llogarisim pagen per ore
@@ -126,8 +145,43 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
     $users_data[$row['id']]['totale_payment_out_hours'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
     $users_data[$row['id']]['totale_payment'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
 
+    // Ndarja e datava me jave nga array
+    $user_date = $row['date'];
+    $user_year_date = explode("-", $user_date);
+    $user_year = $user_year_date[0];
+    $user_week = date("W", strtotime($user_date));
+    $user_week_length = getStartAndEndDateWeek($user_week, $user_year);
+    $user_week_days = $user_week_length['week_start']." => ".$user_week_length['week_end'];
+
+    // Ndarja oreve sipas javes dhe kalkulimi i oreve sipas dites se asaj jave
+
+    $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['data'] = $row['date'];
+    $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['in_hours'] = $in_hours;
+    $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['out_hours'] = $out_hours;
+    $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['total_hours'] = $in_hours + $out_hours;
+
+    $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['payment_in_hours_per_week_day'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours;
+    $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['payment_out_hours_per_week_day'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
+    $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['totale_payment_per_week_day'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
+
+    // Llogaritja e oreve te punes sipas javes
+
+    $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['total_hours_per_week_day'] += $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['total_hours'];
+    $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['total_hours_in_per_week_day'] += $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['in_hours'];
+    $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['total_hours_out_per_week_day'] += $users_data[$row['id']]['WEEK'][$user_week_days][$user_date]['out_hours'];
+
+    $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['totale_payment_in_hours_per_week'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours;
+    $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['totale_payment_out_hours_per_week'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
+    $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['totale_payment_per_week'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
+
+
+
 }
 
+//echo "<pre>";
+//print_r($users_data);
+//echo "</pre>";
+//exit;
 
 ?>
 
@@ -191,7 +245,7 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                     ?>
                                     <tr style="color: red !important;">
                                         <td>
-                                            <button class="btn btn-primary btn-sm" onclick="showData('<?= $user_id ?>')">
+                                            <button class="btn btn-primary btn-sm" onclick="showWeek('<?= $user_id ?>')">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                         </td>
@@ -206,56 +260,89 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                     </tr>
                                     <tr>
                                     <td colspan="12">
-                                        <table class="table table-striped table-bordered table-hover dataTables" id="row_<?= $user_id ?>">
+                                        <table class="table table-striped table-bordered table-hover dataTables" id="row_<?= $user_id ?>" style="display: none">
                                             <thead>
                                             <tr>
                                                 <th scope="col"></th>
                                                 <th scope="col">Nr</th>
-                                                <th scope="col">Full Name</th>
+                                                <th scope="col">Week</th>
                                                 <th scope="col">Hours In</th>
                                                 <th scope="col">Hours Out</th>
                                                 <th scope="col">Totale Hours</th>
                                                 <th scope="col">Payment In</th>
                                                 <th scope="col">Payment Out</th>
-                                                <th scope="col">Totale Payment</th>
+                                                <th scope="col">Totale Payment per Week</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <?php
-                                            $k = 0;
-                                            foreach($data['DATE'] as $working_date => $all_data) {
-                                                $k ++;
-                                                ?>
+                                            $k = 1;
+                                            foreach($data['WEEK'] as $working_date => $all_data) { ?>
                                                 <tr>
-                                                    <td></td>
-                                                    <td><?= $k; ?></td>
+                                                    <td>
+                                                        <button class="btn btn-primary btn-sm" onclick="showDay('<?= $k ?>')">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </td>
+                                                    <td><?= $k ?></td>
                                                     <td><?= $working_date ?></td>
-                                                    <td><?= $all_data['in_hours'] ?> ore</td>
-                                                    <td><?= $all_data['out_hours'] ?> ore</td>
-                                                    <td><?= $all_data['total_hours'] ?> ore</td>
-                                                    <td><?= round( $all_data['payment_in_hurs'], 2 ) ?> Lek</td>
-                                                    <td><?= round( $all_data['payment_out_hours'], 2 ) ?> Lek</td>
-                                                    <td><?= round( $all_data['totale_payment'], 2 ) ?> Lek</td>
+                                                    <td><?= $data['WEEK'][$working_date]['Totale']['total_hours_in_per_week_day'] ?> ore</td>
+                                                    <td><?= $data['WEEK'][$working_date]['Totale']['total_hours_out_per_week_day'] ?> ore</td>
+                                                    <td><?= $data['WEEK'][$working_date]['Totale']['total_hours_per_week_day'] ?> ore</td>
+                                                    <td><?= round( $data['WEEK'][$working_date]['Totale']['totale_payment_in_hours_per_week'], 2 ) ?> Lek</td>
+                                                    <td><?= round( $data['WEEK'][$working_date]['Totale']['totale_payment_out_hours_per_week'], 2 ) ?> Lek</td>
+                                                    <td><?= round( $data['WEEK'][$working_date]['Totale']['totale_payment_per_week'], 2 ) ?> Lek</td>
                                                 </tr>
-                                                <?php
-                                            }
-                                            ?>
+                                                <tr>
+                                                    <td colspan="12">
+                                                        <table class="table table-striped table-bordered table-hover dataTables" id="day_<?= $k ?>" style="display: none">
+                                                            <thead>
+                                                            <tr>
+                                                                <th scope="col"></th>
+                                                                <th scope="col">Nr</th>
+                                                                <th scope="col">Week</th>
+                                                                <th scope="col">Hours In</th>
+                                                                <th scope="col">Hours Out</th>
+                                                                <th scope="col">Totale Hours</th>
+                                                                <th scope="col">Payment In</th>
+                                                                <th scope="col">Payment Out</th>
+                                                                <th scope="col">Totale Payment per Week</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <?php
+                                                            $a = 1;
+                                                            foreach($all_data as $day => $day_data) {
+
+                                                                    if ($day == 'Totale'){
+                                                                        continue;
+                                                                    }
+
+                                                                ?>
+
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td><?= $a ++; ?></td>
+                                                                    <td><?= $day ?></td>
+                                                                    <td><?= $data['WEEK'][$working_date][$day]['in_hours'] ?> ore</td>
+                                                                    <td><?= $data['WEEK'][$working_date][$day]['out_hours'] ?> ore</td>
+                                                                    <td><?= $data['WEEK'][$working_date][$day]['total_hours'] ?> ore</td>
+                                                                    <td><?= round($data['WEEK'][$working_date][$day]['payment_in_hours_per_week_day'], 2 ) ?> Lek</td>
+                                                                    <td><?= round($data['WEEK'][$working_date][$day]['payment_out_hours_per_week_day'], 2 ) ?> Lek</td>
+                                                                    <td><?= round($data['WEEK'][$working_date][$day]['totale_payment_per_week_day'], 2 ) ?> Lek</td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            <?php $k++; } ?>
                                             </tbody>
                                         </table>
                                     </td>
                                     </tr>
-                                    <tr style="border: 1px solid red">
-                                        <th scope="col"></th>
-                                        <th scope="col">Nr</th>
-                                        <th scope="col">Data</th>
-                                        <th scope="col">Hours IN</th>
-                                        <th scope="col">Hours Out</th>
-                                        <th scope="col">Totale Hours</th>
-                                        <th scope="col">Payment In</th>
-                                        <th scope="col">Payment Out</th>
-                                        <th scope="col">Totale Payment</th>
-                                    </tr>
-                                    <?php
+
+                                <?php
                                 }
                                 ?>
                                 </tbody>
@@ -272,8 +359,12 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
 
 <script>
 
-   function showData(id) {
+   function showWeek(id) {
        $("#row_"+id).toggle("slow");
+   }
+
+   function showDay(id) {
+       $("#day_"+id).toggle("slow");
    }
 
 </script>
