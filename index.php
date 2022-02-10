@@ -18,31 +18,6 @@ function isWeekend($date)
 }
 
 /**
- * Funksioni qe mer fillimin dhe fundin e javes
- */
-
-function getStartAndEndDateWeek($week, $year)
-{
-    $dto = new DateTime();
-    $dto->setISODate($year, $week);
-    $ret['week_start'] = $dto->format('Y-m-d');
-    $dto->modify('+6 days');
-    $ret['week_end'] = $dto->format('Y-m-d');
-    return $ret;
-}
-
-/**
- * Lidhemi me databazen
- */
-
-//$db_conn = mysqli_connect( "localhost", "root", "", "test_paga" );
-//
-//if(!$db_conn) {
-//    echo mysqli_connect_error()." ".__LINE__;
-//    exit;
-//}
-
-/**
  * Marrim fillimisht ditet e pushimit qe jane te paracaktuara
  */
 
@@ -60,6 +35,7 @@ $off_days = array();
 while($row = mysqli_fetch_assoc( $result_off_days )) {
     $off_days[$row['date']] = $row['date'];
 }
+
 
 /**
  * Marrim te dhenat e userit dhe marrim ditet kur keto usera kane punuar ne menyre qe te mund te llogarisim pagen per cdo user
@@ -97,13 +73,8 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
         $out_hours = $row['hours'] - 8;
     }
 
-
-
     $users_data[$row['id']]['in_hours'] += $in_hours;
     $users_data[$row['id']]['out_hours'] += $out_hours;
-
-
-
 
     // llogarisim pagen per ore
     $paga = $row['total_paga'] / 22 / 8;
@@ -113,11 +84,14 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
     // Shohim fillimisht nese eshte dite festive
 
     if(isset( $off_days[$row['date']] )) {
-
         // percaktojme koefincentet per brenda orarit dhe jashte orarit
-
         $k_in_hours = 1.5;
         $k_out_hours = 2;
+
+        $off_days[$row['date']]['off_hours'] += $in_hours;
+//        echo "<pre>";
+//        print_r($in_hours);
+//        echo "</pre>";
 
     } else if(isWeekend( $row['date'] )) {
         // percaktojme koefincentet per brenda orarit dhe jashte orarit
@@ -129,6 +103,7 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
         $k_in_hours = 1;
         $k_out_hours = 1.25;
     }
+
 
     // Llogaritja per date e pages totale, pages in hours dhe paga out of hours
     $users_data[$row['id']]['DATE'][$row['date']]['payment_in_hurs'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours;
@@ -145,12 +120,12 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
     $users_data[$row['id']]['totale_payment_out_hours'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
     $users_data[$row['id']]['totale_payment'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
 
+
     // Ndarja e datava me jave nga array
     $user_date = $row['date'];
-    $user_year_date = explode("-", $user_date);
-    $user_year = $user_year_date[0];
     $user_week = date("W", strtotime($user_date));
-    $user_week_length = getStartAndEndDateWeek($user_week, $user_year);
+    $user_week_length['week_start'] = date('Y-m-d', strtotime("monday this week", strtotime($user_date)));
+    $user_week_length['week_end'] = date('Y-m-d', strtotime("sunday this week", strtotime($user_date)));
     $user_week_days = $user_week_length['week_start']." => ".$user_week_length['week_end'];
 
     // Ndarja oreve sipas javes dhe kalkulimi i oreve sipas dites se asaj jave
@@ -174,8 +149,6 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
     $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['totale_payment_out_hours_per_week'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
     $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['totale_payment_per_week'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
 
-
-
 }
 
 //echo "<pre>";
@@ -197,9 +170,11 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
 
 </head>
 <style>
+
     <?php
     include "main.css";
     ?>
+
 </style>
 <body>
 <div id="wrapper">
@@ -245,13 +220,20 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                     ?>
                                     <tr style="color: red !important;">
                                         <td>
-                                            <button class="btn btn-primary btn-sm" onclick="showWeek('<?= $user_id ?>')">
-                                                <i class="fa fa-plus"></i>
+                                            <button class="btn btn-primary btn-sm" id="btn_<?= $user_id ?>" onclick="showWeek('<?= $user_id ?>')">
+                                                <i class="fa fa-plus" id="icon_week_<?= $user_id ?>"></i>
                                             </button>
                                         </td>
                                         <td><?= $nr ?></td>
                                         <td><?= $data['full_name'] ?></td>
-                                        <td><?= $data['in_hours'] ?> ore</td>
+                                        <td><table class="table table-striped table-bordered table-hover dataTables">
+                                                <tr>
+                                                <td><?= $data['out_hours'] ?> ore</td>
+                                                <td><?= $data['out_hours'] ?> ore</td>
+                                                <td><?= $data['out_hours'] ?> ore</td>
+                                                <td><?= $data['out_hours'] ?> ore</td>
+                                                </tr>
+                                            </table></td>
                                         <td><?= $data['out_hours'] ?> ore</td>
                                         <td><?= $data['total_hours'] ?> ore</td>
                                         <td><?= round( $data['totale_payment_in_hours'], 2 ) ?> Lek</td>
@@ -280,8 +262,8 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                             foreach($data['WEEK'] as $working_date => $all_data) { ?>
                                                 <tr>
                                                     <td>
-                                                        <button class="btn btn-primary btn-sm" onclick="showDay('<?= $k ?>')">
-                                                            <i class="fa fa-plus"></i>
+                                                        <button class="btn btn-primary btn-sm" id="bnt_<?= $user_id.'_'.$k ?>" onclick="showDay('<?= $user_id.'_'.$k ?>')">
+                                                            <i class="fa fa-plus" id="icon_day_<?= $user_id.'_'.$k ?>"></i>
                                                         </button>
                                                     </td>
                                                     <td><?= $k ?></td>
@@ -295,7 +277,7 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                                 </tr>
                                                 <tr>
                                                     <td colspan="12">
-                                                        <table class="table table-striped table-bordered table-hover dataTables" id="day_<?= $k ?>" style="display: none">
+                                                        <table class="table table-striped table-bordered table-hover dataTables" id="day_<?= $user_id.'_'.$k ?>" style="display: none">
                                                             <thead>
                                                             <tr>
                                                                 <th scope="col"></th>
@@ -313,13 +295,10 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                                             <?php
                                                             $a = 1;
                                                             foreach($all_data as $day => $day_data) {
-
                                                                     if ($day == 'Totale'){
                                                                         continue;
                                                                     }
-
                                                                 ?>
-
                                                                 <tr>
                                                                     <td></td>
                                                                     <td><?= $a ++; ?></td>
@@ -341,7 +320,6 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                         </table>
                                     </td>
                                     </tr>
-
                                 <?php
                                 }
                                 ?>
@@ -360,11 +338,35 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
 <script>
 
    function showWeek(id) {
-       $("#row_"+id).toggle("slow");
+       $("#btn_"+id).prop('disabled', true);
+         setTimeout(function (){
+             $("#btn_"+id).prop('disabled', false);
+         }, 500);
+       if($("#icon_week_"+id).hasClass( "fa-plus" )){
+           $("#icon_week_"+id).addClass("fa-minus");
+           $("#icon_week_"+id).removeClass("fa-plus");
+       }
+       else{
+           $("#icon_week_"+id).removeClass("fa-minus");
+           $("#icon_week_"+id).addClass("fa-plus");
+       }
+       $("#row_"+id).toggle();
    }
 
    function showDay(id) {
-       $("#day_"+id).toggle("slow");
+       $("#bnt_"+id).prop('disabled', true);
+       setTimeout(function (){
+           $("#bnt_"+id).prop('disabled', false);
+       }, 500);
+       if($("#icon_day_"+id).hasClass( "fa-plus" )){
+           $("#icon_day_"+id).addClass("fa-minus");
+           $("#icon_day_"+id).removeClass("fa-plus");
+       }
+       else{
+           $("#icon_day_"+id).removeClass("fa-minus");
+           $("#icon_day_"+id).addClass("fa-plus");
+       }
+       $("#day_"+id).toggle();
    }
 
 </script>

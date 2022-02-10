@@ -140,7 +140,7 @@ require('database.php');
             var row = dt.row(tr);
             var idx = $.inArray(tr.attr('id'), detailRows);
 
-            $(this).removeClass("fa-plus").addClass("fa-minus");
+                $(this).removeClass("fa-plus").addClass("fa-minus");
 
             if (row.child.isShown()) {
                 $(this).removeClass("fa-minus").addClass("fa-plus");
