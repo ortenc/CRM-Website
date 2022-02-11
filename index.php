@@ -188,12 +188,10 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
     $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['totale_payment_out_hours_per_week'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
     $users_data[$row['id']]['WEEK'][$user_week_days]['Totale']['totale_payment_per_week'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
 
+
 }
 
-//echo "<pre>";
-//print_r($users_data);
-//echo "</pre>";
-//exit;
+//printArray($users_data);
 
 ?>
 
