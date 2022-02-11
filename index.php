@@ -83,30 +83,73 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
     // Llogarisim pagesen qe i takon per cdo dite
     // Shohim fillimisht nese eshte dite festive
 
-    if(isset( $off_days[$row['date']] )) {
+    if(isset($off_days[$row['date']])) {
         // percaktojme koefincentet per brenda orarit dhe jashte orarit
+
         $k_in_hours = 1.5;
         $k_out_hours = 2;
 
-        $off_days[$row['date']]['off_hours'] += $in_hours;
-//        echo "<pre>";
-//        print_r($in_hours);
-//        echo "</pre>";
+        $users_in_off_hours = $row['hours'];
+        $users_out_off_hours = 0;
+        if($row['hours'] > 8){
+            $users_in_off_hours = 8;
+            $users_out_off_hours = $row['hours'] - $users_in_off_hours;
+        }
+        $users_data[$row['id']]['users_in_off_hours'] += $users_in_off_hours;
+        $users_data[$row['id']]['users_out_off_hours'] += $users_out_off_hours;
+        $users_data[$row['id']]['totale_payment_off_in_hours'] += $users_data[$row['id']]['payment_per_hour'] * $users_in_off_hours * $k_in_hours;
+        $users_data[$row['id']]['totale_payment_off_out_hours'] += $users_data[$row['id']]['payment_per_hour'] * $users_out_off_hours * $k_out_hours;
 
+
+//        echo "<pre>";
+//        print_r($users_data[$row['id']]['totale_payment_in_hours']);
+//        echo "</pre>";
     } else if(isWeekend( $row['date'] )) {
         // percaktojme koefincentet per brenda orarit dhe jashte orarit
         $k_in_hours = 1.25;
         $k_out_hours = 1.5;
 
+        $users_in_weekend_hours = $row['hours'];
+        $users_out_weekend_hours = 0;
+        if($row['hours'] > 8){
+            $users_in_weekend_hours = 8;
+            $users_out_weekend_hours = $row['hours'] - $users_in_weekend_hours;
+        }
+
+        $users_data[$row['id']]['users_in_weekend_hours'] += $users_in_weekend_hours;
+        $users_data[$row['id']]['users_out_weekend_hours'] += $users_out_weekend_hours;
+        $users_data[$row['id']]['totale_payment_weekend_in_hours'] += $users_data[$row['id']]['payment_per_hour'] * $users_in_weekend_hours * $k_in_hours;
+        $users_data[$row['id']]['totale_payment_weekend_out_hours'] += $users_data[$row['id']]['payment_per_hour'] * $users_out_weekend_hours * $k_out_hours;
+
     } else {
         // percaktojme koefincentet per brenda orarit dhe jashte orarit
         $k_in_hours = 1;
         $k_out_hours = 1.25;
+
+        $users_in_normal_hours = $row['hours'];
+        $users_out_normal_hours = 0;
+        if($row['hours'] > 8){
+            $users_in_normal_hours = 8;
+            $users_out_normal_hours = $row['hours'] - $users_in_normal_hours;
+        }
+
+        $users_data[$row['id']]['users_in_normal_hours'] += $users_in_normal_hours;
+        $users_data[$row['id']]['users_out_normal_hours'] += $users_out_normal_hours;
+        $users_data[$row['id']]['totale_payment_normal_in_hours'] += $users_data[$row['id']]['payment_per_hour'] * $users_in_normal_hours * $k_in_hours;
+        $users_data[$row['id']]['totale_payment_normal_out_hours'] += $users_data[$row['id']]['payment_per_hour'] * $users_out_normal_hours * $k_out_hours;
+
     }
 
 
+    // Llogaritja e pages totale, pages in hours dhe paga out of hours
+    $users_data[$row['id']]['totale_payment_in_hours'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours;
+    $users_data[$row['id']]['totale_payment_out_hours'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
+    $users_data[$row['id']]['totale_payment'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
+
+
+
     // Llogaritja per date e pages totale, pages in hours dhe paga out of hours
-    $users_data[$row['id']]['DATE'][$row['date']]['payment_in_hurs'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours;
+    $users_data[$row['id']]['DATE'][$row['date']]['payment_in_hours'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours;
     $users_data[$row['id']]['DATE'][$row['date']]['payment_out_hours'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
     $users_data[$row['id']]['DATE'][$row['date']]['totale_payment'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
 
@@ -115,10 +158,6 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
     $users_data[$row['id']]['DATE'][$row['date']]['out_hours'] = $out_hours;
     $users_data[$row['id']]['DATE'][$row['date']]['total_hours'] = $in_hours + $out_hours;
 
-    // Llogaritja e pages totale, pages in hours dhe paga out of hours
-    $users_data[$row['id']]['totale_payment_in_hours'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours;
-    $users_data[$row['id']]['totale_payment_out_hours'] += $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
-    $users_data[$row['id']]['totale_payment'] += $users_data[$row['id']]['payment_per_hour'] * $in_hours * $k_in_hours + $users_data[$row['id']]['payment_per_hour'] * $out_hours * $k_out_hours;
 
 
     // Ndarja e datava me jave nga array
@@ -218,7 +257,7 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                 foreach($users_data as $user_id => $data) {
                                     $nr++;
                                     ?>
-                                    <tr style="color: red !important;">
+                                    <tr style="color: black !important;">
                                         <td>
                                             <button class="btn btn-primary btn-sm" id="btn_<?= $user_id ?>" onclick="showWeek('<?= $user_id ?>')">
                                                 <i class="fa fa-plus" id="icon_week_<?= $user_id ?>"></i>
@@ -226,18 +265,87 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
                                         </td>
                                         <td><?= $nr ?></td>
                                         <td><?= $data['full_name'] ?></td>
-                                        <td><table class="table table-striped table-bordered table-hover dataTables">
+                                        <td>
+                                            <table class="table table-striped table-bordered table-hover dataTables">
+                                                <thead>
                                                 <tr>
-                                                <td><?= $data['out_hours'] ?> ore</td>
-                                                <td><?= $data['out_hours'] ?> ore</td>
-                                                <td><?= $data['out_hours'] ?> ore</td>
-                                                <td><?= $data['out_hours'] ?> ore</td>
+                                                <th>Normal Hours in</th>
+                                                <th>Off Hours in</th>
+                                                <th>Weekend Hours in</th>
+                                                <th>Total hours in</th>
                                                 </tr>
-                                            </table></td>
-                                        <td><?= $data['out_hours'] ?> ore</td>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td><?= $data['users_in_normal_hours'] ?> ore (<?= round($data['users_in_normal_hours'] / $data['in_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= $data['users_in_off_hours'] ?> ore (<?= round($data['users_in_off_hours'] / $data['in_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= $data['users_in_weekend_hours'] ?> ore (<?= round($data['users_in_weekend_hours'] / $data['in_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= $data['in_hours'] ?> ore</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table class="table table-striped table-bordered table-hover dataTables">
+                                                <thead>
+                                                <tr>
+                                                    <th>Normal Hours out</th>
+                                                    <th>Off Hours out</th>
+                                                    <th>Weekend Hours out</th>
+                                                    <th>Total hours out</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td><?= $data['users_out_normal_hours'] ?> ore (<?= round($data['users_out_normal_hours'] / $data['out_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= $data['users_out_off_hours'] ?> ore (<?= round($data['users_out_off_hours'] / $data['out_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= $data['users_out_weekend_hours'] ?> ore (<?= round($data['users_out_weekend_hours'] / $data['out_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= $data['out_hours'] ?> ore</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
                                         <td><?= $data['total_hours'] ?> ore</td>
-                                        <td><?= round( $data['totale_payment_in_hours'], 2 ) ?> Lek</td>
-                                        <td><?= round( $data['totale_payment_out_hours'], 2 ) ?> Lek</td>
+                                        <td>
+                                            <table class="table table-striped table-bordered table-hover dataTables">
+                                                <thead>
+                                                <tr>
+                                                    <th>Normal payment in</th>
+                                                    <th>Off payment in</th>
+                                                    <th>Weekend payment in</th>
+                                                    <th>Total payment in</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td><?= round($data['totale_payment_normal_in_hours'], 0) ?> Lek (<?= round($data['totale_payment_normal_in_hours'] / $data['totale_payment_in_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= round($data['totale_payment_off_in_hours'], 0) ?> Lek (<?= round($data['totale_payment_off_in_hours'] / $data['totale_payment_in_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= round($data['totale_payment_weekend_in_hours'], 0) ?> Lek (<?= round($data['totale_payment_weekend_in_hours'] / $data['totale_payment_in_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= round($data['totale_payment_in_hours'], 0) ?> Lek</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td>
+                                            <table class="table table-striped table-bordered table-hover dataTables">
+                                                <thead>
+                                                <tr>
+                                                    <th>Normal payment out</th>
+                                                    <th>Off payment out</th>
+                                                    <th>Weekend payment out</th>
+                                                    <th>Total payment out</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td><?= round($data['totale_payment_normal_out_hours'], 0) ?> Lek (<?= round($data['totale_payment_normal_out_hours'] / $data['totale_payment_out_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= round($data['totale_payment_off_out_hours'], 0) ?> Lek (<?= round($data['totale_payment_off_out_hours'] / $data['totale_payment_out_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= round($data['totale_payment_weekend_out_hours'], 0) ?> Lek (<?= round($data['totale_payment_weekend_out_hours'] / $data['totale_payment_out_hours'] * 100,0) ?>%)</td>
+                                                    <td><?= round($data['totale_payment_out_hours'], 0) ?> Lek</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
                                         <td><?= round( $data['totale_payment'], 2 ) ?> Lek</td>
                                     </tr>
                                     <tr>
