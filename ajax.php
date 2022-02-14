@@ -529,7 +529,7 @@ elseif ($_POST['action'] == "userUpdate") {
     $phone = $conn->escape_string($_POST['phonenum']);
     $email = $conn->escape_string($_POST['email']);
     $birthday = $conn->escape_string($_POST['birthday']);
-    $photo_path = $conn->escape_string($_POST['photo_path']);
+    $photo_path = $conn->escape_string($_POST['profile_photo']);
 
     $profile_photo = uploadPhoto($_FILES, $id, $photo_path);
     $name_preg = preg_match("/^[a-zA-Z-'\s]*$/", $fname);

@@ -103,12 +103,9 @@ while ($row = mysqli_fetch_assoc($result_list)) {
                                 <div class="row profile_content_id">
                                     <div class="col-md-12">
                                         <div id="profile-container-user">
-                                            <img id="profileImage-user" src="<?= $user['photo'] ?>">
-
-                                            <input type="hidden" id = "photo_path" value="<?=$user['photo']?>">
-
+                                            <img class="photo_modifier_container" id="profileImage-user" src="<?= $user['photo'] ?>">
                                         </div>
-                                        <input id="profile_photo" type="file" name="profile_photo">
+                                        <input id="profile_photo" type="file" name="profile_photo" placeholder="Photo" required>
                                     </div>
                                 </div>
                             </div>
@@ -268,6 +265,10 @@ include "footer.php";
 
 <script>
 
+    $("#profileImage-user").click(function() {
+        $("#profile_photo").click();
+    });
+
         $(function () {
             $('.datepicker').datepicker({
                 todayBtn: "linked",
@@ -291,7 +292,6 @@ include "footer.php";
             var post_data = new FormData();
             post_data.append('action', 'userUpdate');
             post_data.append('id', id);
-            post_data.append('photo_path', $("#photo_path").val());
             post_data.append("name", $("#name").val());
             post_data.append("surname", $("#surname").val());
             post_data.append("username", $("#username").val());

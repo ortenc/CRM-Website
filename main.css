@@ -58,3 +58,26 @@
     margin-left: 30px;
     text-align: center;
 }
+
+.image_modify_container{
+    border-radius: 50%;
+}
+
+.photo_modifier_container{
+    border-radius: 10%;
+}
+
+#profile_photo
+{
+    display: none;
+}
+
+.photo_modifier_container
+{
+    max-height: 100%;
+    max-width: 100%;
+    cursor: pointer;
+    height: 250px;
+    width: 250px;
+    object-fit: fill;
+}
