@@ -32,7 +32,7 @@ while ($row = mysqli_fetch_assoc($result_purchcase)){
  * Marrim te dhenat nga tabela products
  */
 
-$query_products = "SELECT product.id,
+$query_products = "SELECT purchase.id,
                     product.name,
                     product.price,
                     category,
@@ -59,19 +59,19 @@ if(!$result_products) {
 
 $product = array();
 while($row = mysqli_fetch_assoc( $result_products )) {
-    echo "<pre>";
-    print_r($row);
-    echo "</pre>";
+//    echo "<pre>";
+//    print_r($row);
+//    echo "</pre>";
 
 
 
     //Te dhenat e produkteve
-//    $product[$row['id']]['id'] = $row['id'];
-//    $product[$row['id']]['name'] = $row['name'];
-//    $product[$row['id']]['price'] = $row['price'];
-//    $product[$row['id']]['category'] = $row['category'];
-//    $product[$row['id']]['manufacturer'] = $row['manufacturer'];
-//    $product[$row['id']]['expire'] = $row['expire'];
+    $product['Product_row'][$row['product_id']]['id'] = $row['product_id'];
+    $product['Product_row'][$row['product_id']]['name'] = $row['name'];
+    $product['Product_row'][$row['product_id']]['price'] = $row['price'];
+    $product['Product_row'][$row['product_id']]['category'] = $row['category'];
+    $product['Product_row'][$row['product_id']]['manufacturer'] = $row['manufacturer'];
+    $product['Product_row'][$row['product_id']]['expire'] = $row['expire'];
 //
 //    if(isset($purchases_made[$row['product_id']])){
 //        $quantity = $row['quantity'];
@@ -81,15 +81,18 @@ while($row = mysqli_fetch_assoc( $result_products )) {
 //    }
 
     $product_name = $row['name'];
-
-    $product[$row['name']]["Product"]['user_name'] = $row['user_name'];
-    $product[$row['name']]["Product"]['user_surname'] = $row['surname'];
+//
+//    $product[$row['id']]["Product"][$product_name]['user_name'] = $row['user_name'];
+//    $product[$row['id']]["Product"][$product_name]['user_surname'] = $row['surname'];
+    $product['Product_row'][$row['product_id']]['Product_details'][$row['id']]['id'] = $row['id'];
+    $product['Product_row'][$row['product_id']]['Product_details'][$row['id']]['user_name'] = $row['user_name'];
+    $product['Product_row'][$row['product_id']]['Product_details'][$row['id']]['surname'] = $row['surname'];
 
 }
 
-//echo "<pre>";
-//print_r($product);
-//echo "</pre>";
+echo "<pre>";
+print_r($product);
+echo "</pre>";
 
 ?>
 
