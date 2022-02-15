@@ -12,7 +12,7 @@ error_reporting( E_ALL ^ E_NOTICE ^ E_WARNING );
  * Marrim te dhenat nga tabela products , purchase , dhe users sa per te vendosur disa emra neper id perkatese
  */
 
-$query_products = "SELECT purchase.id,
+$query_products = "SELECT purchase.id AS p_id,
                     product.name,
                     product.price,
                     category,
@@ -39,31 +39,29 @@ if(!$result_products) {
 $product = array();
 while($row = mysqli_fetch_assoc( $result_products )) {
 
-    //Te dhenat e produkteve
-    $product['Product_row'][$row['product_id']]['id'] = $row['product_id'];
-    $product['Product_row'][$row['product_id']]['name'] = $row['name'];
-    $product['Product_row'][$row['product_id']]['price'] = $row['price'];
-    $product['Product_row'][$row['product_id']]['category'] = $row['category'];
-    $product['Product_row'][$row['product_id']]['manufacturer'] = $row['manufacturer'];
-    $product['Product_row'][$row['product_id']]['expire'] = $row['expire'];
-    $product['Product_row'][$row['product_id']]['total_sales'] += $row['price'] * $row['quantity'];
-    $product['Product_row'][$row['product_id']]['units-sold'] += $row['quantity'];
+    //Te dhenat e bleresve
+    $product[$row['user_name']]['id'] = $row['buyer_id'];
+    $product[$row['user_name']]['date_of_purchase'] = $row['date_of_purchase'];
+    $product[$row['user_name']]['user_name'] = $row['user_name'];
+    $product[$row['user_name']]['surname'] = $row['surname'];
+    $product[$row['user_name']]['quantity'] = $row['quantity'];
+    $product[$row['user_name']]['name'] = $row['name'];
 
-    // Te dhenat e bleresve
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['id'] = $row['id'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['user_name'] = $row['user_name'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['surname'] = $row['surname'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['date_of_purchase'] = $row['date_of_purchase'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['quantity'] = $row['quantity'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['Total_spent'] = $row['quantity'] * $row['price'];
+    // Te dhenat e produkteve
+//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['id'] = $row['id'];
+//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['user_name'] = $row['user_name'];
+//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['surname'] = $row['surname'];
+//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['date_of_purchase'] = $row['date_of_purchase'];
+//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['quantity'] = $row['quantity'];
+//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['Total_spent'] = $row['quantity'] * $row['price'];
 
 }
 
 
 
-//echo "<pre>";
-//print_r($product);
-//echo "</pre>";
+echo "<pre>";
+print_r($product);
+echo "</pre>";
 ?>
 <!DOCTYPE html>
 <html>
@@ -103,37 +101,34 @@ while($row = mysqli_fetch_assoc( $result_products )) {
                                 <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Nr</th>
-                                    <th>Product Name</th>
-                                    <th>Price</th>
-                                    <th>Category</th>
-                                    <th>Manufacturer</th>
-                                    <th>Expire Date</th>
-                                    <th>Units sold</th>
-                                    <th>Total sales</th>
+                                    <th scope="col">Nr</th>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Date of Purchase</th>
+                                    <th scope="col">Quantity bought</th>
+                                    <th scope="col">Total Spent</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <?php
                                 $nr = 0;
-                                    foreach($product['Product_row'] as $product_id => $data) {
-                                $nr++;
-                                ?>
-                                <tr style="color: black !important;">
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" id="btn_<?= $product_id ?>" onclick="showInfo('<?= $product_id ?>')">
-                                            <i class="fa fa-plus" id="icon_info_<?= $product_id ?>"></i>
-                                        </button>
-                                    </td>
-                                    <td><?= $nr ?></td>
-                                    <td><?= $data['name'] ?></td>
-                                    <td><?= $data['price'] ?> leke</td>
-                                    <td><?= $data['category'] ?></td>
-                                    <td><?= $data['manufacturer'] ?></td>
-                                    <td><?= $data['expire'] ?></td>
-                                    <td><?= $data['units-sold'] ?> cope</td>
-                                    <td><?= $data['total_sales'] ?> leke</td>
-                                </tr>
+                                foreach($product['Product_row'] as $product_id => $data) {
+                                    $nr++;
+                                    ?>
+                                    <tr style="color: black !important;">
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" id="btn_<?= $product_id ?>" onclick="showInfo('<?= $product_id ?>')">
+                                                <i class="fa fa-plus" id="icon_info_<?= $product_id ?>"></i>
+                                            </button>
+                                        </td>
+                                        <td><?= $nr ?></td>
+                                        <td><?= $data['name'] ?></td>
+                                        <td><?= $data['price'] ?> leke</td>
+                                        <td><?= $data['category'] ?></td>
+                                        <td><?= $data['manufacturer'] ?></td>
+                                        <td><?= $data['expire'] ?></td>
+                                        <td><?= $data['units-sold'] ?> cope</td>
+                                        <td><?= $data['total_sales'] ?> leke</td>
+                                    </tr>
                                     <tr>
                                         <td colspan="12">
                                             <table class="table table-striped table-bordered table-hover dataTables" id="row_<?= $product_id ?>" style="display: none">
@@ -150,20 +145,20 @@ while($row = mysqli_fetch_assoc( $result_products )) {
                                                 <?php
                                                 $k = 1;
                                                 foreach($data['Test'] as $purchase => $all_data) { ?>
-                                                <tr>
-                                                    <td><?= $k++ ?></td>
-                                                    <td><?= $all_data['user_name'] ?></td>
-                                                    <td><?= $all_data['date_of_purchase'] ?></td>
-                                                    <td><?= $all_data['quantity'] ?></td>
-                                                    <td><?= $all_data['quantity'] * $data['price'] ?></td>
-                                                </tr>
+                                                    <tr>
+                                                        <td><?= $k++ ?></td>
+                                                        <td><?= $all_data['user_name'] ?></td>
+                                                        <td><?= $all_data['date_of_purchase'] ?></td>
+                                                        <td><?= $all_data['quantity'] ?></td>
+                                                        <td><?= $all_data['quantity'] * $data['price'] ?></td>
+                                                    </tr>
                                                 <?php } ?>
                                                 </tbody>
                                             </table>
                                         </td>
                                     </tr>
-                                        <?php $lol += $data['total_sales'] ?>
-                                <?php
+                                    <?php $lol += $data['total_sales'] ?>
+                                    <?php
                                 }
                                 ?>
                                 <h>Total Money Grumbulluar : <?= $lol ?></h>
