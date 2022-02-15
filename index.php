@@ -191,7 +191,7 @@ while($row = mysqli_fetch_assoc( $result_users_data )) {
 
 }
 
-//printArray($users_data);
+printArray($users_data);
 
 ?>
 

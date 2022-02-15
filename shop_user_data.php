@@ -40,28 +40,24 @@ $product = array();
 while($row = mysqli_fetch_assoc( $result_products )) {
 
     //Te dhenat e bleresve
-    $product[$row['user_name']]['id'] = $row['buyer_id'];
-    $product[$row['user_name']]['date_of_purchase'] = $row['date_of_purchase'];
-    $product[$row['user_name']]['user_name'] = $row['user_name'];
-    $product[$row['user_name']]['surname'] = $row['surname'];
-    $product[$row['user_name']]['quantity'] = $row['quantity'];
-    $product[$row['user_name']]['name'] = $row['name'];
+    $product[$row['buyer_id']]['buyer_id'] = $row['buyer_id'];
+    $product[$row['buyer_id']]['user_name'] = $row['user_name'];
+    $product[$row['buyer_id']]['surname'] = $row['surname'];
+    $product[$row['buyer_id']]['Total_spent'] += $row['price'] * $row['quantity'];
 
     // Te dhenat e produkteve
-//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['id'] = $row['id'];
-//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['user_name'] = $row['user_name'];
-//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['surname'] = $row['surname'];
-//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['date_of_purchase'] = $row['date_of_purchase'];
-//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['quantity'] = $row['quantity'];
-//    $product['Product_row'][$row['id']]['Test'][$row['buyer_id']]['Total_spent'] = $row['quantity'] * $row['price'];
+    $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['P_name'] = $row['name'];
+    $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['price'] = $row['price'];
+    $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['category'] = $row['category'];
+    $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['manufacturer'] = $row['manufacturer'];
+    $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['quantity'] = $row['quantity'];
+    $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['Total_sale_of_P'] = $row['price'] * $row['quantity'];
 
 }
 
-
-
-echo "<pre>";
-print_r($product);
-echo "</pre>";
+//echo "<pre>";
+//print_r($product);
+//echo "</pre>";
 ?>
 <!DOCTYPE html>
 <html>
@@ -103,15 +99,13 @@ echo "</pre>";
                                     <th></th>
                                     <th scope="col">Nr</th>
                                     <th scope="col">Full Name</th>
-                                    <th scope="col">Date of Purchase</th>
-                                    <th scope="col">Quantity bought</th>
                                     <th scope="col">Total Spent</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <?php
                                 $nr = 0;
-                                foreach($product['Product_row'] as $product_id => $data) {
+                                foreach($product as $product_id => $data) {
                                     $nr++;
                                     ?>
                                     <tr style="color: black !important;">
@@ -121,13 +115,8 @@ echo "</pre>";
                                             </button>
                                         </td>
                                         <td><?= $nr ?></td>
-                                        <td><?= $data['name'] ?></td>
-                                        <td><?= $data['price'] ?> leke</td>
-                                        <td><?= $data['category'] ?></td>
-                                        <td><?= $data['manufacturer'] ?></td>
-                                        <td><?= $data['expire'] ?></td>
-                                        <td><?= $data['units-sold'] ?> cope</td>
-                                        <td><?= $data['total_sales'] ?> leke</td>
+                                        <td><?= $data['user_name'] ?></td>
+                                        <td><?= $data['Total_spent'] ?> leke</td>
                                     </tr>
                                     <tr>
                                         <td colspan="12">
@@ -136,21 +125,25 @@ echo "</pre>";
                                                 <tr>
                                                     <th scope="col">Nr</th>
                                                     <th scope="col">Full Name</th>
-                                                    <th scope="col">Date purchased</th>
-                                                    <th scope="col">Quantity bought</th>
-                                                    <th scope="col">Total Spent</th>
+                                                    <th scope="col">Price</th>
+                                                    <th scope="col">Category</th>
+                                                    <th scope="col">Manufacturer</th>
+                                                    <th scope="col">Quantity</th>
+                                                    <th scope="col">Total Sale</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 <?php
                                                 $k = 1;
-                                                foreach($data['Test'] as $purchase => $all_data) { ?>
+                                                foreach($data['Date'] as $purchase => $all_data) { ?>
                                                     <tr>
                                                         <td><?= $k++ ?></td>
-                                                        <td><?= $all_data['user_name'] ?></td>
-                                                        <td><?= $all_data['date_of_purchase'] ?></td>
+                                                        <td><?= $all_data['P_name'] ?></td>
+                                                        <td><?= $all_data['price'] ?></td>
+                                                        <td><?= $all_data['category'] ?></td>
+                                                        <td><?= $all_data['manufacturer'] ?></td>
                                                         <td><?= $all_data['quantity'] ?></td>
-                                                        <td><?= $all_data['quantity'] * $data['price'] ?></td>
+                                                        <td><?= $all_data['Total_sale_of_P'] ?></td>
                                                     </tr>
                                                 <?php } ?>
                                                 </tbody>
@@ -161,7 +154,6 @@ echo "</pre>";
                                     <?php
                                 }
                                 ?>
-                                <h>Total Money Grumbulluar : <?= $lol ?></h>
                                 </tbody>
                             </table>
                         </div>

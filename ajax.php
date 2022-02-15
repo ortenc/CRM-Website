@@ -344,12 +344,6 @@ elseif ($_POST['action'] == "login") {
 
     $query_select = "SELECT * FROM users WHERE email='$txtemail' OR phone='$txtemail'";
     $result = mysqli_query($conn, $query_select);
-    if ($result_check) {
-        echo json_encode(array("code" => "200", "message" => "Success"));
-        exit;
-    } else {
-        echo json_encode(array("code" => "422", "message" => "Selecting all form users where email = email or phone = phone FAILED!!!"));
-    }
     $check = mysqli_fetch_assoc($result);
 
 
