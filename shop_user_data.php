@@ -47,6 +47,7 @@ while($row = mysqli_fetch_assoc( $result_products )) {
 
     // Te dhenat e produkteve
     $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['P_name'] = $row['name'];
+    $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['date_of_purchase'] = $row['date_of_purchase'];
     $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['price'] = $row['price'];
     $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['category'] = $row['category'];
     $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['manufacturer'] = $row['manufacturer'];
@@ -125,6 +126,7 @@ while($row = mysqli_fetch_assoc( $result_products )) {
                                                 <tr>
                                                     <th scope="col">Nr</th>
                                                     <th scope="col">Full Name</th>
+                                                    <th scope="col">Date of purchase</th>
                                                     <th scope="col">Price</th>
                                                     <th scope="col">Category</th>
                                                     <th scope="col">Manufacturer</th>
@@ -139,6 +141,7 @@ while($row = mysqli_fetch_assoc( $result_products )) {
                                                     <tr>
                                                         <td><?= $k++ ?></td>
                                                         <td><?= $all_data['P_name'] ?></td>
+                                                        <td><?= $all_data['date_of_purchase'] ?></td>
                                                         <td><?= $all_data['price'] ?></td>
                                                         <td><?= $all_data['category'] ?></td>
                                                         <td><?= $all_data['manufacturer'] ?></td>

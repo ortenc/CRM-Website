@@ -12,7 +12,7 @@ error_reporting( E_ALL ^ E_NOTICE ^ E_WARNING );
  * Marrim te dhenat nga tabela products , purchase , dhe users sa per te vendosur disa emra neper id perkatese
  */
 
-$query_products = "SELECT purchase.id,
+$query_products = "SELECT purchase.id as p_id,
                     product.name,
                     product.price,
                     category,
@@ -57,13 +57,19 @@ while($row = mysqli_fetch_assoc( $result_products )) {
     $product['Product_row'][$row['product_id']]['Test'][$row['id']]['quantity'] = $row['quantity'];
     $product['Product_row'][$row['product_id']]['Test'][$row['id']]['Total_spent'] = $row['quantity'] * $row['price'];
 
+    // Te dhenat nga shop user datadate_of_purchase
+    $product['Heeeeeeeeeey'][$row['product_id']][$row['date_of_purchase']]['id']['date_of_purchase']= $row['date_of_purchase'];
+    $product['Heeeeeeeeeey'][$row['product_id']][$row['date_of_purchase']]['id']['quantity'] += $row['quantity'];
+    $product['Heeeeeeeeeey'][$row['product_id']][$row['date_of_purchase']]['id']['Total Spent'] += $row['quantity'] * $row['price'];
+
+
 }
 
 
 
-//echo "<pre>";
-//print_r($product);
-//echo "</pre>";
+echo "<pre>";
+print_r($product);
+echo "</pre>";
 ?>
 <!DOCTYPE html>
 <html>
@@ -139,9 +145,9 @@ while($row = mysqli_fetch_assoc( $result_products )) {
                                             <table class="table table-striped table-bordered table-hover dataTables" id="row_<?= $product_id ?>" style="display: none">
                                                 <thead>
                                                 <tr>
+                                                    <th></th>
                                                     <th scope="col">Nr</th>
-                                                    <th scope="col">Full Name</th>
-                                                    <th scope="col">Date purchased</th>
+                                                    <th scope="col">Date of purchase</th>
                                                     <th scope="col">Quantity bought</th>
                                                     <th scope="col">Total Spent</th>
                                                 </tr>
@@ -149,8 +155,13 @@ while($row = mysqli_fetch_assoc( $result_products )) {
                                                 <tbody>
                                                 <?php
                                                 $k = 1;
-                                                foreach($data['Test'] as $purchase => $all_data) { ?>
+                                                foreach($product['Date_row'] as $purchase => $all_data) { ?>
                                                 <tr>
+                                                    <td>
+                                                        <button class="btn btn-primary btn-sm" id="btn_extra_<?= $purchase ?>" onclick="show_extra_Info('<?= $purchase ?>')">
+                                                            <i class="fa fa-plus" id="icon_extra_info_<?= $purchase ?>"></i>
+                                                        </button>
+                                                    </td>
                                                     <td><?= $k++ ?></td>
                                                     <td><?= $all_data['user_name'] ?></td>
                                                     <td><?= $all_data['date_of_purchase'] ?></td>
@@ -194,6 +205,22 @@ while($row = mysqli_fetch_assoc( $result_products )) {
         else{
             $("#icon_info_"+id).removeClass("fa-minus");
             $("#icon_info_"+id).addClass("fa-plus");
+        }
+        $("#row_"+id).toggle();
+    }
+
+    function show_extra_Info(id) {
+        $("#btn_extra_"+id).prop('disabled', true);
+        setTimeout(function (){
+            $("#btn_extra_"+id).prop('disabled', false);
+        }, 500);
+        if($("#icon_extra_info_"+id).hasClass( "fa-plus" )){
+            $("#icon_extra_info_"+id).addClass("fa-minus");
+            $("#icon_extra_info_"+id).removeClass("fa-plus");
+        }
+        else{
+            $("#icon_extra_info_"+id).removeClass("fa-minus");
+            $("#icon_extra_info_"+id).addClass("fa-plus");
         }
         $("#row_"+id).toggle();
     }
