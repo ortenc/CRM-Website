@@ -40,7 +40,7 @@ $product = array();
 while($row = mysqli_fetch_assoc( $result_products )) {
 
     //Te dhenat e produkteve
-    $product['Product_row'][$row['product_id']]['id'] = $row['product_id'];
+    $product['Product_row'][$row['product_id']]['id'] = $row['p_id'];
     $product['Product_row'][$row['product_id']]['name'] = $row['name'];
     $product['Product_row'][$row['product_id']]['price'] = $row['price'];
     $product['Product_row'][$row['product_id']]['category'] = $row['category'];
@@ -50,22 +50,22 @@ while($row = mysqli_fetch_assoc( $result_products )) {
     $product['Product_row'][$row['product_id']]['units-sold'] += $row['quantity'];
 
     // Te dhenat e bleresve
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['id'] = $row['id'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['user_name'] = $row['user_name'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['surname'] = $row['surname'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['date_of_purchase'] = $row['date_of_purchase'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['quantity'] = $row['quantity'];
-    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['Total_spent'] = $row['quantity'] * $row['price'];
+//    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['id'] = $row['id'];
+//    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['user_name'] = $row['user_name'];
+//    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['surname'] = $row['surname'];
+//    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['date_of_purchase'] = $row['date_of_purchase'];
+//    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['quantity'] = $row['quantity'];
+//    $product['Product_row'][$row['product_id']]['Test'][$row['id']]['Total_spent'] = $row['quantity'] * $row['price'];
 
     // Te dhenat nga shop user datadate_of_purchase
-    $product['Heeeeeeeeeey'][$row['product_id']][$row['date_of_purchase']]['id']['date_of_purchase']= $row['date_of_purchase'];
-    $product['Heeeeeeeeeey'][$row['product_id']][$row['date_of_purchase']]['id']['quantity'] += $row['quantity'];
-    $product['Heeeeeeeeeey'][$row['product_id']][$row['date_of_purchase']]['id']['Total Spent'] += $row['quantity'] * $row['price'];
-
+    $product['Product_row'][$row['product_id']]['Date_row_per_user'][$row['p_id']]['P_id_control'][$row['date_of_purchase']]['date_of'] = $row['date_of_purchase'];
+    $product['Product_row'][$row['product_id']]['Date_row_per_user'][$row['p_id']]['P_id_control'][$row['date_of_purchase']]['quantity'] += $row['quantity'];
+    $product['Product_row'][$row['product_id']]['Date_row_per_user'][$row['p_id']]['P_id_control'][$row['date_of_purchase']]['total_sales_per_date'] += $row['quantity'] * $row['price'];
+    $product['Product_row'][$row['product_id']]['Date_row_per_user'][$row['p_id']]['P_id_control'][$row['date_of_purchase']]['User'][$row['buyer_id']]['user_name']= $row['user_name'];
+    $product['Product_row'][$row['product_id']]['Date_row_per_user'][$row['p_id']]['P_id_control'][$row['date_of_purchase']]['User'][$row['buyer_id']]['quantity'] += $row['quantity'];
+    $product['Product_row'][$row['product_id']]['Date_row_per_user'][$row['p_id']]['P_id_control'][$row['date_of_purchase']]['User'][$row['buyer_id']]['Total Spent'] += $row['quantity'] * $row['price'];
 
 }
-
-
 
 echo "<pre>";
 print_r($product);
@@ -155,7 +155,7 @@ echo "</pre>";
                                                 <tbody>
                                                 <?php
                                                 $k = 1;
-                                                foreach($product['Date_row'] as $purchase => $all_data) { ?>
+                                                foreach($data['Date_row_per_user'] as $purchase => $all_data) { ?>
                                                 <tr>
                                                     <td>
                                                         <button class="btn btn-primary btn-sm" id="btn_extra_<?= $purchase ?>" onclick="show_extra_Info('<?= $purchase ?>')">
@@ -163,10 +163,9 @@ echo "</pre>";
                                                         </button>
                                                     </td>
                                                     <td><?= $k++ ?></td>
-                                                    <td><?= $all_data['user_name'] ?></td>
-                                                    <td><?= $all_data['date_of_purchase'] ?></td>
-                                                    <td><?= $all_data['quantity'] ?></td>
-                                                    <td><?= $all_data['quantity'] * $data['price'] ?></td>
+                                                    <td><?= $all ?></td>
+                                                    <td><?= $data['Date_row_per_user'][$purchase]['P_id_control'][$row['date_of_purchase']]['quantity'] ?></td>
+                                                    <td><?= $data['Date_row_per_user'][$purchase]['P_id_control'][$row['date_of_purchase']]['total_sales_per_date'] ?></td>
                                                 </tr>
                                                 <?php } ?>
                                                 </tbody>
@@ -181,7 +180,6 @@ echo "</pre>";
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </div>
