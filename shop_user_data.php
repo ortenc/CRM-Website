@@ -44,6 +44,7 @@ while($row = mysqli_fetch_assoc( $result_products )) {
     $product[$row['buyer_id']]['user_name'] = $row['user_name'];
     $product[$row['buyer_id']]['surname'] = $row['surname'];
     $product[$row['buyer_id']]['Total_spent'] += $row['price'] * $row['quantity'];
+    $product[$row['buyer_id']]['Total_quantity'] += $row['quantity'];
 
     // Te dhenat e produkteve
     $product[$row['buyer_id']]['Date'][$row['date_of_purchase']]['P_name'] = $row['name'];
@@ -100,6 +101,7 @@ while($row = mysqli_fetch_assoc( $result_products )) {
                                     <th></th>
                                     <th scope="col">Nr</th>
                                     <th scope="col">Full Name</th>
+                                    <th scope="col">Total Quantity</th>
                                     <th scope="col">Total Spent</th>
                                 </tr>
                                 </thead>
@@ -117,6 +119,7 @@ while($row = mysqli_fetch_assoc( $result_products )) {
                                         </td>
                                         <td><?= $nr ?></td>
                                         <td><?= $data['user_name'] ?></td>
+                                        <td><?= $data['Total_quantity'] ?> cope</td>
                                         <td><?= $data['Total_spent'] ?> leke</td>
                                     </tr>
                                     <tr>
